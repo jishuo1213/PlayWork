@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                              xmlns:tools="http://schemas.android.com/tools"
+                                                              xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                              xmlns:wheel="http://schemas.android.com/apk/res-auto"
+                                                              android:id="@+id/mail_list_fm"
+                                                              android:layout_width="match_parent"
+                                                              android:layout_height="match_parent"
+                                                              android:background="@color/whitesmoke"
+                                                              android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <RelativeLayout
+                android:id="@+id/md_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/toolbar_height"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/actionbar_background">
+
+                <ImageButton
+                    android:id="@+id/ml_menu_btn"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:background="#00000000"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:src="@drawable/wy_mail_list_menu" />
+
+                <TextView
+                    android:id="@+id/ml_dir_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/ml_menu_btn"
+                    android:maxLines="2"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/wy_toolbar_title_size"
+                    tools:text="收件箱" />
+
+                <ImageButton
+                    android:id="@+id/ml_exit_mail_btn"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="#00000000"
+                    android:src="@drawable/wy_mail_list_exit" />
+
+                <ImageButton
+                    android:id="@+id/ml_search_mail_btn"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/ml_exit_mail_btn"
+                    android:background="#00000000"
+                    android:src="@drawable/wy_mail_list_search" />
+
+                <ImageButton
+                    android:id="@+id/ml_write_mail_btn"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/ml_search_mail_btn"
+                    android:background="#00000000"
+                    android:src="@drawable/wy_mail_list_write" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/ml_search_box"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/toolbar_height"
+                android:background="@color/md_search_box_bg"
+                android:visibility="gone"
+                android:gravity="center">
+
+                <AutoCompleteTextView
+                    android:id="@+id/ml_search_mail_actv"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_margin="7dp"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:hint="搜 索"
+                    android:textColor="@color/wy_common_text_color"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <android.support.v4.widget.SwipeRefreshLayout
+                    android:id="@+id/swipe_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                    <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
+                        android:id="@+id/ml_recycler_view"
+                        android:layout_width="match_parent"
+                        android:scrollbars="vertical"
+                        android:layout_height="wrap_content"/>
+                </android.support.v4.widget.SwipeRefreshLayout>
+                <LinearLayout
+                    android:id="@+id/ml_empty_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    >
+
+                    <TextView
+                        android:id="@+id/ml_no_mail_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="-50dp"
+                        android:textSize="18dp"
+                        android:text="该目录中暂时没有邮件"/>
+
+                    <TextView
+                        android:id="@+id/click_to_load_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/ml_no_mail_tv"
+                        android:layout_marginTop="20dp"
+                        android:textSize="18dp"
+                        android:text="点击屏幕加载新邮件"/>
+                    <RelativeLayout
+                        android:id="@+id/ml_is_loading_rl"
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+                        <com.inspur.playwork.view.common.progressbar.ProgressWheel
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerVertical="true"
+                            wheel:matProg_barColor="@color/skyblue"
+                            wheel:matProg_barWidth="2dp"
+                            wheel:matProg_progressIndeterminate="true"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="40dp"
+                            android:textSize="18dp"
+                            android:textColor="@color/skyblue"
+                            android:text="正在加载..."/>
+                    </RelativeLayout>
+
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/download_info_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:textColor="#aaffffff"
+                    android:background="#aa000000"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/vu_guide_ll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="#8800000f"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/imageView_about"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/wy_one_finger"/>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:text="@string/welcome_to_weiyou"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="65dp"
+                android:layout_marginRight="65dp"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/white"
+                android:text="在侧边栏底部的设置中可以配置邮箱账号及数字证书哦~"
+                android:gravity="center"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+
+</com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout>

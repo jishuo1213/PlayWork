@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/setting_item_selector"
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
+
+
+    <TextView
+        android:id="@+id/tv_week_plan_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="5dp"
+        android:paddingTop="10dp"
+        android:text="第2周计划-江国福"
+        android:textColor="@color/key_text"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tv_share_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:paddingBottom="5dp"
+        android:paddingTop="10dp"
+        android:text="2017-01-11 05:26"
+        android:textColor="@color/key_text"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tv_from_department"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:paddingBottom="5dp"
+        android:paddingTop="10dp"
+        android:text="人力资源部"
+        android:textColor="@color/key_text"
+        android:textSize="15sp" />
+
+    <View
+        style="@style/common_horizontal_dividing_line_style"
+        android:layout_below="@id/tv_week_plan_name" />
+</RelativeLayout>

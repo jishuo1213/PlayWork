@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:textIsSelectable="false"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/md_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/actionbar_background">
+
+        <ImageButton
+            android:id="@+id/wy_back_btn"
+            android:layout_width="62dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:background="@color/transparent"
+            android:src="@drawable/icon_back" />
+
+        <TextView
+            android:id="@+id/as_account_email"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/wy_back_btn"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/wy_toolbar_title_size"
+            android:text="数字证书设置" />
+
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bgColor"
+        android:orientation="vertical"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp">
+
+        <TextView
+            android:id="@+id/as_install_ca_btn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/wy_server_setting"
+            android:gravity="center"
+            android:textSize="@dimen/write_mail_info_text_size"
+            android:textColor="@color/wy_common_text_color"
+            android:textIsSelectable="false"
+            android:text="导入新证书" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textSize="@dimen/mail_detail_info_text_size"
+            android:textColor="@color/wy_common_text_light_color"
+            android:textIsSelectable="false"
+            android:text="需要先把证书文件导入到手机存储" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:textSize="@dimen/write_mail_info_text_size"
+            android:textColor="@color/wy_common_text_color"
+            android:text="已安装的数字证书" />
+
+        <ListView
+            android:id="@+id/wy_installed_ca_lv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:choiceMode="singleChoice"
+            android:background="@color/white"
+            android:layout_marginTop="10dp"/>
+        <TextView
+            android:id="@+id/wy_ca_lv_empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="您的邮箱账号未安装任何证书"
+            android:layout_marginTop="10dp"
+            android:textSize="@dimen/mail_detail_info_text_size"
+            android:textColor="@color/wy_common_text_light_color"
+            android:gravity="center"
+            android:background="@color/white"/>
+
+        <View style="@style/common_horizontal_dividing_line_style"
+            android:layout_marginBottom="10dp"/>
+
+        <RelativeLayout
+            android:id="@+id/as_default_encrypt_mail"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="10dp">
+
+            <CheckBox
+                android:id="@+id/as_default_encrypt_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:button="@drawable/wy_switch_button"  />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/write_mail_info_text_size"
+                android:textColor="@color/wy_common_text_color"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@id/as_default_encrypt_iv"
+                android:text="加密待发送邮件的内容和附件" />
+        </RelativeLayout>
+
+        <View style="@style/common_horizontal_dividing_line_style"
+              android:layout_marginBottom="10dp"/>
+        <RelativeLayout
+            android:id="@+id/as_default_sign_mail"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="10dp">
+
+            <CheckBox
+                android:id="@+id/as_default_sign_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:button="@drawable/wy_switch_button" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/write_mail_info_text_size"
+                android:textColor="@color/wy_common_text_color"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@id/as_default_sign_iv"
+                android:text="签名待发送邮件的内容和附件" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout>

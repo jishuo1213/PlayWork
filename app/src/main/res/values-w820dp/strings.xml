@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pull_to_load">上拉同步更多邮件</string>
+    <string name="loading">正在同步服务器邮件</string>
+    <string name="release_to_load">松开开始同步服务器邮件</string>
+    <string name="send_mail_btn">发送</string>
+    <string name="select_contact_ok_btn">确定</string>
+</resources>

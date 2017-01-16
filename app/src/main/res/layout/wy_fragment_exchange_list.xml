@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                              android:layout_width="match_parent"
+                                                              android:layout_height="match_parent"
+                                                              xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                              android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/md_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/actionbar_background">
+
+        <ImageButton
+            android:id="@+id/wy_back_btn"
+            android:layout_width="62dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:background="@color/transparent"
+            android:src="@drawable/icon_back" />
+
+        <TextView
+            android:id="@+id/ml_dir_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/wy_back_btn"
+            android:textColor="@color/white"
+            android:textSize="@dimen/wy_toolbar_title_size"
+            android:text="与他（她）的往来邮件" />
+
+        <ImageButton
+            android:id="@+id/el_write_mail_btn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="#00000000"
+            android:src="@drawable/wy_mail_list_write" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+        <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
+            android:id="@+id/ml_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <TextView
+            android:id="@+id/el_no_mail_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-50dp"
+            android:visibility="gone"
+            android:textSize="18dp"
+            android:text="未找到您与该联系人的往来邮件"/>
+    </LinearLayout>
+</com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout>

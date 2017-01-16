@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <!--android:layout_width="@dimen/calendar_date_click_bg_width"-->
+    <!--android:layout_height="@dimen/calendar_date_click_bg_width"-->
+    <LinearLayout
+        android:id="@+id/lin_date_back"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="1.5dp"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="12"
+            android:textColor="@color/black_lower"
+            android:textSize="@dimen/calendar_date_text_size" />
+
+        <TextView
+            android:id="@+id/tv_lunar_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-1.5dp"
+            android:gravity="center"
+            android:text="十五"
+            android:textColor="@color/text_gray"
+            android:textSize="@dimen/toolbar_text_size" />
+    </LinearLayout>
+</FrameLayout>
+

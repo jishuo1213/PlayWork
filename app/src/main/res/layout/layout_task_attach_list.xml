@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_titlebar" />
+
+    <EditText
+        android:id="@+id/edit_search_attach"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/search_edit_background"
+        android:drawableLeft="@drawable/img_search"
+        android:drawablePadding="5dp"
+        android:drawableStart="@drawable/img_search"
+        android:hint="搜索"
+        android:paddingEnd="0dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="0dp"
+        android:paddingStart="5dp" />
+
+
+    <com.inspur.playwork.view.common.pulltorefresh.PullToRefreshView
+        android:id="@+id/pull_refresh_task_attach"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_task_attachment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="vertical" />
+    </com.inspur.playwork.view.common.pulltorefresh.PullToRefreshView>
+
+
+
+</LinearLayout>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="280dp"
+    android:layout_height="wrap_content"
+    android:background="#ffffff"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/tv_content1"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:background="@drawable/bg_white_aaaaaa"
+        android:gravity="center"
+        android:text="删除"
+        android:textColor="#353535"
+        android:textSize="16sp" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#d7d7d7" />
+
+    <TextView
+        android:id="@+id/tv_content2"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:background="@drawable/bg_white_aaaaaa"
+        android:gravity="center"
+        android:text="撤回"
+        android:textColor="#353535"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#d7d7d7" />
+
+    <TextView
+        android:id="@+id/tv_content6"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:background="@drawable/bg_white_aaaaaa"
+        android:gravity="center"
+        android:text="复制"
+        android:textColor="#353535"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#d7d7d7" />
+
+    <!--    <TextView
+            android:id="@+id/tv_content3"
+            android:layout_width="match_parent"
+            android:layout_height="43dp"
+            android:background="@drawable/bg_white_aaaaaa"
+            android:gravity="center"
+            android:text="转发"
+            android:textColor="#353535"
+            android:textSize="16sp"
+            android:visibility="gone" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#d7d7d7" />-->
+
+    <TextView
+        android:id="@+id/tv_content3"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:background="@drawable/bg_white_aaaaaa"
+        android:gravity="center"
+        android:text="回复"
+        android:textColor="#353535"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#d7d7d7" />
+
+    <TextView
+        android:id="@+id/tv_content4"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:background="@drawable/bg_white_aaaaaa"
+        android:gravity="center"
+        android:text="全部回复"
+        android:textColor="#353535"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#d7d7d7" />
+</LinearLayout>

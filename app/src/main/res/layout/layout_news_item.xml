@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="3dp">
+
+    <ImageView
+        android:id="@+id/image_news_thumbnail"
+        android:layout_width="90dp"
+        android:layout_height="60dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/inspur" />
+
+    <TextView
+        android:id="@+id/tv_news_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/image_news_thumbnail"
+        android:layout_toRightOf="@id/image_news_thumbnail"
+        android:ellipsize="end"
+        android:lines="3"
+        android:paddingEnd="0dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="0dp"
+        android:paddingStart="5dp"
+        android:textStyle="bold"
+        android:text="参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议"
+        android:textColor="@color/key_text"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_news_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/tv_news_title"
+        android:paddingTop="1dp"
+        android:text="2017-01-09"
+        android:textColor="@color/text_gray"
+        android:textSize="12sp" />
+
+    <View
+        style="@style/common_horizontal_dividing_line_style"
+        android:layout_alignParentBottom="true"
+        android:paddingTop="3dp" />
+
+
+</RelativeLayout>

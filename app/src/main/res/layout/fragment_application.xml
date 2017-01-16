@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/relative_week_plan"
+                    style="@style/app_item_style">
+                    <!--android:visibility="v"-->
+
+                    <ImageView
+                        android:id="@+id/iv_weekly_plan"
+                        style="@style/app_item_image_style"
+                        android:src="@drawable/icon_app_weekly_plan" />
+
+                    <TextView
+                        style="@style/app_item_text_style"
+                        android:layout_toRightOf="@id/iv_weekly_plan"
+                        android:text="@string/weekly_plan" />
+
+                    <ImageView style="@style/app_item_right_button" />
+                </RelativeLayout>
+
+                <View style="@style/app_dividing_line_style" />
+
+                <RelativeLayout
+                    android:id="@+id/relative_weiyou"
+                    style="@style/app_item_style">
+
+                    <ImageView
+                        android:id="@+id/iv_weiyou"
+                        style="@style/app_item_image_style"
+                        android:src="@drawable/icon_app_weiyou" />
+
+                    <TextView
+                        style="@style/app_item_text_style"
+                        android:layout_toRightOf="@id/iv_weiyou"
+                        android:text="@string/weiyou" />
+
+                    <ImageView style="@style/app_item_right_button" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <View style="@style/common_horizontal_dividing_line_style" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/relative_weizhi"
+                    style="@style/app_item_style">
+
+                    <ImageView
+                        android:id="@+id/iv_weizhi"
+                        style="@style/app_item_image_style"
+                        android:src="@drawable/icon_app_weizhi" />
+
+                    <TextView
+                        style="@style/app_item_text_style"
+                        android:layout_toRightOf="@id/iv_weizhi"
+                        android:text="@string/weizhi" />
+
+                    <ImageView style="@style/app_item_right_button" />
+                </RelativeLayout>
+
+                <View style="@style/app_dividing_line_style" />
+
+                <RelativeLayout
+                    android:id="@+id/relative_weipan"
+                    style="@style/app_item_style">
+
+                    <ImageView
+                        android:id="@+id/iv_weipan"
+                        style="@style/app_item_image_style"
+                        android:src="@drawable/icon_app_weipan" />
+
+                    <TextView
+                        style="@style/app_item_text_style"
+                        android:layout_toRightOf="@id/iv_weipan"
+                        android:text="@string/weipan" />
+
+                    <ImageView style="@style/app_item_right_button" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <View style="@style/common_horizontal_dividing_line_style" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/relative_inspur_weekplan"
+                    style="@style/app_item_style">
+
+                    <ImageView
+                        android:id="@+id/iv_inspurweekplan"
+                        style="@style/app_item_image_style"
+                        android:src="@drawable/icon_app_weekplan" />
+
+                    <TextView
+                        style="@style/app_item_text_style"
+                        android:layout_toRightOf="@id/iv_inspurweekplan"
+                        android:text="@string/inspur_weekplan" />
+
+                    <ImageView style="@style/app_item_right_button" />
+                </RelativeLayout>
+
+                <View style="@style/app_dividing_line_style" />
+
+                <RelativeLayout
+                    android:id="@+id/relative_inspur_mbo"
+                    style="@style/app_item_style">
+
+                    <ImageView
+                        android:id="@+id/iv_inspur_mbo"
+                        style="@style/app_item_image_style"
+                        android:src="@drawable/icon_app_mbo" />
+
+                    <TextView
+                        style="@style/app_item_text_style"
+                        android:layout_toRightOf="@id/iv_inspur_mbo"
+                        android:text="@string/inspur_mbo" />
+
+                    <ImageView style="@style/app_item_right_button" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <View style="@style/common_horizontal_dividing_line_style" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <RelativeLayout
+                    android:id="@+id/relative_contacts"
+                    style="@style/app_item_style"
+                    android:visibility="visible">
+
+                    <ImageView
+                        android:id="@+id/iv_weiliao"
+                        style="@style/app_item_image_style"
+                        android:src="@drawable/ic_menu_cc_am" />
+
+                    <TextView
+                        style="@style/app_item_text_style"
+                        android:layout_toRightOf="@id/iv_weiliao"
+                        android:text="通讯录" />
+
+                    <ImageView style="@style/app_item_right_button" />
+                </RelativeLayout>
+
+                <View style="@style/app_dividing_line_style" />
+
+                <RelativeLayout
+                    style="@style/app_item_style"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/iv_weibo"
+                        style="@style/app_item_image_style"
+                        android:src="@drawable/icon_app_weibo" />
+
+                    <TextView
+                        style="@style/app_item_text_style"
+                        android:layout_toRightOf="@id/iv_weibo"
+                        android:text="@string/weibo"
+                        android:textColor="@color/grey" />
+
+                    <ImageView style="@style/app_item_right_button" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <View style="@style/common_horizontal_dividing_line_style" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

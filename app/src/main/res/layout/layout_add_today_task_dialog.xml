@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.inspur.playwork.view.timeline.addtask.AddTodayRootView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/add_today_task_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    android:clickable="true">
+
+    <LinearLayout
+        android:id="@+id/dialog_main"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <com.inspur.playwork.view.timeline.addtask.KeyEventEditText
+            android:id="@+id/tv_task_start_time"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginLeft="27dp"
+            android:layout_marginStart="27dp"
+            android:background="@null"
+            android:gravity="start|center_vertical"
+            android:maxLength="13"
+            android:ems="6"
+            android:text="下午"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <!--android:minEms="6"-->
+
+
+        <View
+            android:id="@+id/depart_view"
+            android:layout_width="1px"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginRight="3dp"
+            android:background="@color/deliver_line" />
+
+        <com.inspur.playwork.view.timeline.addtask.KeyEventEditText
+            android:id="@+id/edit_input_task_content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_weight="7"
+            android:background="@null"
+            android:cursorVisible="true"
+            android:gravity="center_vertical"
+            android:hint="这里输入任务内容"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textColorHint="@color/text_gray"
+            android:textSize="15sp" />
+
+        <ImageButton
+            android:id="@+id/btn_confrim"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:background="@null"
+            android:contentDescription="@null"
+            android:padding="5dp"
+            android:src="@drawable/selector_confrim_add" />
+    </LinearLayout>
+</com.inspur.playwork.view.timeline.addtask.AddTodayRootView>

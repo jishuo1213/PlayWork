@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:layout_alignParentBottom="true"
+    android:background="@color/whitesmoke">
+
+    <TextView
+        android:id="@+id/wy_pop_window_title"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:textColor="@color/key_text"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/wy_pop_window_title"
+        android:gravity="center"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentBottom="true">
+        <Button
+            android:id="@+id/wy_confirm_btn1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginLeft="20dp"
+            android:text="否"
+            android:textSize="@dimen/write_mail_info_text_size"
+            android:textColor="@color/wy_common_text_color"/>
+        <Button
+            android:id="@+id/wy_confirm_btn2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginRight="20dp"
+            android:text="是"
+            android:textSize="@dimen/write_mail_info_text_size"
+            android:textColor="@color/wy_common_text_color"/>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="chose_time_id" type="id">100</item>
+    <item name="chose_person_id" type="id">101</item>
+    <item name="chose_time_new_id" type="id">102</item>
+</resources>

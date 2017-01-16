@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="15dp"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp" >
+        <TextView
+            android:id="@+id/ca_in_using"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:singleLine="true"
+            android:textColor="@color/write_mail_bg_color"
+            android:textSize="@dimen/mail_detail_info_text_size"
+            android:text="使用中"
+            android:visibility="gone"/>
+        <TextView
+            android:id="@+id/ca_friendly_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/ca_in_using"
+            android:singleLine="true"
+            android:textColor="@color/wy_common_text_color"
+            android:textSize="@dimen/mail_detail_info_text_size"
+            android:text="证书名"/>
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp" >
+        <TextView
+            android:id="@+id/ca_title2"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/wy_common_text_light_color"
+            android:text="颁发给:"
+            android:layout_alignParentLeft="true"/>
+
+        <TextView
+            android:id="@+id/ca_cn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/ca_title2"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/wy_common_text_light_color"
+            android:text="Langchao"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp" >
+        <TextView
+            android:id="@+id/ca_title3"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/wy_common_text_light_color"
+            android:text="颁发者:"
+            android:layout_alignParentLeft="true"/>
+
+        <TextView
+            android:id="@+id/ca_issuer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/ca_title3"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/wy_common_text_light_color"
+            android:text="Langchao"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp" >
+        <TextView
+            android:id="@+id/ca_title4"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/wy_common_text_light_color"
+            android:text="有效期至:"
+            android:layout_alignParentLeft="true"/>
+
+        <TextView
+            android:id="@+id/ca_cert_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/ca_title4"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/wy_common_text_light_color"
+            android:text="2016年4月11日21:33:23"/>
+    </RelativeLayout>
+
+</LinearLayout>

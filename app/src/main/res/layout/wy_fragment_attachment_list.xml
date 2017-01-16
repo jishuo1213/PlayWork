@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/mal_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/actionbar_background">
+        <ImageButton
+            android:id="@+id/wy_back_btn"
+            android:layout_width="62dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:background="@color/transparent"
+            android:src="@drawable/icon_back" />
+
+        <TextView
+            android:id="@+id/mal_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/wy_back_btn"
+            android:maxLines="2"
+            android:textColor="@color/white"
+            android:textSize="@dimen/wy_toolbar_title_size"
+            android:text="附件列表" />
+
+        <Button
+            android:id="@+id/select_attachment_ok"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/wy_button_cornerbg"
+            android:text="确定"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <!--<ImageButton-->
+        <!--android:id="@+id/mal"-->
+        <!--android:layout_width="50dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:background="#00000000"-->
+        <!--android:src="@drawable/wy_mail_list_exit" />-->
+
+    </RelativeLayout>
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/mal_search_box"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/toolbar_height"-->
+        <!--android:background="@color/md_search_box_bg"-->
+        <!--android:visibility="gone"-->
+        <!--android:gravity="center">-->
+
+        <!--<AutoCompleteTextView-->
+            <!--android:id="@+id/mal_search_actv"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="35dp"-->
+            <!--android:layout_margin="7dp"-->
+            <!--android:background="@color/white"-->
+            <!--android:gravity="center"-->
+            <!--android:hint="搜 索"-->
+            <!--android:singleLine="true"-->
+            <!--android:textColor="@color/wy_common_text_color"-->
+            <!--android:textSize="16sp" />-->
+    <!--</LinearLayout>-->
+
+    <!--<com.handmark.pulltorefresh.library.PullToRefreshListView-->
+    <!--android:id="@+id/ml_ptrlv"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="@color/mask"-->
+    <!--android:cacheColorHint="#00000000"-->
+    <!--android:fadingEdge="none"-->
+    <!--android:fastScrollEnabled="false"-->
+    <!--android:footerDividersEnabled="false"-->
+    <!--android:headerDividersEnabled="false"-->
+    <!--android:smoothScrollbar="true" />-->
+
+    <ListView
+        android:id="@+id/mal_lv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/bgColor"
+        android:cacheColorHint="#00000000" />
+
+
+</com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout>

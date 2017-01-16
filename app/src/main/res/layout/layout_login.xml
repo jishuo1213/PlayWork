@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:id="@+id/imageView"
+        android:src="@drawable/icon_chat_default_avatar"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="15dp">
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:padding="5dp"
+            android:text="帐 号："
+            android:textColor="@color/black_lower"
+            android:textSize="18sp"
+            android:layout_marginLeft="13dp" />
+
+        <EditText
+            android:id="@+id/edit_login_username"
+            android:layout_width="303dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:singleLine="true"
+            android:hint=""
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/line_bg"
+        android:layout_above="@+id/edit_login_password"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="clip_vertical"
+        android:weightSum="1"
+        android:layout_marginTop="0dp">
+        <TextView
+            android:id="@+id/password_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black_lower"
+            android:layout_marginLeft="13dp"
+            android:padding="5dp"
+            android:text="密 码："
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/edit_login_password"
+            android:layout_width="304dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint=""
+            android:singleLine="true"
+            android:inputType="textPassword"
+            android:textSize="18sp"
+            android:layout_marginRight="15dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1px"
+        android:background="@color/line_bg"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:id="@+id/view2" />
+
+    <Button
+        android:id="@+id/btn_log_in"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/x_bg_btn_green"
+        android:text="登 录"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:layout_centerInParent="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp" />
+
+
+</LinearLayout>

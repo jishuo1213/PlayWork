@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/actionbar_background">
+
+        <Button
+            android:id="@+id/cancel_send_mail_btn"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:background="#00000000"
+            android:text="取消"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:text="写邮件"
+            android:textColor="@color/white"
+            android:textSize="@dimen/wy_toolbar_title_size" />
+
+        <ImageButton
+            android:id="@+id/wm_safty_opt_btn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@id/send_mail_ok_btn"
+            android:layout_marginRight="10dp"
+            android:background="@color/transparent"
+            android:src="@drawable/wy_write_mail_jiami" />
+        <Button
+            android:id="@+id/send_mail_ok_btn"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/wy_button_cornerbg"
+            android:text="发送"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/wm_editor_tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/lower_gray"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+
+            <ImageButton
+                android:id="@+id/action_undo"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:src="@drawable/undo"
+                />
+
+            <ImageButton
+                android:id="@+id/action_redo"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:src="@drawable/redo"
+                />
+
+            <ImageButton
+                android:id="@+id/action_bold"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:src="@drawable/bold"
+                />
+
+            <ImageButton
+                android:id="@+id/action_italic"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:src="@drawable/italic"
+                />
+
+            <TextView
+                android:id="@+id/action_txt_color"
+                android:layout_width="48dp"
+                android:layout_height="match_parent"
+                android:textStyle="bold"
+                android:text="A"
+                android:textSize="32dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:clickable="true"
+                android:textColor="@color/white"
+                />
+
+            <LinearLayout
+                android:id="@+id/action_bg_color"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@color/transparent"
+                android:gravity="center"
+                android:clickable="true"
+                android:layout_margin="6dp">
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/rich_editor_bg_color"
+                    />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/action_font_size"
+                android:layout_width="64dp"
+                android:layout_height="48dp"
+                android:text="16号"
+                android:clickable="true"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:gravity="center"
+                />
+
+            <ImageButton
+                android:id="@+id/action_strikethrough"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:src="@drawable/strikethrough"
+                />
+
+            <ImageButton
+                android:id="@+id/action_underline"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:src="@drawable/underline"
+                />
+
+            <ImageButton
+                android:id="@+id/action_indent"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:src="@drawable/indent"
+                />
+
+            <ImageButton
+                android:id="@+id/action_outdent"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:src="@drawable/outdent"
+                />
+
+            <ImageButton
+                android:id="@+id/action_align_left"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:src="@drawable/justify_left"
+                />
+
+            <ImageButton
+                android:id="@+id/action_align_center"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:src="@drawable/justify_center"
+                />
+
+            <ImageButton
+                android:id="@+id/action_align_right"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:src="@drawable/justify_right"
+                />
+
+            <ImageButton
+                android:id="@+id/action_blockquote"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:src="@drawable/blockquote"
+                />
+
+            <ImageButton
+                android:id="@+id/action_insert_image"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:visibility="gone"
+                android:src="@drawable/insert_image"
+                />
+
+            <ImageButton
+                android:id="@+id/action_insert_link"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:visibility="gone"
+                android:contentDescription="@null"
+                android:src="@drawable/insert_link"
+                />
+
+            <ImageButton
+                android:id="@+id/action_subscript"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:src="@drawable/subscript"
+                />
+
+            <ImageButton
+                android:id="@+id/action_superscript"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:src="@drawable/superscript"
+                />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="36dp">
+
+                <TextView
+                    android:id="@+id/wm_to_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:text="发给："
+                    android:textColor="@color/wy_common_text_color"
+                    android:textSize="@dimen/write_mail_info_text_size" />
+
+                <ImageView
+                    android:id="@+id/wm_to_selector_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="2dp"
+                    android:src="@drawable/wy_write_mail_add" />
+
+
+                <!--<com.inspur.playwork.weiyou.view.ContactInputView-->
+                <com.inspur.playwork.weiyou.view.FlowLayout
+                    android:id="@+id/wm_to_civ"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/wm_to_selector_btn"
+                    android:layout_toRightOf="@id/wm_to_title">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/wm_to_actv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="30dp"
+                        android:minWidth="10dp"
+                        android:background="@null"
+                        android:inputType="textEmailAddress"
+                        android:textColor="@color/wy_common_text_light_color" />
+                </com.inspur.playwork.weiyou.view.FlowLayout>
+
+            </RelativeLayout>
+
+            <View
+                style="@style/common_horizontal_dividing_line_style"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="36dp">
+
+                <TextView
+                    android:id="@+id/wm_cc_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="抄送："
+                    android:textColor="@color/wy_common_text_color"
+                    android:textSize="@dimen/write_mail_info_text_size" />
+
+                <ImageView
+                    android:id="@+id/wm_cc_selector_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:paddingLeft="2dp"
+                    android:src="@drawable/wy_write_mail_add" />
+
+                <!--<com.inspur.playwork.weiyou.view.ContactInputView-->
+                <com.inspur.playwork.weiyou.view.FlowLayout
+                    android:id="@+id/wm_cc_civ"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/wm_cc_selector_btn"
+                    android:layout_toRightOf="@id/wm_cc_title">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/wm_cc_actv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="30dp"
+                        android:minWidth="10dp"
+                        android:background="@null"
+                        android:inputType="textEmailAddress"
+                        android:textColor="@color/wy_common_text_light_color"/>
+                </com.inspur.playwork.weiyou.view.FlowLayout>
+            </RelativeLayout>
+
+            <View
+                style="@style/common_horizontal_dividing_line_style"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp" />
+
+            <RelativeLayout
+                android:id="@+id/sc_relative_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:minHeight="32dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/wm_sc_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:paddingBottom="3dp"
+                    android:paddingTop="10dp"
+                    android:text="密送"
+                    android:textColor="@color/wy_common_text_color" />
+
+                <ImageView
+                    android:id="@+id/wm_sc_selector_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignBottom="@id/wm_sc_title"
+                    android:layout_alignParentRight="true"
+                    android:paddingLeft="2dp"
+                    android:paddingRight="2dp"
+                    android:src="@drawable/wy_write_mail_add" />
+
+                <!--<com.inspur.playwork.weiyou.view.ContactInputView-->
+                <!--<com.inspur.playwork.weiyou.view.FlowLayout-->
+                    <!--android:id="@+id/wm_sc_civ"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_marginLeft="10dp"-->
+                    <!--android:layout_toLeftOf="@id/wm_sc_selector_btn"-->
+                    <!--android:layout_toRightOf="@id/wm_sc_title">-->
+                    <!--<AutoCompleteTextView-->
+                    <!--android:id="@+id/wm_sc_actv"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="30dp"-->
+                    <!--android:background="@null"-->
+                    <!--android:minWidth="30dp"-->
+                    <!--android:inputType="textEmailAddress"-->
+                    <!--android:text="" />-->
+                <!--</com.inspur.playwork.weiyou.view.FlowLayout>-->
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/wd_dividing_line"
+                style="@style/common_horizontal_dividing_line_style"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="2dp"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="36dp">
+
+                <TextView
+                    android:id="@+id/wm_subject_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="主题："
+                    android:textColor="@color/wy_common_text_color"
+                    android:textSize="@dimen/write_mail_info_text_size" />
+
+                <ImageView
+                    android:id="@+id/wm_attachment_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/wy_write_mail_attachment" />
+
+                <EditText
+                    android:id="@+id/wm_subject_et"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/wm_attachment_btn"
+                    android:layout_toRightOf="@id/wm_subject_title"
+                    android:background="@null"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/wy_common_text_color"
+                    android:textSize="@dimen/write_mail_info_text_size" />
+
+            </RelativeLayout>
+
+            <View
+                style="@style/common_horizontal_dividing_line_style"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="2dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:orientation="vertical">
+                <!-- 附件列表 ListView-->
+                <com.inspur.playwork.weiyou.view.InsideListView
+                    android:id="@+id/wm_attachment_lv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    />
+                <!-- 文本编辑器 -->
+                <jp.wasabeef.richeditor.RichEditor
+                    android:id="@+id/wm_content_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
+                <!-- 签名文字 -->
+               <!-- <TextView
+                    android:id="@+id/wm_signature_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/wy_common_text_light_color"
+                    android:textSize="@dimen/write_mail_info_text_size"
+                    android:text="@string/wy_write_mail_signature"/>-->
+                <!-- 引用的邮件内容 -->
+                <!--<WebView
+                    android:id="@+id/wm_quote_mail_wv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"/>-->
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/wm_hide_tv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+</com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout>

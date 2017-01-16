@@ -1,0 +1,80 @@
+apply plugin: 'com.android.model.native'
+
+def lib_distribution_root = '../distribution/openssl/lib'
+def lib_distribution_header = '../distribution'
+model {
+
+    repositories {
+        libs(PrebuiltLibraries) {
+            openssl {
+
+                headers.srcDir "${lib_distribution_header}/openssl/include"
+
+                binaries.withType(StaticLibraryBinary) {
+                    staticLibraryFile = file("${lib_distribution_root}/${targetPlatform.getName()}/libssl.a")
+                }
+
+                binaries.withType(StaticLibraryBinary) {
+                    staticLibraryFile = file("${lib_distribution_root}/${targetPlatform.getName()}/libcrypto.a")
+                }
+            }
+        }
+    }
+
+    android {
+        compileSdkVersion 23
+        buildToolsVersion "23.0.3"
+
+        defaultConfig {
+            minSdkVersion.apiLevel = 14
+            targetSdkVersion.apiLevel = 23
+            versionCode 1
+            versionName "1.0"
+        }
+
+        sources {
+            main {
+                jni {
+                    dependencies {
+                        library 'openssl' linkage 'static'
+//                        library 'openssl' linkage 'shared'
+                    }
+                }
+//                jniLibs {
+//                    source {
+//                        srcDir "${lib_distribution_root}"
+//                    }
+//                }
+            }
+        }
+
+
+        ndk {
+            moduleName = 'opensslutil'
+            toolchain = 'gcc'
+            CFlags.addAll(['-Wall'])
+            stl = 'gnustl_static'
+            abiFilters.addAll(['armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64', 'mips', 'mips64'])
+            ldLibs.addAll(['android', 'log'])
+        }
+    }
+}
+
+task(distributeLib, type: Copy) {
+    // trigger build library
+    dependsOn assemble
+    into '../distribution/opensslutil/'
+    from('src/main/jni/smime.h') {
+        into 'include/'
+    }
+    from('src/main/jni/opensslutil.h') {
+        into 'include/'
+    }
+    from('src/main/jni/strutil.h') {
+        into 'include/'
+    }
+    from('build/outputs/native/release/lib') {
+        into 'lib/'
+    }
+}
+

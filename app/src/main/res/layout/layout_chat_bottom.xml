@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp">
+
+    <!--<ImageView-->
+    <!--android:paddingTop="2dp"-->
+    <!--android:paddingBottom="2dp"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center_vertical"-->
+    <!--android:layout_marginEnd="5dp"-->
+    <!--android:layout_marginLeft="3dp"-->
+    <!--android:layout_marginRight="5dp"-->
+    <!--android:layout_marginStart="3dp"-->
+    <!--android:contentDescription="@null"-->
+    <!--android:src="@drawable/chat_emoji_button_background"-->
+    <!--android:visibility="gone" />-->
+
+    <ImageView
+        android:id="@+id/btn_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:contentDescription="@null"
+        android:src="@drawable/chat_more_button_background" />
+
+
+    <!--<FrameLayout-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="32dp"-->
+    <!--android:layout_marginEnd="5dp"-->
+    <!--android:layout_marginRight="5dp"-->
+    <!--android:layout_weight="1"-->
+    <!--android:background="@drawable/shape_bg_reply_edittext">-->
+
+
+    <FrameLayout
+        android:id="@+id/rl_editbar_bg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="1"
+        android:background="@drawable/chat_bottom_line"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!--android:background="@drawable/shape_bg_reply_edittext"-->
+
+
+        <EditText
+            android:id="@+id/edit_message_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:inputType="textMultiLine"
+            android:maxLines="3"
+            android:minHeight="40dp"
+            android:paddingEnd="32dp"
+            android:paddingRight="32dp"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/emotion_button"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="end|center_vertical"
+            android:clickable="true"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_emotion" />
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp">
+
+        <ImageView
+            android:id="@+id/img_voice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:src="@drawable/chat_voice_button_background" />
+
+        <Button
+            android:id="@+id/btn_send_and_voice"
+            android:layout_width="50dp"
+            android:layout_height="32dp"
+            android:background="@drawable/chat_send_btn_selector"
+            android:text="发送"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/btn_quick_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@drawable/quick_add_people_background" />
+
+</LinearLayout>

@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/whitesmoke"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/md_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/actionbar_background">
+
+        <ImageButton
+            android:id="@+id/wy_back_btn"
+            android:layout_width="62dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:background="@color/transparent"
+            android:src="@drawable/icon_back" />
+
+        <ImageView
+            android:id="@+id/md_delete_btn"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="12dp"
+            android:src="@drawable/wy_md_delete_btn" />
+
+        <ImageView
+            android:id="@+id/md_forward_btn"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@id/md_delete_btn"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="12dp"
+            android:src="@drawable/wy_md_forward_btn" />
+
+        <ImageView
+            android:id="@+id/md_reply_all_btn"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@id/md_forward_btn"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="12dp"
+            android:src="@drawable/wy_md_reply_all_btn" />
+
+        <ImageView
+            android:id="@+id/md_reply_btn"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@id/md_reply_all_btn"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="12dp"
+            android:src="@drawable/wy_md_reply_btn" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/md_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/bgColor">
+
+        <LinearLayout
+            android:id="@+id/md_rl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bgColor"
+            android:textColor="@color/wy_common_text_color"
+            android:orientation="vertical"
+            >
+
+            <RelativeLayout
+                android:id="@+id/md_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="10dp">
+                <ImageView
+                    android:id="@+id/md_encrypt_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_toLeftOf="@id/mail_head_signed_icon"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/mail_safe_option"
+
+                     />
+                <ImageView
+                    android:id="@+id/md_signed_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_below="@id/md_encrypt_icon"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/signature"
+
+                    />
+                <TextView
+                    android:id="@+id/md_subject"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:textColor="@color/wy_common_text_dark_color"
+                    android:textSize="@dimen/wy_toolbar_title_size"
+                    android:layout_toLeftOf="@id/md_encrypt_icon"
+                    android:layout_marginRight="5dp"
+                    tools:text="邮件主题youjianZHUTI```sadasf邮件主题youjianZHUTI```sadasf邮件主题youjianZHUTI```sadasf" />
+
+            </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/md_sender_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/mail_detail_info_text_size"
+                    android:text="发  件  人："/>
+
+                <TextView
+                    android:id="@+id/md_sender_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/mail_detail_info_text_size"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/md_time_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/mail_detail_info_text_size"
+                    android:text="@string/wy_send_time" />
+
+                <TextView
+                    android:id="@+id/md_time_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/mail_detail_info_text_size"/>
+            </LinearLayout>
+            <RelativeLayout
+                android:id="@+id/md_to_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/md_to_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:textSize="@dimen/mail_detail_info_text_size"
+                    android:text="收  件  人：" />
+                <TextView
+                    android:id="@+id/md_to_folding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:visibility="gone"
+                    android:textColor="@color/write_mail_bg_color"
+                    android:textSize="@dimen/mail_detail_info_text_size"
+                    android:text="@string/unfold_rcpts"/>
+                <com.inspur.playwork.weiyou.view.WordWrapView
+                    android:id="@+id/md_receiver_tvs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/md_to_folding"
+                    android:layout_toRightOf="@id/md_to_title"
+                    />
+                <TextView
+                    android:id="@+id/md_to_mask"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_toLeftOf="@id/md_to_folding"
+                    android:layout_toRightOf="@id/md_to_title"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/wy_rcpt_gradient"
+                    android:visibility="gone"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/md_cc_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/md_cc_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/mail_detail_info_text_size"
+                    android:layout_alignParentLeft="true"
+                    android:text="抄  送  人："/>
+                <TextView
+                    android:id="@+id/md_cc_folding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:visibility="gone"
+                    android:textColor="@color/write_mail_bg_color"
+                    android:textSize="@dimen/mail_detail_info_text_size"
+                    android:text="@string/unfold_rcpts"/>
+                <com.inspur.playwork.weiyou.view.WordWrapView
+                    android:id="@+id/md_cc_tvs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/md_cc_folding"
+                    android:layout_toRightOf="@id/md_cc_title"
+                    />
+                <TextView
+                    android:id="@+id/md_cc_mask"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_toLeftOf="@id/md_cc_folding"
+                    android:layout_toRightOf="@id/md_cc_title"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/wy_rcpt_gradient"
+                    android:visibility="gone"
+                    />
+            </RelativeLayout>
+
+            <View style="@style/common_horizontal_dividing_line_style"
+                  android:layout_marginTop="10dp"/>
+
+            <com.inspur.playwork.weiyou.view.InsideListView
+                android:id="@+id/md_attachment_lv"
+                android:layout_width="match_parent"
+                android:background="@color/oldlace"
+                android:layout_height="wrap_content"/>
+
+            <View style="@style/common_horizontal_dividing_line_style"/>
+
+            <WebView
+                android:id="@+id/md_content_wv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:descendantFocusability="blocksDescendants"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

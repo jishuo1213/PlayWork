@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="67dp"
+    android:background="@drawable/setting_item_selector">
+
+
+    <ImageView
+        android:id="@+id/img_attachment_icon"
+        android:layout_width="41dp"
+        android:layout_height="41dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp"
+        android:contentDescription="@null"
+        android:src="@drawable/attachment_common" />
+
+
+    <TextView
+        android:id="@+id/tv_attach_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/img_attachment_icon"
+        android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp"
+        android:layout_toEndOf="@id/img_attachment_icon"
+        android:layout_toRightOf="@id/img_attachment_icon"
+        android:gravity="bottom"
+        android:text="123KB"
+        android:textColor="@color/message_item_gray"
+        android:textSize="12sp" />
+
+
+    <TextView
+        android:id="@+id/tv_attach_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/img_attachment_icon"
+        android:layout_marginEnd="10dp"
+        android:layout_marginLeft="13dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginStart="13dp"
+        android:layout_toEndOf="@id/img_attachment_icon"
+        android:layout_toRightOf="@id/img_attachment_icon"
+        android:maxEms="13"
+        android:singleLine="true"
+        android:text="界面标注列表界面标注列表界面标注列表界面标注列表"
+        android:textColor="@color/black"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tv_attach_create_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/img_attachment_icon"
+        android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp"
+        android:layout_toEndOf="@id/tv_attach_size"
+        android:layout_toRightOf="@id/tv_attach_size"
+        android:text="09-16 13:30"
+        android:textColor="@color/message_item_gray"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tv_attach_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:text="未下载" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@color/message_item_gray" />
+</RelativeLayout>

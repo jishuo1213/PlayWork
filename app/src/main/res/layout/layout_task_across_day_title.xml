@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<View xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="@color/dotted_red">
+
+
+    <!--    <ImageButton
+            android:id="@+id/img_add_task"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/add_task_selector"
+            android:contentDescription="@null"
+            android:padding="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/add_task"
+            android:tag="add_cross_task" />-->
+
+</View>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+    <View
+        style="@style/common_horizontal_dividing_line_style"/>
+    <ImageView
+        android:id="@+id/wy_attachment_icon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_margin="12dp"
+        android:src="@drawable/attachment_common"/>
+
+    <LinearLayout
+        android:id="@+id/wy_ai_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true">
+
+        <TextView
+            android:id="@+id/wy_attachment_status"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="10dp"
+            android:textSize="@dimen/mail_detail_info_text_size"
+            android:textColor="@color/write_mail_bg_color"
+            tools:text="未下载" />
+
+        <ImageView
+            android:id="@+id/wy_attachment_remove"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:padding="10dp"
+            android:layout_marginRight="3dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/wy_remove_attachment"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            android:textSize="@dimen/mail_detail_info_text_size"
+            android:textColor="@color/wy_common_text_light_color"/>
+        <!--<Button-->
+            <!--android:id="@+id/wy_attachment_checkbox"-->
+            <!--android:layout_width="60dp"-->
+            <!--android:layout_height="60dp"-->
+            <!--android:background="@drawable/selector_chose_picture_item"-->
+            <!--android:padding="10dp"-->
+            <!--android:layout_marginRight="3dp"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:visibility="gone"-->
+            <!--android:textSize="@dimen/mail_detail_info_text_size"-->
+            <!--android:textColor="@color/wy_common_text_light_color"/>&lt;!&ndash;android:clickable="true"-->
+            <!--android:focusable="true"&ndash;&gt;-->
+
+        <CheckBox
+            android:id="@+id/wy_attachment_checkbox"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone"/>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/wy_attachment_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/wy_attachment_icon"
+        android:layout_toLeftOf="@id/wy_ai_right"
+        android:layout_alignParentTop="true"
+        android:singleLine="true"
+        android:layout_marginTop="7dp"
+        android:textSize="@dimen/mail_detail_info_text_size"
+        android:textColor="@color/wy_common_text_color"
+        tools:text="yuan源.docx" />
+
+    <TextView
+        android:id="@+id/wy_attachment_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/wy_attachment_icon"
+        android:layout_toLeftOf="@id/wy_ai_right"
+        android:layout_below="@id/wy_attachment_name"
+        android:layout_marginTop="3dp"
+        android:textSize="@dimen/mail_detail_info_text_size"
+        android:textColor="@color/wy_common_text_light_color"
+        tools:text="374k" />
+
+</RelativeLayout>

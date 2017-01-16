@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    android:orientation="horizontal">
+
+    <include layout="@layout/layout_choose_user_contracts" />
+
+    <ImageView
+        android:id="@+id/line_left"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/icon_shadow" />
+
+    <LinearLayout
+        android:layout_width="142dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/layout_middle"
+                android:layout_width="71dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_hide_person"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
+                    android:background="#ffc05d"
+                    android:paddingTop="10dp"
+                    android:scrollbarStyle="outsideOverlay"
+                    android:scrollbars="vertical" />
+
+                <View style="@style/common_horizontal_dividing_line_style" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_exit_person"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="#ffc05d"
+                    android:paddingTop="10dp"
+                    android:scrollbarStyle="outsideOverlay"
+                    android:scrollbars="vertical" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/line_right"
+                style="@style/common_vertical_dividing_line_style" />
+
+            <com.inspur.playwork.view.message.chat.ChoosePersonLayout
+                android:id="@+id/layout_right"
+                android:layout_width="71dp"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_chat_person"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#ffa30f"
+                    android:paddingTop="10dp"
+                    android:scrollbarStyle="outsideOverlay"
+                    android:scrollbars="vertical" />
+            </com.inspur.playwork.view.message.chat.ChoosePersonLayout>
+        </LinearLayout>
+
+        <include layout="@layout/layout_choose_user_bottom" />
+    </LinearLayout>
+</com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout>

@@ -1,0 +1,223 @@
+//apply plugin: 'com.android.model.application'
+//
+//def lib_distribution_openssl = '../distribution/openssl/lib'
+//def lib_distribution_header = '../distribution'
+//
+//model {
+//
+//    repositories {
+//        libs(PrebuiltLibraries) {
+//            openssl {
+//                headers.srcDir "${lib_distribution_header}/openssl/include"
+//                binaries.withType(StaticLibraryBinary) {
+//                    staticLibraryFile = file("${lib_distribution_openssl}/${targetPlatform.getName()}/libssl.a")
+//                }
+//                binaries.withType(StaticLibraryBinary) {
+//                    staticLibraryFile = file("${lib_distribution_openssl}/${targetPlatform.getName()}/libcrypto.a")
+//                }
+//            }
+//        }
+//    }
+//
+//    android {
+//        compileSdkVersion 23
+//        buildToolsVersion "23.0.3"
+//
+//        defaultConfig {
+//            applicationId "com.inspur.playwork"
+//            minSdkVersion.apiLevel 14
+//            targetSdkVersion.apiLevel 23
+//            versionCode 111
+//            versionName "0.99.2.1"
+//        }
+//
+//        ndk {
+//            platformVersion = 21
+//            moduleName = 'DecryptMail'
+//            toolchain = 'gcc'
+//            ldLibs.addAll(['android', 'log'])
+//        }
+//
+//        buildTypes {
+//            debug {
+//                buildConfigFields {
+//                    create() {
+//                        type "boolean"
+//                        name "LOG_DEBUG"
+//                        value "true"
+//                    }
+//                    create() {
+//                        type "boolean"
+//                        name "UPLOAD_LOG"
+//                        value "true"
+//                    }
+//                }
+//            }
+//            release {
+//                minifyEnabled false
+//                proguardFiles.add(file('proguard-rules.txt'))
+//                buildConfigFields {
+//                    create() {
+//                        type "boolean"
+//                        name "LOG_DEBUG"
+//                        value "false"
+//                    }
+//                    create() {
+//                        type "boolean"
+//                        name "UPLOAD_LOG"
+//                        value "true"
+//                    }
+//                }
+//            }
+//        }
+//
+//        sources {
+//            main {
+//                jni {
+//                    dependencies {
+//                        library 'openssl' linkage 'static'
+//                    }
+//                }
+//
+//                jniLibs {
+//                    source {
+//                        srcDir "${lib_distribution_openssl}"
+//                    }
+//                }
+//            }
+//        }
+//
+//
+//        productFlavors {
+//            create("arm7") {
+//                ndk.abiFilters.add("armeabi-v7a")
+//            }
+//            create("arm8") {
+//                ndk.abiFilters.add("arm64-v8a")
+//            }
+//            create("all"){
+//                ndk.abiFilters.add("armeabi-v7a")
+//                ndk.abiFilters.add("arm64-v8a")
+//            }
+//        }
+//
+//
+//    }
+//    android.packagingOptions {
+//        exclude 'META-INF/MANIFEST.MF'
+//        exclude 'META-INF/MANIFEST.MF'
+//        exclude 'META-INF/MANIFEST.MF'
+//        exclude 'META-INF/MANIFEST.MF'
+//        exclude 'META-INF/LICENSE.txt'
+//    }
+//}
+
+
+apply plugin: 'com.android.application'
+
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
+
+    defaultConfig {
+        applicationId "com.inspur.playwork"
+        minSdkVersion 14
+        targetSdkVersion 24
+        versionCode 128
+        versionName "2.0.1"
+
+
+        ndk {
+            // Specifies the ABI configurations of your native
+            // libraries Gradle should build and package with your APK.
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+        }
+
+        externalNativeBuild {
+            cmake {
+                // Sets optional flags for the C compiler.
+                cFlags "-Wno-error=format-security"
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            buildConfigField "boolean", "UPLOAD_LOG", "true"
+//            return true
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+//            , 'proguard-rules.pro'
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            buildConfigField "boolean", "UPLOAD_LOG", "true"
+//            return true
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/MANIFEST.MF'
+//        return true
+    }
+
+    externalNativeBuild {
+        cmake {
+            path 'CMakeLists.txt'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+
+    compile 'com.android.support:support-annotations:24.2.1'
+    compile 'com.android.support:recyclerview-v7:24.2.1'
+    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.android.support:support-v13:24.2.1'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:cardview-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
+
+    compile 'de.greenrobot:eventbus:2.4.0'
+    compile 'de.greenrobot:greendao:2.0.0'
+    compile 'com.google.code.gson:gson:2.4'
+    compile('io.socket:socket.io-client:0.8.2') {
+        exclude group: 'org.json', module: 'json'
+    }
+//    compile 'com.squareup.okhttp:okhttp:2.7.4'
+    compile 'com.sun.mail:android-mail:1.5.5'
+    compile 'com.sun.mail:android-activation:1.5.5'
+    compile 'me.leolin:ShortcutBadger:1.1.10@aar'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxjava:1.1.6'
+    compile 'id.zelory:compressor:1.0.4'
+
+    compile project(':richeditor')
+    compile project(path: ':recyclerview-swipe')
+
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    debugCompile 'com.github.markzhai:blockcanary-android:1.3.1'
+    releaseCompile 'com.github.markzhai:blockcanary-no-op:1.3.1'
+
+//    compile "com.facebook.react:react-native:+"
+//    compile 'com.squareup.okhttp:okhttp:2.7.4'
+}
+
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven {
+        url "https://maven.java.net/content/groups/public/"
+    }
+}

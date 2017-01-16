@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.inspur.playwork">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+
+    <application
+        android:name=".core.PlayWorkApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+
+        <!--<provider-->
+        <!--android:name="android.support.v4.content.FileProvider"-->
+        <!--android:authorities="com.inspur.playwork.fileprovider"-->
+        <!--android:exported="false"-->
+        <!--android:grantUriPermissions="true">-->
+        <!--<meta-data android:name="android.support.FILE_PROVIDER_PATHS" />-->
+        <!--</provider>-->
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.inspur.playwork.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".view.profile.my.MyInfoActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.profile.setting.SettingActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".view.profile.setting.UpdateAccountStep1Activity" />
+        <activity android:name=".view.profile.setting.UpdateAccountStep2Activity" />
+        <activity android:name=".view.profile.setting.UpdateAccountStep3Activity" />
+        <activity android:name=".view.profile.setting.UpdateAccountStep4Activity" />
+        <activity android:name=".view.profile.setting.UpdatePasswordActivity" />
+        <activity
+            android:name=".view.common.viewimage.ImageViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.message.chat.ChatActivityNew"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+        <!-- android:windowSoftInputMode="adjustResize" -->
+        <activity
+            android:name=".view.login.LoginActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".view.login.WelcomeActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".view.timeline.taskattachment.TaskAttachmentActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <!-- <activity -->
+        <!-- android:name="com.nononsenseapps.filepicker.FilePickerActivity" -->
+        <!-- android:label="@string/app_name" -->
+        <!-- android:theme="@style/FilePickerTheme"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.GET_CONTENT" /> -->
+
+
+        <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+        <!-- </intent-filter> -->
+        <!-- </activity> -->
+        <activity
+            android:name=".utils.appContainer.AppContainerActivity"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".utils.appContainer.AppContainerPortiaActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+
+        <!-- ————————————   微邮  Activity    —————————————— -->
+        <activity
+            android:name=".weiyou.WeiYouMainActivity"
+            android:screenOrientation="portrait">
+
+            <!-- &lt;!&ndash;ACTION_SENDTO&ndash;&gt; -->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.VIEW"></action> -->
+            <!-- <category android:name="android.intent.category.DEFAULT"></category> -->
+            <!-- <data android:mimeType="text/plain"></data> -->
+            <!-- </intent-filter> -->
+        </activity>
+        <activity
+            android:name=".view.common.DummyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Transparent" />
+        <!-- ————————————   微邮  Activity    —————————————— -->
+
+
+        <!-- <service -->
+        <!-- android:name=".core.PlayWorkServiceNew" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="false" /> -->
+
+
+        <!-- <receiver -->
+        <!-- android:name=".core.PushService$NetStateReceiver" -->
+        <!-- android:exported="false" -->
+        <!-- android:process=":push"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.net.conn.CONNECTIVITY_CHANGE" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
+        <receiver
+            android:name=".broadcastreciver.NotifyMsgReciver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.inspur.playwork.broadcastreciver.recivemsgnotify" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".core.PushService"
+            android:process=":push" />
+        <service
+            android:name=".core.PushService$InnerService"
+            android:process=":push" />
+
+        <!-- <service -->
+        <!-- android:name=".core.InnerService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="false" -->
+        <!-- android:process=":push"> -->
+
+
+        <!-- </service> -->
+        <service
+            android:name=".core.PlayWorkServiceNew"
+            android:enabled="true"
+            android:exported="false" />
+        <service android:name=".core.PlayWorkServiceNew$InnerService" />
+
+        <activity android:name=".view.common.chosepicture.ChoseImageActivity" />
+        <activity android:name=".view.application.weekplan.WeekPlanActivity" />
+        <activity android:name=".view.application.news.GroupNewsActivity" />
+
+        <receiver android:name=".weiyou.utils.NetStatusReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".view.application.addressbook.AddressBookActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+    </application>
+
+</manifest>

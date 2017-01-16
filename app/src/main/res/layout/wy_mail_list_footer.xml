@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:wheel="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+        <com.inspur.playwork.view.common.progressbar.ProgressWheel
+            android:id="@+id/load_more_progressBar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="80dp"
+            android:visibility="gone"
+            wheel:matProg_barColor="@color/skyblue"
+            wheel:matProg_barWidth="2dp"
+            wheel:matProg_progressIndeterminate="true"
+            android:layout_centerVertical="true"/>
+        <TextView
+            android:id="@+id/load_more_tv"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:text="点击加载更多邮件"
+            android:textColor="@color/wy_common_text_light_color"
+            android:textSize="16sp"
+            />
+</RelativeLayout>

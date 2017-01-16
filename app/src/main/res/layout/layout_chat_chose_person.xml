@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/layout_left"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/common_bg_grey"
+        android:clickable="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:gravity="center">
+
+            <AutoCompleteTextView
+                android:id="@+id/actv_search_person"
+                android:layout_width="203dp"
+                android:layout_height="26dp"
+                android:background="@color/white"
+                android:gravity="center"
+                android:hint="搜索"
+                android:singleLine="true"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_contact_list_tag"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:background="#e1e1e6"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tv_choose_contact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:gravity="center"
+                android:text="@string/recent_contact"
+                android:textColor="@color/contact_list_tag_normal"
+                android:textSize="15dp" />
+
+            <TextView
+                android:id="@+id/tv_choose_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:gravity="center"
+                android:minEms="3"
+                android:text="@string/contact_group"
+                android:textColor="@color/contact_list_tag_normal"
+                android:textSize="15dp" />
+
+            <TextView
+                android:id="@+id/tv_choose_department"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:gravity="center"
+                android:text="@string/department_member"
+                android:textColor="@color/contact_list_tag_normal"
+                android:textSize="15dp" />
+        </LinearLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_contact_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/line_left"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/icon_shadow" />
+
+    <LinearLayout
+        android:layout_width="142dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/layout_middle"
+                android:layout_width="71dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="26dp"
+                    android:background="@color/common_bg_grey"
+                    android:gravity="center"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/icon_group_hidden" />
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_hide_person"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
+                    android:background="#ffc05d"
+                    android:paddingTop="10dp"
+                    android:scrollbarStyle="outsideOverlay"
+                    android:scrollbars="vertical" />
+
+                <View style="@style/common_horizontal_dividing_line_style" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="26dp"
+                    android:background="@color/common_bg_grey"
+                    android:gravity="center"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/icon_group_exit" />
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_exit_person"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="#ffc05d"
+                    android:paddingTop="10dp"
+                    android:scrollbarStyle="outsideOverlay"
+                    android:scrollbars="vertical" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/line_right"
+                style="@style/common_vertical_dividing_line_style" />
+
+            <!--<LinearLayout
+                android:layout_width="23dp"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:clickable="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:src="@drawable/icon_group_remove_all" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:src="@drawable/icon_group_add_all" />
+            </LinearLayout>
+
+            <View style="@style/common_vertical_dividing_line_style" />-->
+
+            <com.inspur.playwork.view.message.chat.ChoosePersonLayout
+                android:id="@+id/layout_right"
+                android:layout_width="71dp"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="26dp"
+                    android:background="@color/common_bg_grey"
+                    android:gravity="center"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/icon_group_chat" />
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_chat_person"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#ffa30f"
+                    android:paddingTop="10dp"
+                    android:scrollbarStyle="outsideOverlay"
+                    android:scrollbars="vertical" />
+            </com.inspur.playwork.view.message.chat.ChoosePersonLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="#ffcb7a"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/iv_choose_person_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
+                android:src="@drawable/chat_choose_person_cancel" />
+
+            <ImageView
+                android:id="@+id/iv_choose_person_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
+                android:src="@drawable/chat_choose_person_ok" />
+        </LinearLayout>
+    </LinearLayout>
+</com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout>

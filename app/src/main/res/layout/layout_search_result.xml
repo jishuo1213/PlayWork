@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <ImageView
+        android:id="@+id/iv_contact_avatar"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:contentDescription="@null"
+        android:src="@drawable/icon_chat_default_avatar" />
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/iv_contact_avatar"
+        android:layout_alignRight="@id/iv_contact_avatar"
+        android:layout_below="@id/iv_contact_avatar"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:gravity="center_horizontal"
+        android:ems="3"
+        android:text="樊继硕"
+        android:textColor="@color/wy_common_text_dark_color"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:id="@+id/lin_preson_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/tv_name"
+        android:layout_toRightOf="@id/tv_name"
+        android:orientation="vertical"
+        android:paddingTop="2dp">
+
+        <TextView
+            android:id="@+id/tv_person_department"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:text="软件集团人力资源部"
+            android:textColor="@color/wy_common_text_dark_color"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_person_mail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableEnd="@drawable/send_email"
+            android:drawablePadding="3dp"
+            android:drawableRight="@drawable/send_email"
+            android:padding="2dp"
+            android:text="邮箱:fanjsh@inspur.com"
+            android:textColor="@color/wy_common_text_dark_color"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_person_department_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/setting_item_selector"
+            android:drawableEnd="@drawable/call_tel"
+            android:drawablePadding="3dp"
+            android:drawableRight="@drawable/call_tel"
+            android:padding="2dp"
+            android:text="电话:85105848"
+            android:textColor="@color/wy_common_text_dark_color"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_person_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/setting_item_selector"
+            android:drawableEnd="@drawable/call_phone"
+            android:drawablePadding="3dp"
+            android:drawableRight="@drawable/call_phone"
+            android:padding="2dp"
+            android:text="查看手机号码"
+            android:textColor="@color/address_book_blue"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+
+    <View
+        style="@style/common_horizontal_dividing_line_style"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginStart="10dp"
+        android:background="#e4e4e4" />
+
+    <LinearLayout
+        android:id="@+id/send_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/lin_preson_info"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/lin_preson_info"
+        android:layout_marginBottom="1px"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/setting_item_selector"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:src="@drawable/send_chat_msg" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="5dp"
+            android:ems="3"
+            android:gravity="center"
+            android:text="发消息"
+            android:textColor="#666666"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+
+</RelativeLayout>

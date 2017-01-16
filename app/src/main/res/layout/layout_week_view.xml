@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.inspur.playwork.view.timeline.CalendarScrollViewNew xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:calendar="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/week_recycler_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:scrollbars="none"
+    calendar:calendar_mode="week">
+
+    <!--    <android.support.v4.view.ViewPager
+            android:id="@+id/calendar_view_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />-->
+
+</com.inspur.playwork.view.timeline.CalendarScrollViewNew><!--    android:layout_marginLeft="6dp"
+    android:layout_marginRight="6dp"-->

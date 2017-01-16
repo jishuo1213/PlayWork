@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/click_toggle_menu"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alpha="0.8"
+    android:orientation="horizontal"
+    android:visibility="visible">
+
+
+    <ImageView
+        android:id="@+id/img_task_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/add_task_selector"
+        android:contentDescription="@null"
+        android:paddingBottom="11dp"
+        android:paddingTop="11dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/task_chat" />
+
+    <ImageView
+        android:id="@+id/img_edit_task"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/add_task_selector"
+        android:contentDescription="@null"
+        android:paddingBottom="11dp"
+        android:paddingTop="11dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/task_edit" />
+
+    <!--    <ImageView
+            android:id="@+id/img_task_acc"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:contentDescription="@null"
+            android:src="@drawable/task_acc" />-->
+
+    <!--    <ImageView
+            android:id="@+id/img_task_mine"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/add_task_selector"
+            android:contentDescription="@null"
+            android:src="@drawable/task_mine" />-->
+
+    <ImageView
+        android:id="@+id/img_task_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/add_task_selector"
+        android:contentDescription="@null"
+        android:paddingBottom="11dp"
+        android:paddingTop="11dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/task_delete" />
+</LinearLayout>

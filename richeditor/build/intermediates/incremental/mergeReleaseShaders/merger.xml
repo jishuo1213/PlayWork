@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/home/fan/workspace/Android/GitPlayWork/PlayWork/richeditor/src/main/shaders"/></dataSet><dataSet config="release"><source path="/home/fan/workspace/Android/GitPlayWork/PlayWork/richeditor/src/release/shaders"/></dataSet></merger>

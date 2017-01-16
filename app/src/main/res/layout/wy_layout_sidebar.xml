@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@color/common_bg_grey"
+    android:orientation="vertical">
+    <!--wy_layout_sidebar header-->
+
+    <RelativeLayout
+        android:id="@+id/current_account_rl"
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_gravity="center">
+        <TextView
+            android:id="@+id/current_account_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:maxWidth="360dp"
+            android:paddingRight="30dp"
+            android:singleLine="true"
+            android:layout_alignParentLeft="true"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:clickable="false"
+            android:textIsSelectable="false"
+            android:textColor="@color/key_text"
+            tools:text="shenchuochuochuochuochuo@vip.qq.com"/>
+
+        <ImageView
+            android:id="@+id/account_selector_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/dir_droplist_normal"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:clickable="false"
+            android:layout_marginRight="10dp" />
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/sidebar_directory_rv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@color/transparent"
+        android:background="@android:color/white"/>
+    <LinearLayout
+        android:id="@+id/wy_setting_btn"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@drawable/wy_setting_btn_style"
+        android:focusable="true"
+        android:clickable="true"
+        android:gravity="center"
+        >
+        <ImageView
+            android:id="@+id/setting_btn_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/wy_setting_btn_img_style"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/wy_settings"
+            android:textSize="20sp"
+            android:textColor="@color/wy_common_text_color"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"/>
+    </LinearLayout>
+</LinearLayout>

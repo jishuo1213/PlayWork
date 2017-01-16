@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:paddingTop="10dp"
+    android:background="@drawable/touchable_background_white">
+
+    <TextView
+        android:id="@+id/tv_contact_avatar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/wy_avatar_bg_1"
+        android:layout_centerVertical="true"
+        android:textIsSelectable="false"
+        android:text="空"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:gravity="center" />
+
+    <!--<CheckBox-->
+        <!--android:id="@+id/checkbox_mail_contact"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:clickable="false"-->
+        <!--android:focusable="false"-->
+        <!--android:layout_alignParentRight="true" />-->
+
+    <TextView
+        android:id="@+id/tv_contact_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_contact_avatar"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:singleLine="true"
+        tools:text="神戳戳"
+        android:textColor="#333333"
+        android:textSize="16sp"
+        android:textIsSelectable="false"/>
+
+    <TextView
+        android:id="@+id/tv_contact_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_contact_name"
+        android:layout_toRightOf="@id/tv_contact_avatar"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="10dp"
+        android:singleLine="true"
+        android:textColor="#666666"
+        tools:text="xxx@inspur.com"
+        android:textSize="15sp"
+        android:textIsSelectable="false" />
+
+</RelativeLayout>

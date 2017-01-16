@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    android:layout_alignParentBottom="true"
+    android:layout_marginTop="120dp"
+    android:background="@color/whitesmoke"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginLeft="30dp"
+        android:gravity="center_vertical"
+        android:text="请输入证书密码"
+        android:textSize="@dimen/wy_toolbar_title_size" />
+
+    <View style="@style/common_horizontal_dividing_line_style" />
+
+    <EditText
+        android:id="@+id/wy_input_pwd_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="40dp"
+        android:background="@null"
+        android:inputType="textPassword" />
+
+    <View style="@style/common_horizontal_dividing_line_style"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="15dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/wy_input_pwd_cancel_btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:text="取消"
+            android:textColor="@color/wy_common_text_color"
+            android:textSize="@dimen/mail_detail_info_text_size" />
+
+        <Button
+            android:id="@+id/wy_input_pwd_ok_btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="30dp"
+            android:layout_weight="1"
+            android:text="确定"
+            android:textColor="@color/wy_common_text_color"
+            android:textSize="@dimen/mail_detail_info_text_size" />
+    </LinearLayout>
+
+</LinearLayout>

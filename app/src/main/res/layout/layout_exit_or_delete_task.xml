@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    >
+
+    <TextView
+        android:id="@+id/tv_delete_text"
+        style="@style/TxtTitle"
+        android:textColor="@color/key_text"
+        android:text="确定要退出吗？"
+        />
+
+</LinearLayout>

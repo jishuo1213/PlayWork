@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval"
+    android:useLevel="false"
+    >
+<!--    <solid android:color="@color/toolbar_text_pressed_color"/>-->
+    <solid android:color="@color/text_gray"/>
+    <!--<solid android:color="@android:color/holo_red_light"/>-->
+<!--    <size android:height="@dimen/calendar_date_click_bg_width"
+        android:width="@dimen/calendar_date_click_bg_width">
+    </size>-->
+
+<!--    <size android:height="10dp"
+        android:width="10dp">
+    </size>-->
+
+</shape>

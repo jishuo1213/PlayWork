@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/md_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/actionbar_background">
+
+        <ImageButton
+            android:id="@+id/wy_back_btn"
+            android:layout_width="62dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:background="@color/transparent"
+            android:src="@drawable/icon_back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/wy_back_btn"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/wy_toolbar_title_size"
+            android:text="添加账户" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/md_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/bgColor">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bgColor"
+            android:orientation="vertical"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp">
+            <TextView
+                style="@style/wy_account_setting_title"
+                android:text="请填写邮箱账号信息" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/wy_server_setting_item_width"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/wy_server_setting_bg">
+
+                <EditText
+                    android:id="@+id/aa_account_email_et"
+                    style="@style/wy_server_setting_ev"
+                    android:layout_width="match_parent"
+                    android:inputType="textEmailAddress"
+                    android:hint="电子邮件地址" />
+
+                <View
+                    style="@style/common_horizontal_dividing_line_style"
+                    android:layout_below="@id/aa_account_email_et" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/aa_account_email_et">
+
+                    <CheckBox
+                        android:id="@+id/aa_show_password"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:button="@drawable/selector_password_visible"
+                        android:layout_alignParentRight="true" />
+                    <EditText
+                        android:id="@+id/aa_password_et"
+                        style="@style/wy_server_setting_ev"
+                        android:layout_alignParentRight="false"
+                        android:layout_alignParentLeft="true"
+                        android:layout_toLeftOf="@id/aa_show_password"
+                        android:inputType="textPassword"
+                        android:hint="密码" />
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/wy_server_setting_item_height"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/wy_server_setting_bg">
+
+                <CheckBox
+                    android:id="@+id/aa_setting_mode_cb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:checked="true"
+                    android:button="@drawable/wy_switch_button" />
+                <TextView
+                    android:id="@+id/aa_setting_mode_tv"
+                    style="@style/wy_server_setting_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toLeftOf="@id/aa_setting_mode_cb"
+                    android:paddingLeft="10dp"
+                    android:gravity="center_vertical"
+                    android:text="快速设置" />
+            </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/aa_detail_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    style="@style/wy_account_setting_title"
+                    android:text="显示名称" />
+
+                <EditText
+                    android:id="@+id/aa_display_name"
+                    style="@style/wy_account_setting_editor"
+                    tools:text="sunyuan" />
+
+                <View style="@style/common_horizontal_dividing_line_style" />
+
+                <TextView
+                    style="@style/wy_account_setting_title"
+                    android:text="发件昵称" />
+
+                <EditText
+                    android:id="@+id/aa_nickname"
+                    style="@style/wy_account_setting_editor"
+                    tools:text="sunyuan" />
+
+                <View style="@style/common_horizontal_dividing_line_style" />
+
+                <TextView
+                    style="@style/wy_account_setting_title"
+                    android:text="收件服务器" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/wy_server_setting_item_width"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/wy_server_setting_bg">
+
+                    <TextView
+                        android:id="@+id/aa_receive_server_tv"
+                        style="@style/wy_server_setting_tv"
+                        android:layout_alignParentTop="true"
+                        android:text="服务器" />
+
+                    <View
+                        android:layout_width="0.5dp"
+                        android:layout_height="match_parent"
+                        android:layout_toRightOf="@+id/aa_receive_server_tv"
+                        android:background="@color/lightgray" />
+
+                    <EditText
+                        android:id="@+id/aa_receive_server_et"
+                        style="@style/wy_server_setting_ev"
+                        android:layout_toRightOf="@id/aa_receive_server_tv"
+                        tools:text="mail.inspur.com" />
+
+                    <View
+                        style="@style/common_horizontal_dividing_line_style"
+                        android:layout_below="@id/aa_receive_server_et" />
+
+                    <TextView
+                        android:id="@+id/aa_receive_port_tv"
+                        style="@style/wy_server_setting_tv"
+                        android:layout_below="@id/aa_receive_server_et"
+                        android:text="端口" />
+
+                    <EditText
+                        android:id="@+id/aa_receive_port_et"
+                        style="@style/wy_server_setting_ev"
+                        android:layout_below="@id/aa_receive_server_et"
+                        android:layout_toRightOf="@id/aa_receive_server_tv"
+                        android:inputType="number"
+                        tools:text="995" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/wy_server_setting_item_height"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/wy_server_setting_bg">
+
+                    <TextView
+                        android:id="@+id/aa_receive_ssl_tv"
+                        style="@style/wy_server_setting_tv"
+                        android:layout_alignParentTop="true"
+                        android:text="SSL" />
+
+                    <View
+                        android:layout_width="0.5dp"
+                        android:layout_height="match_parent"
+                        android:layout_toRightOf="@+id/aa_receive_ssl_tv"
+                        android:background="@color/lightgray" />
+
+                    <CheckBox
+                        android:id="@+id/aa_receive_ssl_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"
+                        android:button="@drawable/wy_switch_button" />
+                </RelativeLayout>
+
+                <TextView
+                    style="@style/wy_account_setting_title"
+                    android:text="发件服务器" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/wy_server_setting_item_width"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/wy_server_setting_bg">
+
+                    <TextView
+                        android:id="@+id/aa_send_server_tv"
+                        style="@style/wy_server_setting_tv"
+                        android:layout_alignParentTop="true"
+                        android:text="服务器" />
+
+                    <View
+                        android:layout_width="0.5dp"
+                        android:layout_height="match_parent"
+                        android:layout_toRightOf="@+id/aa_send_server_tv"
+                        android:background="@color/lightgray" />
+
+                    <EditText
+                        android:id="@+id/aa_send_server_et"
+                        style="@style/wy_server_setting_ev"
+                        android:layout_toRightOf="@id/aa_send_server_tv"
+                        tools:text="mai.inspur.com" />
+
+                    <View
+                        style="@style/common_horizontal_dividing_line_style"
+                        android:layout_below="@id/aa_send_server_et" />
+
+                    <TextView
+                        android:id="@+id/aa_send_port_tv"
+                        style="@style/wy_server_setting_tv"
+                        android:layout_below="@id/aa_send_server_et"
+                        android:text="端口" />
+
+                    <EditText
+                        android:id="@+id/aa_send_port_et"
+                        style="@style/wy_server_setting_ev"
+                        android:layout_below="@id/aa_send_server_et"
+                        android:layout_toRightOf="@id/aa_send_server_tv"
+                        android:inputType="number"
+                        tools:text="995" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/wy_server_setting_item_height"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/wy_server_setting_bg">
+
+                    <TextView
+                        android:id="@+id/aa_send_ssl_tv"
+                        style="@style/wy_server_setting_tv"
+                        android:layout_alignParentTop="true"
+                        android:text="SSL" />
+
+                    <View
+                        android:layout_width="0.5dp"
+                        android:layout_height="match_parent"
+                        android:layout_toRightOf="@+id/aa_send_ssl_tv"
+                        android:background="@color/lightgray" />
+
+                    <CheckBox
+                        android:id="@+id/aa_send_ssl_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"
+                        android:button="@drawable/wy_switch_button" />
+                </RelativeLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout
+        android:id="@+id/aa_finish_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@drawable/wy_setting_btn_style"
+        android:orientation="vertical">
+        <View style="@style/common_horizontal_dividing_line_style" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/selector_confrim_add"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/wy_common_text_light_color"
+            android:textSize="14dp"
+            android:text="登录"/>
+    </LinearLayout>
+
+</com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout>

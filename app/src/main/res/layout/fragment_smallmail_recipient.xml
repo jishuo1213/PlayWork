@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!--<include layout="@layout/layout_titlebar_with_text" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent"
+        android:orientation="horizontal">
+
+        <include layout="@layout/layout_choose_user_contracts" />
+
+        <ImageView
+            android:id="@+id/line_left"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/icon_shadow" />
+
+        <LinearLayout
+            android:layout_width="142dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_chat_person"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#ffa30f"
+                    android:scrollbarStyle="outsideOverlay"
+                    android:scrollbars="vertical" />
+            </LinearLayout>
+
+            <include layout="@layout/layout_choose_user_bottom" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

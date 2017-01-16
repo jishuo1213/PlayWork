@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:background="@color/common_bg_grey"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:orientation="horizontal">
+
+    <TextView
+        style="@style/week_china_text"
+        android:layout_weight="1"
+        android:text="一" />
+    <!--android:layout_marginLeft="5dp"
+    android:layout_marginStart="5dp"-->
+
+    <TextView
+        style="@style/week_china_text"
+        android:layout_weight="1"
+        android:text="二" />
+
+    <TextView
+        style="@style/week_china_text"
+        android:layout_weight="1"
+        android:text="三" />
+
+    <TextView
+        style="@style/week_china_text"
+        android:layout_weight="1"
+        android:text="四" />
+
+    <TextView
+        style="@style/week_china_text"
+        android:layout_weight="1"
+        android:text="五" />
+
+    <TextView
+        style="@style/week_china_text"
+        android:layout_weight="1"
+        android:text="六"
+        android:textColor="@color/toolbar_text_pressed_color" />
+
+    <TextView
+        style="@style/week_china_text"
+        android:layout_weight="1"
+        android:text="日"
+        android:textColor="@color/toolbar_text_pressed_color" />
+    <!--    android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"-->
+
+
+</LinearLayout>

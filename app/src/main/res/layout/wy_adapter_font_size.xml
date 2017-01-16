@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="64dp"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    >
+
+    <TextView
+        android:id="@+id/font_size_item_tv"
+        android:layout_width="64dp"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:textColor="@color/key_text"
+        android:singleLine="true"
+        android:textSize="18dp"
+        tools:text="16号"/>
+
+</LinearLayout>

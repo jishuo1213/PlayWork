@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/re_my_info"
+                android:layout_width="fill_parent"
+                android:layout_height="90dp"
+                android:layout_marginTop="13dp"
+                android:background="@color/white">
+
+                <ImageView
+                    android:id="@+id/iv_vchat_avatar"
+                    android:layout_width="67dip"
+                    android:layout_height="67dip"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="13dp"
+                    android:src="@drawable/icon_chat_default_avatar" />
+
+                <TextView
+                    android:id="@+id/tv_topic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="93dp"
+                    android:layout_marginTop="25dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tv_department"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginLeft="93dp"
+                    android:textColor="@color/my_department"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    style="@style/app_item_right_button"
+                    android:layout_marginRight="20dp" />
+            </RelativeLayout>
+
+            <View style="@style/app_dividing_line_style" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/re_collection"
+                    style="@style/me_item_style">
+
+                    <ImageView
+                        android:id="@+id/iv_collection"
+                        style="@style/me_item_image_style"
+                        android:src="@drawable/icon_me_collection" />
+
+                    <TextView
+                        style="@style/me_item_text_style"
+                        android:layout_toRightOf="@id/iv_collection"
+                        android:text="@string/collection" />
+
+                    <ImageView style="@style/app_item_right_button" />
+                </RelativeLayout>
+
+                <View style="@style/me_dividing_line_style" />
+
+                <RelativeLayout
+                    android:id="@+id/re_company"
+                    style="@style/me_item_style">
+
+                    <ImageView
+                        android:id="@+id/iv_company"
+                        style="@style/me_item_image_style"
+                        android:src="@drawable/icon_me_company" />
+
+                    <TextView
+                        style="@style/me_item_text_style"
+                        android:layout_toRightOf="@id/iv_company"
+                        android:text="@string/company" />
+
+                    <ImageView style="@style/app_item_right_button" />
+                </RelativeLayout>
+
+                <View style="@style/me_dividing_line_style" />
+
+                <RelativeLayout
+                    android:id="@+id/re_help"
+                    style="@style/me_item_style">
+
+                    <ImageView
+                        android:id="@+id/iv_help"
+                        style="@style/me_item_image_style"
+                        android:src="@drawable/icon_me_help" />
+
+                    <TextView
+                        style="@style/me_item_text_style"
+                        android:layout_toRightOf="@id/iv_help"
+                        android:text="@string/help" />
+
+                    <ImageView style="@style/app_item_right_button" />
+                </RelativeLayout>
+
+                <View style="@style/me_dividing_line_style" />
+
+                <RelativeLayout
+                    android:id="@+id/re_recommend"
+                    style="@style/me_item_style">
+
+                    <ImageView
+                        android:id="@+id/iv_recommend"
+                        style="@style/me_item_image_style"
+                        android:src="@drawable/icon_me_recommend" />
+
+                    <TextView
+                        style="@style/me_item_text_style"
+                        android:layout_toRightOf="@id/iv_recommend"
+                        android:text="@string/recommend" />
+
+                    <ImageView style="@style/app_item_right_button" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <View style="@style/common_horizontal_dividing_line_style" />
+
+            <RelativeLayout
+                android:id="@+id/re_login_web"
+                style="@style/me_item_style">
+
+                <ImageView
+                    android:id="@+id/iv_login_web"
+                    style="@style/me_item_image_style"
+                    android:src="@drawable/icon_me_login_web" />
+
+                <TextView
+                    style="@style/me_item_text_style"
+                    android:layout_toRightOf="@id/iv_login_web"
+                    android:text="@string/login_web" />
+
+                <ImageView style="@style/app_item_right_button" />
+            </RelativeLayout>
+
+            <View style="@style/me_dividing_line_style" />
+
+            <RelativeLayout
+                android:id="@+id/re_settings"
+                style="@style/me_item_style"
+                android:layout_marginTop="17dp">
+
+                <ImageView
+                    android:id="@+id/iv_settings"
+                    style="@style/me_item_image_style"
+                    android:src="@drawable/icon_me_settings" />
+
+                <TextView
+                    style="@style/me_item_text_style"
+                    android:layout_toRightOf="@id/iv_settings"
+                    android:text="@string/settings" />
+
+                <ImageView style="@style/app_item_right_button" />
+
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_logout"
+                style="@style/TxtTitle"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="13dp"
+                android:layout_height="43dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/selector_exit_down"
+                android:layout_marginRight="13dp"
+                android:gravity="center"
+                android:text="@string/logout"
+                android:textColor="#ffFF0000"
+                android:textSize="16sp"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
