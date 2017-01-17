@@ -2,6 +2,7 @@ package com.inspur.playwork.utils;
 
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -57,6 +59,7 @@ public class OkHttpClientManagerNew {
 
     // 请求数据json类型
     private static final MediaType JSON_TYPE = MediaType.parse("application/json; charset=utf-8");
+    private static final MediaType URLENCODE_TYPE = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
 
     private OkHttpClient mOkHttpClient;
 
@@ -143,13 +146,15 @@ public class OkHttpClientManagerNew {
      * @param url              API
      * @param responseCallback 回调方法
      */
-    public void getAsyn(String url, Callback responseCallback) {
+    public Call getAsyn(String url, Callback responseCallback) {
         Log.i(TAG, "getAsyn: " + url);
         Request request = new Request.Builder().url(url).build();
-        mOkHttpClient.newCall(request).enqueue(responseCallback);
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(responseCallback);
+        return call;
     }
 
-    public void getAsyn(String url, Callback responseCallback, JSONObject jsonParam, String requestId) {
+    public Call getAsyn(String url, Callback responseCallback, JSONObject jsonParam, String requestId) {
         Iterator<String> keys = jsonParam.keys();
         url += "?";
         Log.i(TAG, "getAsyn: " + jsonParam.toString());
@@ -171,6 +176,26 @@ public class OkHttpClientManagerNew {
             builder.header("requestId", requestId);
         Log.i(TAG, "getAsyn: " + url);
         Request request = builder.get().url(url).build();
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(responseCallback);
+        return call;
+    }
+
+    void postFormData(String url, Callback responseCallback, JSONObject params, String requestId) {
+        Iterator<String> keys = params.keys();
+        Log.i(TAG, "getAsyn: " + params.toString());
+        FormBody.Builder builder = new FormBody.Builder();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            String value = params.optString(key);
+//            url = url + "&" + key + "=" + value;
+            builder.addEncoded(key, value);
+        }
+        RequestBody body = builder.build();
+        Request.Builder requestBuilder = new Request.Builder();
+        requestBuilder.url(url).addHeader("Content-Type", "application/x-www-form-urlencoded")
+                .addHeader("requestId", requestId).post(body);
+        Request request = requestBuilder.build();
         mOkHttpClient.newCall(request).enqueue(responseCallback);
     }
 

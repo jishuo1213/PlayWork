@@ -16,6 +16,7 @@ import com.inspur.playwork.utils.OkHttpClientManager;
 import com.inspur.playwork.utils.PreferencesHelper;
 import com.inspur.playwork.utils.SingleRefreshManager;
 import com.inspur.playwork.view.application.addressbook.AddressBookViewOperation;
+import com.inspur.playwork.view.application.news.NewListFragment;
 import com.inspur.playwork.view.application.news.NewsViewOperation;
 import com.inspur.playwork.view.application.weekplan.WeekPlanViewOperation;
 
@@ -44,6 +45,7 @@ public class ApplicationStores extends Stores {
     private static final String GET_OTHER_PLANS = "getOtherPlans";
     private static final String GET_WEEK_PLAN_DETAIL = "getWeekPlanByWeeks";
     private static final String QUERY_NEWS = "getNews";
+    private static final String QUERY_NEWS_DETAIL = "getNewsDetail";
 
     private ArrayList<WeekPlanHeader> planArrayList;
 
@@ -168,18 +170,32 @@ public class ApplicationStores extends Stores {
         this.newsWeakReference = new WeakReference<>(operation);
     }
 
-    public void getNews(int type, int page, String departMent) {
+
+    public void getNews(String uuid, int type, int page, String departMent) {
         JSONObject requsetJson = new JSONObject();
         try {
             requsetJson.put("page", page);
             requsetJson.put("type", type + 1);
             requsetJson.put("department", departMent);
             requsetJson.put("length", 10);
-            OkHttpClientManager.getInstance().getAsyn(AppConfig.QUERY_NEWS_URL,
-                    getNewsCallback, requsetJson, QUERY_NEWS);
+            OkHttpClientManager.getInstance().getAsyn(AppConfig.NEWS_URL + "query.page",
+                    getNewsCallback, requsetJson, QUERY_NEWS + "&" + uuid);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void getNewsDetail(String id, String key) {
+        JSONObject requestJson = new JSONObject();
+        try {
+            requestJson.put("id", id);
+            requestJson.put("key", key);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        OkHttpClientManager.getInstance().postFormData(AppConfig.NEWS_URL + "detail",
+                getNewsDetailCallback, requestJson, QUERY_NEWS_DETAIL);
     }
 
     public void getShareWeekPlanList(int weekNum) {
@@ -275,10 +291,20 @@ public class ApplicationStores extends Stores {
     };
 
     private void errorHandle(String requestId) {
+        String uuid = null;
+        if (requestId.contains("&")) {
+            requestId = requestId.split("&")[0];
+            uuid = requestId.split("&")[1];
+        }
         switch (requestId) {
             case GET_OTHER_PLANS:
                 if (weekPlanWeakReference.get() != null) {
                     weekPlanWeakReference.get().showShareWeekPlanList(null);
+                }
+                break;
+            case QUERY_NEWS:
+                if (newsWeakReference.get() != null) {
+                    newsWeakReference.get().showNewsError(uuid, NewListFragment.NET_ERROR);
                 }
                 break;
         }
@@ -318,6 +344,8 @@ public class ApplicationStores extends Stores {
         }
     }
 
+
+
     private Callback getNewsCallback = new Callback() {
         @Override
         public void onFailure(Call call, IOException e) {
@@ -329,18 +357,28 @@ public class ApplicationStores extends Stores {
         public void onResponse(Call call, Response response) throws IOException {
             if (response.isSuccessful()) {
                 try {
+                    String requestId = call.request().header("requestId");
+                    String uuid = requestId.split("&")[1];
+
                     JSONObject res = new JSONObject(response.body().string());
-                    int page = res.optInt("page");
                     JSONArray newsArray = res.optJSONArray("data");
                     int count = newsArray.length();
+                    if (count == 0) {
+                        if (newsWeakReference.get() != null) {
+                            newsWeakReference.get().showNewsError(uuid, NewsViewOperation.QUERY_RES_EMPTY);
+                        }
+                        return;
+                    }
                     ArrayList<DepartmentNewsBean> newsBeanArrayList = new ArrayList<>();
                     for (int i = 0; i < count; i++) {
                         JSONObject news = newsArray.optJSONObject(i);
                         DepartmentNewsBean newsBean = new DepartmentNewsBean(news);
                         newsBeanArrayList.add(newsBean);
                     }
+
+
                     if (newsWeakReference.get() != null) {
-                        newsWeakReference.get().showNews(page, newsBeanArrayList);
+                        newsWeakReference.get().showNews(uuid, newsBeanArrayList);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

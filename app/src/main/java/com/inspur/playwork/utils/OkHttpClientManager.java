@@ -36,6 +36,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.Map;
 
+import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
@@ -116,14 +117,14 @@ public class OkHttpClientManager {
      * @param url              API
      * @param responseCallback 回调方法
      */
-    public void getAsyn(String url, Callback responseCallback) {
+    public Call getAsyn(String url, Callback responseCallback) {
         Log.i(TAG, "getAsyn: " + url);
 //        Request request = new Request.Builder().url(url).build();
 //        mOkHttpClient.newCall(request).enqueue(responseCallback);
-        newManager.getAsyn(url, responseCallback);
+        return newManager.getAsyn(url, responseCallback);
     }
 
-    public void getAsyn(String url, Callback responseCallback, JSONObject jsonParam, String requestId) {
+    public Call getAsyn(String url, Callback responseCallback, JSONObject jsonParam, String requestId) {
 //        Iterator<String> keys = jsonParam.keys();
 //        url += "?";
 //        Log.i(TAG, "getAsyn: " + jsonParam.toString());
@@ -146,7 +147,11 @@ public class OkHttpClientManager {
 //        Log.i(TAG, "getAsyn: " + url);
 //        Request request = builder.get().url(url).build();
 //        mOkHttpClient.newCall(request).enqueue(responseCallback);
-        newManager.getAsyn(url, responseCallback, jsonParam, requestId);
+        return newManager.getAsyn(url, responseCallback, jsonParam, requestId);
+    }
+
+    public void postFormData(String url, Callback responseCallback, JSONObject params, String requestId) {
+        newManager.postFormData(url, responseCallback, params, requestId);
     }
 
 
@@ -343,12 +348,10 @@ public class OkHttpClientManager {
      * 异步基于post的文件上传，单文件且携带其他form参数上传
      */
     public void postAsyn(String url, String fileKey, File file, Param[] params, Callback callback, ProgressRequestListener listener) {
-//        postAsyn(url, new String[]{fileKey}, new File[]{file}, params, callback, listener);
         newManager.postAsyn(url, fileKey, file, params, callback, listener);
     }
 
     public Response postSync(String url, String fileKey, File file, Param[] params, ProgressRequestListener listener) throws IOException {
-//        return postSync(url, new String[]{fileKey}, new File[]{file}, params, listener);
         return newManager.postSync(url, fileKey, file, params, listener);
     }
 

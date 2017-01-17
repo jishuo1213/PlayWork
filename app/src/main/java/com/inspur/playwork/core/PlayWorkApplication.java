@@ -92,7 +92,6 @@ public class PlayWorkApplication extends Application {
             init(false);
             CrashHandler.getInstance().init();
         }
-
 //        KLog.init(BuildConfig.LOG_DEBUG);
     }
 
@@ -322,7 +321,8 @@ public class PlayWorkApplication extends Application {
 
     public void resume() {
         init(true);
-        PlayWorkCrashHandler.getInstance().init(BuildConfig.UPLOAD_LOG);
+//        PlayWorkCrashHandler.getInstance().init(BuildConfig.UPLOAD_LOG);
+        CrashHandler.getInstance().init();
         Log.i(TAG, "resume: ");
         isLogOut = false;
     }

@@ -1,9 +1,10 @@
 package com.inspur.playwork.view.application.news;
 
-import android.app.DialogFragment;
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.util.ArrayMap;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,11 +16,13 @@ import android.view.ViewGroup;
 
 import com.inspur.playwork.R;
 import com.inspur.playwork.model.news.DepartmentNewsBean;
+import com.inspur.playwork.model.news.LoadNewsRequest;
 import com.inspur.playwork.stores.application.ApplicationStores;
 import com.inspur.playwork.utils.PreferencesHelper;
-import com.inspur.playwork.view.common.progressbar.CommonDialog;
+import com.inspur.playwork.utils.UItoolKit;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Created by fan on 17-1-15.
@@ -31,7 +34,15 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
     public static final String TAB_COUNT = "tab_count";
     public static final String TAB_NAMES = "tab_name";
 
-    private enum NewsType {
+    public interface NewsListEventListener {
+        void onTabChange(int index);
+
+        void onNewsClick(DepartmentNewsBean newsBean);
+    }
+
+    private NewsListEventListener eventListener;
+
+    public enum NewsType {
         GroupNews,
         GroupAnnouncement,
         UnitNews,
@@ -55,18 +66,29 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
     private int tabCount;
     private String[] tab_names;
 
-//    private RecyclerView currentRecyclerView;
-
     private ArrayList[] newsListArray;//每个tab页新闻
 
     private int[] loadingPages;//每个tab页已经加载的新闻的页数
 
     private int currentPage;//当前tab页index
 
-    private DialogFragment progressDialog;
+    private ArrayMap<String, LoadNewsRequest> requestArrayMap;
+    private String currentNeedRequestId;
+
+    //    private DialogFragment progressDialog;
     private SwipeRefreshLayout refreshLayout;
     private NewsType currentType;
     private ArrayList<View> recyclerViews;
+    private ViewPager viewPager;
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof NewsListEventListener) {
+            eventListener = (NewsListEventListener) activity;
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +98,7 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
         newsListArray = new ArrayList[tabCount];
         loadingPages = new int[4];
         currentType = NewsType.GroupNews;
+        requestArrayMap = new ArrayMap<>();
     }
 
     @Nullable
@@ -106,7 +129,7 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
         adapter.setListener(this);
         tabViews.setAdapter(adapter);
         recyclerViews = new ArrayList<>();
-        ViewPager viewPager = (ViewPager) view.findViewById(R.id.page_main_view);
+        viewPager = (ViewPager) view.findViewById(R.id.page_main_view);
         for (int i = 0; i < tabCount; i++) {
             recyclerViews.add(LayoutInflater.from(getActivity()).inflate(R.layout.layout_single_recyclerview, viewPager, false));
             loadingPages[i] = 1;
@@ -132,17 +155,27 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        loadMoreNews(1);
+        loadMoreNews(LoadNewsRequest.INIT_LOAD, 1);
+        refreshLayout.setRefreshing(true);
     }
 
-    private void loadMoreNews(int page) {
-        ApplicationStores.getInstance().getNews(currentType.ordinal(), page, PreferencesHelper.
+    private void loadMoreNews(int loadType, int page) {
+        Log.d(TAG, "loadMoreNews() called with: loadType = [" + loadType + "], page = [" + page + "]");
+        String uuid = UUID.randomUUID().toString();
+        currentNeedRequestId = uuid;
+        LoadNewsRequest request = new LoadNewsRequest(uuid, page, currentType, loadType);
+        requestArrayMap.put(uuid, request);
+        ApplicationStores.getInstance().getNews(uuid, request.newsType.ordinal(), request.page, PreferencesHelper.
                 getInstance().getCurrentUser().company);
     }
 
     @Override
     public void onTabClick(int pos) {
-
+        Log.i(TAG, "onTabClick: " + pos);
+        if (eventListener != null) {
+            eventListener.onTabChange(pos);
+        }
+        viewPager.setCurrentItem(pos);
     }
 
     @Override
@@ -152,17 +185,25 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
 
     @Override
     public void onPageSelected(int position) {
+        if (eventListener != null)
+            eventListener.onTabChange(position);
         currentPage = position;
         currentType = NewsType.getItem(position);
         RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(position);
-        if (currentRecyclerView.getLayoutManager() == null) {
+        if (currentRecyclerView.getLayoutManager() == null) {//还没有加载过数据
             currentRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
             currentRecyclerView.setHasFixedSize(true);
 //            currentRecyclerView.addOnScrollListener(recyclerScrollListener);
             loadingPages[currentPage] = 1;
-        }
-        if (currentRecyclerView.getAdapter() == null) {
-            loadMoreNews(1);
+            refreshLayout.setRefreshing(true);
+            if (currentRecyclerView.getAdapter() == null) {
+                loadMoreNews(LoadNewsRequest.INIT_LOAD, 1);
+            }
+        } else {
+            Log.i(TAG, "onPageSelected: " + refreshLayout.isRefreshing());
+            if (refreshLayout.isRefreshing()) {
+                refreshLayout.setRefreshing(false);
+            }
         }
     }
 
@@ -173,93 +214,167 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
 
     @Override
     public void onRefresh() {
-
+        loadMoreNews(LoadNewsRequest.PULL_REFRESH_LOAD, 1);
+        refreshLayout.setRefreshing(true);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void showNews(final int page, final ArrayList<DepartmentNewsBean> newsBeanArrayList) {
-        Log.d(TAG, "showNews() called with: page = [" + page + "], newsBeanArrayList = [" + newsBeanArrayList.size() + "]");
+    public void showNews(final String uuid, final ArrayList<DepartmentNewsBean> newsBeanArrayList) {
+        Log.d(TAG, "showNews() called with: uuid = [" + uuid + "], newsBeanArrayList = [" + newsBeanArrayList.size() + "]");
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                loadingPages[currentPage] = page;
-                int prviousNewsLength;
-                if (newsListArray[currentPage] == null) {
-                    prviousNewsLength = 0;
-                    newsListArray[currentPage] = newsBeanArrayList;
-                } else {
-                    prviousNewsLength = newsListArray[currentPage].size();
-                    newsListArray[currentPage].addAll(newsBeanArrayList);
-                }
-                RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(currentPage);
-                if (currentRecyclerView.getAdapter() == null) {
-                    RecyclerNewsAdapter adapter = new RecyclerNewsAdapter(currentRecyclerView);
-                    adapter.setNewsBeanArrayList(newsListArray[currentPage]);
-                    adapter.setListEventListener(NewListFragment.this);
-                    currentRecyclerView.setAdapter(adapter);
-                } else {
-                    RecyclerNewsAdapter adapter = (RecyclerNewsAdapter) currentRecyclerView.getAdapter();
-                    if (prviousNewsLength > 0) {
-                        Log.i(TAG, "run: " + prviousNewsLength);
-                        adapter.notifyItemRangeInserted(prviousNewsLength, newsBeanArrayList.size());
-//                        adapter.notifyDataSetChanged();
-//                        Log.i(TAG, "run: " + adapter.getItemCount());
-//                        adapter.setFooterViewRefresh(false);
+                LoadNewsRequest request = requestArrayMap.get(uuid);
+                Log.i(TAG, "run: " + request + "" + currentNeedRequestId);
+                if (uuid.equals(currentNeedRequestId)) {//返回的数据是需要的数据
+                    if (request.newsType == currentType) {//是当前的tab页
+                        setCurrentTabResult(request, newsBeanArrayList);
                     } else {
-                        adapter.notifyDataSetChanged();
+                        setNotCurrentTabResult(request, newsBeanArrayList);
+                    }
+                } else {
+                    if (request.newsType == currentType) {//返回页是一样的新闻类型但不是需要的数据
+                        boolean isHaveMore = false;
+                        for (LoadNewsRequest loadNewsRequest : requestArrayMap.values()) {
+                            if (loadNewsRequest.newsType == currentType) {
+                                if (!loadNewsRequest.uuid.equals(uuid)) {
+                                    isHaveMore = true;
+                                }
+                            }
+                        }
+                        if (!isHaveMore) {//
+                            if (currentPage == request.newsType.ordinal())
+                                setCurrentTabResult(request, newsBeanArrayList);
+                        } else {
+                            if (request.loadType == LoadNewsRequest.PULL_REFRESH_LOAD) {//
+                                if (refreshLayout.isRefreshing()) {
+                                    refreshLayout.setRefreshing(false);
+                                }
+                            }
+                        }
+                    } else {
+                        setNotCurrentTabResult(request, newsBeanArrayList);
                     }
                 }
+                requestArrayMap.remove(uuid);
             }
         });
     }
 
-    private void showProgressDialog() {
-        if (progressDialog == null) {
-            progressDialog = CommonDialog.getInstance("正在创建聊天...");
-            progressDialog.setCancelable(false);
-            progressDialog.show(getFragmentManager(), null);
+    @SuppressWarnings("unchecked")
+    private void setCurrentTabResult(LoadNewsRequest request, ArrayList<DepartmentNewsBean> newsBeanArrayList) {
+        if (request.loadType == LoadNewsRequest.PULL_REFRESH_LOAD) {//下拉刷新，此时需要刷新数据
+            newsListArray[currentPage] = newsBeanArrayList;
+            RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(currentPage);
+            if (currentRecyclerView.getAdapter() == null) {
+                setRecyclerViewInitAdapter(currentRecyclerView, currentPage);
+            } else {
+                RecyclerNewsAdapter adapter = (RecyclerNewsAdapter) currentRecyclerView.getAdapter();
+                adapter.setNewsBeanArrayList(newsListArray[currentPage]);
+                adapter.notifyDataSetChanged();
+            }
+            refreshLayout.setRefreshing(false);
+            loadingPages[currentPage] = 1;
+        } else if (request.loadType == LoadNewsRequest.LOAD_MORE_LOAD) {//加载更多
+            RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(currentPage);
+            loadingPages[currentPage] = request.page;
+            int prviousNewsLength;
+            prviousNewsLength = newsListArray[currentPage].size();
+            newsListArray[currentPage].addAll(newsBeanArrayList);
+            RecyclerNewsAdapter adapter = (RecyclerNewsAdapter) currentRecyclerView.getAdapter();
+            adapter.notifyItemRangeInserted(prviousNewsLength, newsBeanArrayList.size());
+            adapter.setFooterViewRefresh(false);
+        } else {
+            RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(currentPage);
+            loadingPages[currentPage] = request.page;
+            newsListArray[currentPage] = newsBeanArrayList;
+            setRecyclerViewInitAdapter(currentRecyclerView, currentPage);
+            refreshLayout.setRefreshing(false);
         }
     }
 
-    private void dismissProgressDialog() {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-            progressDialog = null;
+    @SuppressWarnings("unchecked")
+    private void setNotCurrentTabResult(LoadNewsRequest request, ArrayList<DepartmentNewsBean> newsBeanArrayList) {
+        int requestIndex = request.newsType.ordinal();
+        Log.i(TAG, "run: requestIndex" + requestIndex);
+        RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(requestIndex);
+        if (currentRecyclerView.getAdapter() == null) {
+            newsListArray[requestIndex] = newsBeanArrayList;
+            setRecyclerViewInitAdapter(currentRecyclerView, requestIndex);
+        } else {
+            RecyclerNewsAdapter adapter = (RecyclerNewsAdapter) currentRecyclerView.getAdapter();
+            if (request.loadType == LoadNewsRequest.PULL_REFRESH_LOAD ||
+                    request.loadType == LoadNewsRequest.INIT_LOAD) {//下拉刷新的数据
+                loadingPages[requestIndex] = 1;
+                newsListArray[requestIndex] = newsBeanArrayList;
+                adapter.setNewsBeanArrayList(newsListArray[requestIndex]);
+                adapter.notifyDataSetChanged();
+            } else if (request.loadType == LoadNewsRequest.LOAD_MORE_LOAD) {
+                int requestTabPage = loadingPages[requestIndex];
+                if (request.page - requestTabPage == 1) {
+                    int prviousNewsLength = newsListArray[requestIndex].size();
+                    loadingPages[requestIndex] = request.page;
+                    newsListArray[requestIndex].addAll(newsBeanArrayList);
+                    adapter.notifyItemRangeInserted(prviousNewsLength, newsBeanArrayList.size());
+                    adapter.setFooterViewRefresh(false);
+                }
+            }
         }
     }
 
     @Override
-    public void onNewsClick(DepartmentNewsBean newsBean) {
+    public void showNewsError(final String uuid, final int errCode) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LoadNewsRequest request = requestArrayMap.get(uuid);
+                switch (errCode) {
+                    case NewsViewOperation.QUERY_RES_EMPTY:
+                        if (request.newsType == currentType) {
+                            if (request.loadType == LoadNewsRequest.LOAD_MORE_LOAD) {
+                                RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(currentPage);
+                                RecyclerNewsAdapter adapter = (RecyclerNewsAdapter) currentRecyclerView.getAdapter();
+                                adapter.setFooterViewRefresh(false);
+                                UItoolKit.showToastShort(getActivity(), "没有更多可加载的数据");
+                            }
+                            UItoolKit.showToastShort(getActivity(), "当前没有可加载的数据");
+                        }
+                        break;
+                    case NewsViewOperation.NET_ERROR:
+                        if (request.loadType == LoadNewsRequest.INIT_LOAD) {
+                            UItoolKit.showToastShort(getActivity(), "加载新闻失败，请检查网络");
+                        } else if (request.loadType == LoadNewsRequest.LOAD_MORE_LOAD) {
+                            UItoolKit.showToastShort(getActivity(), "加载更多新闻失败，请检查网络");
+                        } else {
+                            UItoolKit.showToastShort(getActivity(), "刷新新闻失败，请检查网络");
+                        }
+                        break;
+                }
+                requestArrayMap.remove(uuid);
+            }
+        });
+    }
 
+    private void setRecyclerViewInitAdapter(RecyclerView currentRecyclerView, int index) {
+        RecyclerNewsAdapter adapter = new RecyclerNewsAdapter(currentRecyclerView);
+        //noinspection unchecked
+        adapter.setNewsBeanArrayList(newsListArray[index]);
+        adapter.setListEventListener(NewListFragment.this);
+        currentRecyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onNewsClick(DepartmentNewsBean newsBean) {
+        if (eventListener != null) {
+            eventListener.onNewsClick(newsBean);
+        }
     }
 
     @Override
     public void onLoadMoreClick() {
         int currentLoadPage = loadingPages[currentPage] + 1;
-        loadMoreNews(currentLoadPage);
+        loadMoreNews(LoadNewsRequest.LOAD_MORE_LOAD, currentLoadPage);
     }
 
-//    private int lastVisibleItem = 0;
-
-//    private RecyclerView.OnScrollListener recyclerScrollListener = new RecyclerView.OnScrollListener() {
-//        @Override
-//        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//            super.onScrollStateChanged(recyclerView, newState);
-//            RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(currentPage);
-//            if (newState == RecyclerView.SCROLL_STATE_IDLE
-//                    && lastVisibleItem + 1 == currentRecyclerView.getAdapter().getItemCount()) {
-//                RecyclerNewsAdapter adapter = (RecyclerNewsAdapter) currentRecyclerView.getAdapter();
-//                adapter.setFooterViewRefresh(true);
-//                loadMoreNews(++loadingPages[currentPage]);
-//            }
-//        }
-//
-//        @Override
-//        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//            RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(currentPage);
-//            super.onScrolled(recyclerView, dx, dy);
-//            lastVisibleItem = ((LinearLayoutManager) currentRecyclerView.getLayoutManager()).findLastVisibleItemPosition();
-//        }
-//    };
 }

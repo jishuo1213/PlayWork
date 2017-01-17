@@ -47,7 +47,7 @@ public class AppConfig {
     public static final String BASE_SERVER = "http://htime.inspur.com/m/";
     public static final String BASE_LOG_SERVER = "http://htime.inspur.com/l/";
 
-    public static final String QUERY_NEWS_URL = "http://office8.inspur.com:8082/inspur/news/query.page";
+    public static final String NEWS_URL = "http://office8.inspur.com:8082/inspur/news/";
 //    public static final String BASE_SERVER = "http://htime.inspur.com/m/";
 
     // 登陆ad认证服务

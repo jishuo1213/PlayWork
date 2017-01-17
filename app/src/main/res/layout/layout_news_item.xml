@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
-    android:layout_marginTop="3dp">
+    android:layout_marginTop="3dp"
+    android:background="@drawable/setting_item_selector">
 
     <ImageView
         android:id="@+id/image_news_thumbnail"
@@ -12,7 +13,7 @@
         android:layout_height="60dp"
         android:contentDescription="@null"
         android:scaleType="fitXY"
-        android:src="@drawable/inspur" />
+        android:src="@drawable/inspur_logo" />
 
     <TextView
         android:id="@+id/tv_news_title"
@@ -26,10 +27,10 @@
         android:paddingLeft="5dp"
         android:paddingRight="0dp"
         android:paddingStart="5dp"
-        android:textStyle="bold"
         android:text="参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议参加会议"
         android:textColor="@color/key_text"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tv_news_date"

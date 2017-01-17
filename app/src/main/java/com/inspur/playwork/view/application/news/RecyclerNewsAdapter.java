@@ -40,7 +40,7 @@ class RecyclerNewsAdapter extends RecyclerView.Adapter<RecyclerNewsAdapter.ViewH
         this.recyclerView = recyclerView;
     }
 
-    public void setListEventListener(NewsListEventListener listEventListener) {
+    void setListEventListener(NewsListEventListener listEventListener) {
         this.listEventListener = listEventListener;
     }
 
@@ -77,10 +77,10 @@ class RecyclerNewsAdapter extends RecyclerView.Adapter<RecyclerNewsAdapter.ViewH
                 if (CommonUtils.isUrlVliad(departmentNewsBean.imageUrl)) {
                     String res = departmentNewsBean.imageUrl.replace("_small", "");
                     Glide.with(holder.itemView.getContext()).load(res).
-                            diskCacheStrategy(DiskCacheStrategy.RESULT).placeholder(R.drawable.inspur)
+                            diskCacheStrategy(DiskCacheStrategy.RESULT).placeholder(R.drawable.inspur_logo)
                             .into(holder.newsThumb);
                 } else {
-                    Glide.with(holder.itemView.getContext()).load(R.drawable.inspur).into(holder.newsThumb);
+                    Glide.with(holder.itemView.getContext()).load(R.drawable.inspur_logo).into(holder.newsThumb);
                 }
                 holder.itemView.setOnClickListener(newsClickListenr);
                 break;
@@ -156,6 +156,8 @@ class RecyclerNewsAdapter extends RecyclerView.Adapter<RecyclerNewsAdapter.ViewH
 
     void setFooterViewRefresh(boolean isRefresh) {
         ViewHolder viewHolder = (ViewHolder) recyclerView.findViewHolderForLayoutPosition(getItemCount() - 1);
+        if(viewHolder == null)
+            return;
         if (isRefresh) {
             if (viewHolder.type == FOOTER_VIEW) {
                 viewHolder.loadMoreView.setVisibility(View.GONE);

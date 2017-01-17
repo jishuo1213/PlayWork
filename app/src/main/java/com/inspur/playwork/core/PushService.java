@@ -62,6 +62,8 @@ public class PushService extends Service implements Emitter.Listener {
 
     private static final String TAG = "PushServiceFan";
 
+
+
     private static final String NEW_GROUP_MSG = "newGroupMsg";
     private static final String NEW_TASK = "newTask";
 

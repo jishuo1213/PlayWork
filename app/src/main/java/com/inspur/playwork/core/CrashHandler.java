@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.BatchUpdateException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -143,35 +144,40 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
         //cpu架构
         pw.print("CPU ABI: ");
-        pw.println(Build.CPU_ABI);
+        if (Build.VERSION.SDK_INT > 20)
+            pw.println(Build.SUPPORTED_ABIS[0]);
+        else
+            pw.println(Build.CPU_ABI);
     }
 
     private void uploadExceptionToServer(final File f) {
-        OkHttpClientManager.getInstance().postAsyn("http://218.57.135.45:55166/feedback/uploadFiles", "uploadFile", f, null, new Callback() {
-            @Override
-            public void onFailure(Call request, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Log.i(TAG, "onResponse: " + f.getAbsolutePath());
-                Log.i(TAG, "onResponse: " + response.toString());
-                if (response.code() == 200) {
-                    deleteFile(response.body().string());
+        if (f.exists()) {
+            OkHttpClientManager.getInstance().postAsyn("http://218.57.135.45:55166/feedback/uploadFiles", "uploadFile", f, null, new Callback() {
+                @Override
+                public void onFailure(Call request, IOException e) {
+                    e.printStackTrace();
                 }
-            }
-        }, null);
-    }
 
-    private void deleteFile(String jsonData) {
-        try {
-            JSONObject jsonObject = new JSONObject(jsonData);
-            String fileName = jsonObject.optString("fileName");
-            File file = new File(FILE_PATH + fileName);
-            file.delete();
-        } catch (JSONException e) {
-            e.printStackTrace();
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    Log.i(TAG, "onResponse: " + f.getAbsolutePath());
+                    Log.i(TAG, "onResponse: " + response.toString());
+                    if (response.code() == 200) {
+                        f.delete();
+                    }
+                }
+            }, null);
         }
     }
+
+//    private void deleteFile(String jsonData) {
+//        try {
+//            JSONObject jsonObject = new JSONObject(jsonData);
+//            String fileName = jsonObject.optString("fileName");
+//            File file = new File(FILE_PATH + fileName);
+//            file.delete();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
