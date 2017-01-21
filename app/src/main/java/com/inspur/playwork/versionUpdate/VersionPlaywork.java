@@ -57,6 +57,7 @@ public class VersionPlaywork {
         this.initNotify(activity);
         this.handler = handler;
         viewReference = new WeakReference<>(activity);
+        Log.i(TAG, "VersionPlaywork: " + jsonObj);
         updateVersion();
     }
 
@@ -126,10 +127,12 @@ public class VersionPlaywork {
      */
     private boolean getServerVerCode() {
         try {
+            Log.i(TAG, "getServerVerCode: " + jsonObj.Version);
             newVerCode = Double.parseDouble(jsonObj.Version);
             Log.i(TAG, "newVerCode: " + newVerCode);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;//如果这里改为false 则不更新会退出程序
         }
 
@@ -142,10 +145,12 @@ public class VersionPlaywork {
      */
     private boolean getServerVerName() {
         try {
+            Log.i(TAG, "getServerVerName: " + jsonObj.VersionName);
             newVerName = jsonObj.VersionName;
             Log.i(TAG, "onResponse====》 newVerName: " + newVerName);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;//如果这里改为false 则不更新会退出程序
         }
 
@@ -224,8 +229,6 @@ public class VersionPlaywork {
     private void update() {
 //        Intent intent = new Intent(Intent.ACTION_VIEW);
         String update_apkName = "Waner.apk";
-//        intent.setDataAndType(Uri.fromFile(new File(FileUtil.getDownloadPath(), update_apkName))
-//                , "application/vnd.android.package-archive");
         if (viewReference.get() != null)
             viewReference.get().startActivity(FileUtil.getOpenFileIntent(viewReference.get(), FileUtil.getDownloadPath() + update_apkName));
     }
@@ -256,44 +259,6 @@ public class VersionPlaywork {
             this.update();
             mNotificationManager.cancel(101);
         }
-//        try {
-//            Request request = new Request.Builder().url(url).build();
-//            Response response = new OkHttpClient().newCall(request).execute();
-//            if (response.isSuccessful()) {
-////                int length = Integer.parseInt(response.header("Content-Length"));
-//                int length = Integer.parseInt(response.header("File-Size"));
-//                inputStream = response.body().byteStream();
-//                File file = new File(fileName);
-//                fileOutputStream = new FileOutputStream(file);
-//                byte[] buffer = new byte[4 * 1024];
-//                int notifySize = 0;
-//                int readSize;
-//                int downCount = 0;
-//                this.setNotify(downCount, length, "正在下载");
-//                while ((readSize = inputStream.read(buffer)) != -1) {
-//                    fileOutputStream.write(buffer, 0, readSize);
-//                    downCount += readSize;
-//                    notifySize += readSize;
-//                    if (downCount < length) {
-//                        if (notifySize > NOTIFY_NUM) {
-//                            this.setNotify(downCount, length, "正在下载");
-//                            notifySize = 0;
-//                        }
-//                    } else {
-//                        this.setNotify(downCount, length, "下载完成");
-//                    }
-//                }
-//                fileOutputStream.flush();
-//                // 自动更新
-//                this.update();
-//                mNotificationManager.cancel(101);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            Util.closeQuietly(inputStream);
-//            Util.closeQuietly(fileOutputStream);
-//        }
     }
 
     /**
@@ -311,7 +276,7 @@ public class VersionPlaywork {
         handler.post(runnable);
     }
 
-    private static class UpdateProgressRunnable implements Runnable {
+    public static class UpdateProgressRunnable implements Runnable {
 
         private NotificationCompat.Builder mNotificationCompatBuilder;
         private NotificationManager mNotificationManager;
@@ -320,12 +285,12 @@ public class VersionPlaywork {
         private String downTitle;
 
 
-        UpdateProgressRunnable(NotificationCompat.Builder mNotificationCompatBuilder, NotificationManager mNotificationManager) {
+        public UpdateProgressRunnable(NotificationCompat.Builder mNotificationCompatBuilder, NotificationManager mNotificationManager) {
             this.mNotificationCompatBuilder = mNotificationCompatBuilder;
             this.mNotificationManager = mNotificationManager;
         }
 
-        void setProgress(int count, int length, String downTitle) {
+        public void setProgress(int count, int length, String downTitle) {
             this.count = count;
             this.length = length;
             this.downTitle = downTitle;

@@ -5,8 +5,11 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +17,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -28,20 +32,16 @@ import com.inspur.playwork.utils.FileUtil;
 import com.inspur.playwork.utils.UItoolKit;
 import com.inspur.playwork.utils.db.bean.MailAccount;
 import com.inspur.playwork.view.common.BaseActivity;
-import com.inspur.playwork.view.common.chosepicture.ChosePictureFragment;
 import com.inspur.playwork.weiyou.adapter.DirectoryListAdapter;
 import com.inspur.playwork.weiyou.fragment.AddNewAccountFragment;
-import com.inspur.playwork.weiyou.fragment.ContactSelectorFragment;
 import com.inspur.playwork.weiyou.fragment.ExchangeListFragment;
 import com.inspur.playwork.weiyou.fragment.MailAttachmentFragment;
 import com.inspur.playwork.weiyou.fragment.MailDetailFragment;
 import com.inspur.playwork.weiyou.fragment.MailListFragment;
-import com.inspur.playwork.weiyou.fragment.SelectLocalAttachmentFragment;
 import com.inspur.playwork.weiyou.fragment.VUAccountCAFragment;
 import com.inspur.playwork.weiyou.fragment.VUAccountSettingsFragment;
 import com.inspur.playwork.weiyou.fragment.VUFeedbackFragment;
 import com.inspur.playwork.weiyou.fragment.VUSettingsFragment;
-import com.inspur.playwork.weiyou.fragment.WriteMailFragment;
 import com.inspur.playwork.weiyou.store.VUActivityOperation;
 import com.inspur.playwork.weiyou.store.VUStores;
 import com.inspur.playwork.weiyou.utils.NetStatusReceiver;
@@ -83,9 +83,7 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
     private MailListFragment mailListFragment;
     private ExchangeListFragment exchangeListFragment;
     private MailDetailFragment mailDetailFragment;
-    private WriteMailFragment writeMailFragment;
     private MailAttachmentFragment mailAttachmentFragment;
-    private ContactSelectorFragment contactSelectorFragment;
     private VUAccountSettingsFragment vuAccountSettingsFragment;
     private VUAccountCAFragment vuAccountCAFragment;
     public VUSettingsFragment vuSettingsFragment;
@@ -93,8 +91,7 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
     private AddNewAccountFragment addNewAccountFragment;
 
     public DrawerLayout drawer;
-    private ChosePictureFragment choosePictureFragment;
-    public SelectLocalAttachmentFragment selectAttachmentFragment;
+
     private NetStatusReceiver netStatusReceiver;
 
     @Override
@@ -158,7 +155,7 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
         });
 
         vuStores.setVUActivityReference(this);//侧边栏的视图操作
-        vuStores.initVUData();
+        vuStores.initVUData(false);
         // 开启Fragment事务
         fm = getFragmentManager();
     }
@@ -198,7 +195,6 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
         dirListAdapter.setOnDirClickListener(this);
         dirListAdapter.setSelectedDir(0);
         directoryRv.setAdapter(dirListAdapter);
-
         vuStores.switchMailDirectory(-1);//加载收件箱邮件
     }
 
@@ -225,91 +221,6 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
 //        激活新选中的目录样式
         dirListAdapter.notifyItemChanged(position);
 
-    }
-
-
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
-    @Override
-    public void onBackPressed() {
-        Log.i(TAG, "onBackPress");
-//        if(writeMailFragment!=null){
-//            Log.i(TAG, writeMailFragment.isVisible()+"");
-//        }
-        FragmentTransaction ft = getFT();
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else if (selectAttachmentFragment != null && selectAttachmentFragment.isVisible()){
-            super.onBackPressed();
-            ft.show(writeMailFragment);
-            //打开侧边栏手势滑动
-            selectAttachmentFragment = null;
-        } else if (contactSelectorFragment != null && contactSelectorFragment.isResumed()) {
-            super.onBackPressed();
-            ft.show(writeMailFragment);
-            contactSelectorFragment = null;
-        } else if (choosePictureFragment != null && choosePictureFragment.isResumed()) {
-            super.onBackPressed();
-            ft.show(writeMailFragment);
-            choosePictureFragment = null;
-        } else if (writeMailFragment != null && writeMailFragment.isResumed()) {
-            if (isWritingMail) vuStores.onCancelSendMail();
-            else {
-                Log.i(TAG, "onBackPressed: writeMailFragment != null && writeMailFragment.isResumed()");
-                //打开侧边栏手势滑动
-                if(mailDetailFragment == null) {
-                    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-                }
-                super.onBackPressed();
-                ft.show(mailListFragment);
-                writeMailFragment = null;
-            }
-        } else if (mailDetailFragment != null && mailDetailFragment.isVisible()) {
-            //从 来往邮件列表进的又见详情界面 返回的时候 返回来往邮件列表界面，不显示侧边栏
-            if (exchangeListFragment==null) {
-                //打开侧边栏手势滑动
-                drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            }
-            super.onBackPressed();
-            ft.show(mailListFragment);
-            mailDetailFragment = null;
-
-        }else if (exchangeListFragment != null && exchangeListFragment.isVisible()) {
-            super.onBackPressed();
-            ft.show(mailListFragment);
-            exchangeListFragment = null;
-        } else if (mailAttachmentFragment != null && mailAttachmentFragment.isVisible()){
-            super.onBackPressed();
-            ft.show(mailListFragment);
-            mailAttachmentFragment = null;
-        } else if (vuFeedbackFragment != null && vuFeedbackFragment.isResumed()) {
-            if (isWritingFeedback) vuFeedbackFragment.onCancelSendFeedback();
-            else {
-                super.onBackPressed();
-                vuFeedbackFragment = null;
-            }
-        } else if (vuAccountSettingsFragment != null && vuAccountSettingsFragment.isResumed()) {
-            Log.i(TAG, "onBackPressed: vuAccountSettingsFragment");
-            super.onBackPressed();
-            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            vuAccountSettingsFragment = null;
-        } else if (addNewAccountFragment != null && addNewAccountFragment.isResumed()) {
-            super.onBackPressed();
-            addNewAccountFragment = null;
-        } else if (vuSettingsFragment != null && vuSettingsFragment.isVisible()) {
-            Log.i(TAG, "onBackPressed: vuSettingsFragment");
-            super.onBackPressed();
-            vuSettingsFragment = null;
-        } else {
-            if (!vuStores.currDirIsInbox()) {
-                vuStores.switchMailDirectory(0);
-            } else if(mailListFragment!= null&&mailListFragment.mailSearchBox.isShown()){
-                Log.i(TAG, "onBackPressed: hide searchMailBtn ······");
-                mailListFragment.hideSearchBox();
-            } else{
-                Log.i(TAG, "onBackPressed: 关闭微邮~");
-                super.onBackPressed();
-            }
-        }
     }
 
     @Override
@@ -341,17 +252,6 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
 //        ft.addToBackStack(null);
 //        ft.commit();
 //    }
-
-    public void openSelectAttachmentFragment() {
-        FragmentTransaction ft = getFT();
-        if (selectAttachmentFragment != null) {
-//            selectAttachmentFragment = new SelectLocalAttachmentFragment();
-            ft.add(R.id.wy_fragment_container, selectAttachmentFragment);
-            ft.hide(writeMailFragment);
-            ft.addToBackStack(null);
-            ft.commit();
-        }
-    }
     @Override
     public void openExchangeListFragment() {
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -427,6 +327,7 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
         if (vuAccountCAFragment == null) {
             vuAccountCAFragment = new VUAccountCAFragment();
         }
+        hideInputMethod();
         ft.replace(R.id.wy_fragment_container, vuAccountCAFragment, "vuAccountCAFragment");
         ft.addToBackStack(null);
         ft.commit();
@@ -442,18 +343,15 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
         ft.commit();
     }
 
-    public void gotoWriteMail(int type) {
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        if(writeMailFragment==null||!writeMailFragment.isAdded()) {
-            writeMailFragment = null;
-            vuStores.setQuoteType(type);
-            FragmentTransaction ft = getFT();
-            writeMailFragment = new WriteMailFragment();
-            ft.replace(R.id.wy_fragment_container, writeMailFragment, "writeMailFragment");
-            ft.addToBackStack(null);
-            ft.commit();
-            isWritingMail = true;
-        }
+    public void innerWriteMail(int type){
+        Intent intent = new Intent();
+        intent.putExtra("type",type);
+        gotoWriteMail(intent);
+    }
+
+    public void gotoWriteMail(Intent intent) {
+        intent.setClass(WeiYouMainActivity.this,WriteMailActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -461,53 +359,9 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
      */
     @Override
     public void reEditDraftMail() {
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        if(writeMailFragment==null||!writeMailFragment.isAdded()) {
-            vuStores.setQuoteType(QUOTE_TYPE_REEDIT);
-            FragmentTransaction ft = getFT();
-            writeMailFragment = new WriteMailFragment();
-            ft.replace(R.id.wy_fragment_container, writeMailFragment, "writeMailFragment");
-            ft.addToBackStack(null);
-            ft.commit();
-            isWritingMail = true;
-        }
-    }
-
-    public int selectAs = 0;
-
-    /**
-     * 显示联系人选择器的方法
-     */
-    public void showContactSelector(int cType) {
-        if(contactSelectorFragment==null||!contactSelectorFragment.isAdded()) {
-            selectAs = cType;
-            FragmentTransaction ft = getFT();
-            contactSelectorFragment = new ContactSelectorFragment();
-            ft.add(R.id.wy_fragment_container, contactSelectorFragment);
-            ft.hide(writeMailFragment);
-            ft.addToBackStack(null);
-            ft.commit();
-        }
-    }
-
-    /**
-     * 显示图片选择器的方法
-     */
-    public void showImageSelector() {
-//        if(choosePictureFragment==null||!choosePictureFragment.isAdded()) {
-            FragmentTransaction ft = getFT();
-            if (choosePictureFragment == null) {
-                choosePictureFragment = (ChosePictureFragment) ChosePictureFragment.getInstance("确定",true);
-//                choosePictureFragment.setMultiChooseMode(true);
-                choosePictureFragment.setListener(writeMailFragment);
-//                choosePictureFragment.setSendButtonText("确定");
-            }
-            ft.hide(writeMailFragment);
-            ft.add(R.id.wy_fragment_container, choosePictureFragment);
-            ft.hide(writeMailFragment);
-            ft.addToBackStack(null);
-            ft.commit();
-//        }
+        Intent intent = new Intent();
+        intent.putExtra("type",WeiYouMainActivity.QUOTE_TYPE_REEDIT);
+        gotoWriteMail(intent);
     }
 
     public void showKeyboard(View v) {
@@ -576,36 +430,6 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
         });
     }
 
-    private boolean isPaused = false;
-
-    @Override
-    public boolean isPaused() {
-        return isPaused;
-    }
-
-    @Override
-    protected void onPause() {
-        isPaused = true;
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        isPaused = false;
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-//        Log.i(TAG, "onDestroy");
-        vuStores.clean();
-        vuStores.unRegister();
-        vuStores = null;
-        FileUtil.clearMailCache();// 清空邮件缓存
-        unregisterReceiver(netStatusReceiver);
-        super.onDestroy();
-    }
-
     private FragmentTransaction getFT() {
         FragmentTransaction ft = fm.beginTransaction();
         /*添加的动画效果*/
@@ -631,16 +455,129 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
         vuStores.switchMailDirectory(position);//切换目录
     }
 
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+    @Override
+    public void onBackPressed() {
+        Log.i(TAG, "onBackPress");
+//        if(writeMailFragment!=null){
+//            Log.i(TAG, writeMailFragment.isVisible()+"");
+//        }
+        FragmentTransaction ft = getFT();
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else if (mailDetailFragment != null && mailDetailFragment.isVisible()) {
+            if(mailDetailFragment.downloadConfirmDialog.isPopWindowShowing()){
+                vuStores.cancelDownloadMail();
+                mailDetailFragment.downloadConfirmDialog.hidePopWindow();
+                return;
+            }
+            //从 来往邮件列表进的又见详情界面 返回的时候 返回来往邮件列表界面，不显示侧边栏
+            if (exchangeListFragment==null) {
+                //打开侧边栏手势滑动
+                drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            }
+            super.onBackPressed();
+            mailDetailFragment = null;
+
+        }else if (exchangeListFragment != null && exchangeListFragment.isVisible()) {
+            super.onBackPressed();
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            exchangeListFragment = null;
+        } else if (mailAttachmentFragment != null && mailAttachmentFragment.isVisible()){
+            super.onBackPressed();
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            mailAttachmentFragment = null;
+        } else if (vuFeedbackFragment != null && vuFeedbackFragment.isResumed()) {
+            if (isWritingFeedback) vuFeedbackFragment.onCancelSendFeedback();
+            else {
+                super.onBackPressed();
+                vuFeedbackFragment = null;
+            }
+        } else if (vuAccountSettingsFragment != null && vuAccountSettingsFragment.isResumed()) {
+            Log.i(TAG, "onBackPressed: vuAccountSettingsFragment");
+            super.onBackPressed();
+            vuAccountSettingsFragment = null;
+        } else if (addNewAccountFragment != null && addNewAccountFragment.isResumed()) {
+            super.onBackPressed();
+            addNewAccountFragment = null;
+        } else if (vuSettingsFragment != null && vuSettingsFragment.isVisible()) {
+            Log.i(TAG, "onBackPressed: vuSettingsFragment");
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            super.onBackPressed();
+            vuSettingsFragment = null;
+        } else {
+            if (!vuStores.currDirIsInbox()) {
+                vuStores.switchMailDirectory(0);
+            } else if(mailListFragment!= null && mailListFragment.mailSearchBox.isShown()){
+                Log.i(TAG, "onBackPressed: hide searchMailBtn ······");
+                mailListFragment.hideSearchBox();
+            } else{
+                Log.i(TAG, "onBackPressed: 关闭微邮~");
+                super.onBackPressed();
+            }
+        }
+    }
+    @Override
+    public int getNetworkType() {
+
+        int strNetworkType = -1;
+
+//获取网络连接管理者
+        ConnectivityManager connectionManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        //获取网络的状态信息，有下面三种方式
+        NetworkInfo networkInfo = connectionManager.getActiveNetworkInfo();
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+            if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                strNetworkType = vuStores.CURR_NETWORK_TYPE_WIFI;
+            } else if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+                String _strSubTypeName = networkInfo.getSubtypeName();
+
+                Log.e("getNetworkType", "Network getSubtypeName : " + _strSubTypeName);
+
+                // TD-SCDMA   networkType is 17
+                int networkType = networkInfo.getSubtype();
+                switch (networkType) {
+                    case TelephonyManager.NETWORK_TYPE_GPRS:
+                    case TelephonyManager.NETWORK_TYPE_EDGE:
+                    case TelephonyManager.NETWORK_TYPE_CDMA:
+                    case TelephonyManager.NETWORK_TYPE_1xRTT:
+                    case TelephonyManager.NETWORK_TYPE_IDEN: //api<8 : replace by 11
+                        strNetworkType = vuStores.CURR_NETWORK_TYPE_2G;
+                        break;
+                    case TelephonyManager.NETWORK_TYPE_UMTS:
+                    case TelephonyManager.NETWORK_TYPE_EVDO_0:
+                    case TelephonyManager.NETWORK_TYPE_EVDO_A:
+                    case TelephonyManager.NETWORK_TYPE_HSDPA:
+                    case TelephonyManager.NETWORK_TYPE_HSUPA:
+                    case TelephonyManager.NETWORK_TYPE_HSPA:
+                    case TelephonyManager.NETWORK_TYPE_EVDO_B: //api<9 : replace by 14
+                    case TelephonyManager.NETWORK_TYPE_EHRPD:  //api<11 : replace by 12
+                    case TelephonyManager.NETWORK_TYPE_HSPAP:  //api<13 : replace by 15
+                        strNetworkType = vuStores.CURR_NETWORK_TYPE_3G;
+                        break;
+                    case TelephonyManager.NETWORK_TYPE_LTE:    //api<11 : replace by 13
+                        strNetworkType = vuStores.CURR_NETWORK_TYPE_4G;
+                        break;
+                    default:
+                        // http://baike.baidu.com/item/TD-SCDMA 中国移动 联通 电信 三种3G制式
+                        if (_strSubTypeName.equalsIgnoreCase("TD-SCDMA") || _strSubTypeName.equalsIgnoreCase("WCDMA") || _strSubTypeName.equalsIgnoreCase("CDMA2000")) {
+                            strNetworkType = vuStores.CURR_NETWORK_TYPE_3G;
+                        } else {
+                            strNetworkType = vuStores.CURR_NETWORK_TYPE_4G;
+                        }
+
+                        break;
+                }
+            }
+        }
+
+        return strNetworkType;
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case 100:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    writeMailFragment.openCamera();
-                } else {
-                    UItoolKit.showToastShort(this, "拍照请提供相机权限");
-                }
-                break;
             case 102:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     vuAccountCAFragment.choseFile();
@@ -648,31 +585,40 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
                     UItoolKit.showToastShort(this, "请提供选择文件权限");
                 }
                 break;
-            case 103:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    writeMailFragment.choseFile();
-                } else {
-                    UItoolKit.showToastShort(this, "请提供选择文件权限");
-                }
-                break;
-            case 104:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    writeMailFragment.isInsertImage = false;
-                    showImageSelector();
-                } else {
-                    UItoolKit.showToastShort(this, "请提供选择文件权限");
-                }
-                break;
-            case 105:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    writeMailFragment.isInsertImage = true;
-                    showImageSelector();
-                } else {
-                    UItoolKit.showToastShort(this, "请提供选择文件权限");
-                }
-                break;
+
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
+
+    private boolean isPaused = false;
+    @Override
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    @Override
+    protected void onPause() {
+        isPaused = true;
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        isPaused = false;
+        Log.i(TAG, "onResume: vuStores="+vuStores.getMailListData().size());
+//        vuStores.register();
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+//        Log.i(TAG, "onDestroy");
+        vuStores.clean();
+        vuStores = null;
+        FileUtil.clearMailCache();// 清空邮件缓存
+        unregisterReceiver(netStatusReceiver);
+        super.onDestroy();
+    }
+
 }

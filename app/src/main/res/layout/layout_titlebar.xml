@@ -77,4 +77,13 @@
         android:src="@drawable/selector_new_chat"
         android:visibility="gone" />
 
+    <ImageButton
+        android:id="@+id/iv_search"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@id/iv_right"
+        android:background="@drawable/selector_back_button"
+        android:src="@drawable/wy_mail_list_search"
+        android:visibility="gone" />
+
 </RelativeLayout>

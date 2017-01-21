@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:clickable="true"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -11,7 +12,6 @@
         android:layout_height="@dimen/toolbar_height"
         android:layout_alignParentTop="true"
         android:background="@drawable/actionbar_background">
-
         <ImageButton
             android:id="@+id/wy_back_btn"
             android:layout_width="62dp"
@@ -87,7 +87,57 @@
                     <!--android:gravity="center_vertical" />-->
             <!--</RelativeLayout>-->
             <!--<View style="@style/common_horizontal_dividing_line_style" />-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="15dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/wy_common_text_light_color"
+                    android:textSize="@dimen/mail_detail_info_text_size"
+                    android:text="默认选项" />
+                <View style="@style/common_horizontal_dividing_line_style" />
+
+                <TextView
+                    android:id="@+id/aa_setting_mode_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:paddingLeft="10dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="10dp"
+                    android:textSize="@dimen/mail_detail_info_text_size"
+                    android:text="邮件收取模式" />
+                <RadioGroup
+                    android:id="@+id/pop3_download_way"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:orientation="vertical">
+                    <RadioButton
+                        android:id="@+id/download_mail_head"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/wy_common_text_color"
+                        android:textColor="@color/wy_common_text_color"
+                        android:text="只下载邮件头（省流量，首次查看时下载正文）"/>
+                    <RadioButton
+                        android:id="@+id/download_mail_all"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:buttonTint="@color/wy_common_text_color"
+                        android:textColor="@color/wy_common_text_color"
+                        android:text="下载整封邮件（费流量，展示快）"/>
+                </RadioGroup>
+                <View style="@style/common_horizontal_dividing_line_style" android:layout_marginTop="10dp"/>
+            </LinearLayout>
         </LinearLayout>
+
     </ScrollView>
 
     <LinearLayout

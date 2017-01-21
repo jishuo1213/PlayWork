@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.inspur.playwork.R;
 import com.inspur.playwork.weiyou.WeiYouMainActivity;
@@ -28,6 +30,7 @@ public class VUSettingsFragment extends Fragment implements View.OnClickListener
     private ListView mailAccountListLv;
 
     public MailAccountListAdapter mlAdapter;
+    private RadioGroup downloadWayRG;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,23 @@ public class VUSettingsFragment extends Fragment implements View.OnClickListener
         addNewAccountLL.setOnClickListener(this);
 //        sendFeedbackLL = (RelativeLayout)view.findViewById(R.id.wy_setting_feedback);
 //        sendFeedbackLL.setOnClickListener(this);
+        downloadWayRG = (RadioGroup) view.findViewById(R.id.pop3_download_way);
+        downloadWayRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.download_mail_head:
+                        wyma.vuStores.changeMailDownloadWay(wyma.vuStores.MAIL_DOWNLOAD_WAY_HEAD);
+                        break;
+                    case R.id.download_mail_all:
+                        wyma.vuStores.changeMailDownloadWay(wyma.vuStores.MAIL_DOWNLOAD_WAY_ALL);
+                        break;
+                }
+            }
+        });
+        int flag = wyma.vuStores.getMailDownloadWay();
+        ((RadioButton)downloadWayRG.findViewById(R.id.download_mail_head)).setChecked(flag == wyma.vuStores.MAIL_DOWNLOAD_WAY_HEAD);
+        ((RadioButton)downloadWayRG.findViewById(R.id.download_mail_all)).setChecked(flag == wyma.vuStores.MAIL_DOWNLOAD_WAY_ALL);
         return view;
     }
 

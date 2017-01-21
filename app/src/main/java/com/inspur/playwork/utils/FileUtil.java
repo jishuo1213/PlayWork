@@ -19,10 +19,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -154,9 +158,6 @@ public class FileUtil {
         if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 24) {
             File[] externalFileDirs = context.getExternalFilesDirs(null);
             File[] exiernalCacheDirs = context.getExternalCacheDirs();
-            for (File file : externalFileDirs) {
-                Log.i(TAG, "init: " + file.getAbsolutePath());
-            }
             if (externalFileDirs.length > 1) {
                 if (externalFileDirs[1] != null) {
                     SDCardRoot = externalFileDirs[1].getAbsolutePath() + File.separator;
@@ -180,20 +181,20 @@ public class FileUtil {
                 SDCardRoot = context.getFilesDir().getAbsolutePath() + File.separator;
                 cacheFilePath = context.getCacheDir() + File.separator;
             }
-        } else if(Build.VERSION.SDK_INT  >= 24){
+        } else if (Build.VERSION.SDK_INT >= 24) {
             File[] externalFileDirs = context.getExternalFilesDirs(null);
             File[] exiernalCacheDirs = context.getExternalCacheDirs();
-            if(externalFileDirs.length > 0){
+            if (externalFileDirs.length > 0) {
                 SDCardRoot = externalFileDirs[0].getAbsolutePath() + File.separator;
-            }else{
+            } else {
                 SDCardRoot = context.getFilesDir().getAbsolutePath() + File.separator;
             }
-            if(exiernalCacheDirs.length > 0){
-                cacheFilePath = exiernalCacheDirs[0].getAbsolutePath()+File.separator;
-            }else{
+            if (exiernalCacheDirs.length > 0) {
+                cacheFilePath = exiernalCacheDirs[0].getAbsolutePath() + File.separator;
+            } else {
                 cacheFilePath = context.getCacheDir() + File.separator;
             }
-        }else{
+        } else {
             SDCardRoot = System.getenv(ENV_SECONDARY_STORAGE);
             if (SDCardRoot != null) {
                 SDCardRoot = SDCardRoot + File.separator + "Android" + File.separator + "data" + File.separator + context.getPackageName()
@@ -228,11 +229,11 @@ public class FileUtil {
 
         File file = new File(SDCardRoot + "playWork");
         File cacheFile = new File(cacheFilePath + "playWork");
-        Log.i(TAG, "init: is playwork exists"+file.getAbsolutePath()+file.exists());
+        Log.i(TAG, "init: is playwork exists" + file.getAbsolutePath() + file.exists());
         if (!file.exists()) {
             Log.i(TAG, "init: -------------");
             boolean result = file.mkdir();
-            Log.i(TAG, "init: ------------- mk playwork dir"+result);
+            Log.i(TAG, "init: ------------- mk playwork dir" + result);
             if (!result)
                 Log.e("fileUtil", "创建附件文件夹失败");
         }
@@ -245,9 +246,9 @@ public class FileUtil {
 
         File fileAttachment = new File(getAttachmentPath());
         if (!fileAttachment.exists()) {
-            Log.i(TAG, "init: -------------"+fileAttachment.getAbsolutePath());
+            Log.i(TAG, "init: -------------" + fileAttachment.getAbsolutePath());
             boolean result = fileAttachment.mkdir();
-            Log.i(TAG, "init: "+result);
+            Log.i(TAG, "init: " + result);
             if (!result)
                 Log.e("fileUtil", "创建附件文件夹失败");
         }
@@ -296,6 +297,13 @@ public class FileUtil {
             boolean result = log.mkdir();
             if (!result)
                 Log.e("fileUtil", "创建日志文件夹失败");
+        }
+
+        File news = new File(getNewsFilePath());
+        if (!news.exists()) {
+            boolean result = news.mkdir();
+            if (!result)
+                Log.e("fileUtil", "创建新闻文件夹失败");
         }
     }
 
@@ -559,6 +567,10 @@ public class FileUtil {
         return SDCardRoot + "playWork/avatar/";
     }
 
+    public static String getNewsFilePath() {
+        return SDCardRoot + "playWork/news/";
+    }
+
     public static String getAttachmentPath() {
         return SDCardRoot + "playWork/attachment/";
     }
@@ -750,7 +762,7 @@ public class FileUtil {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             Uri uri = FileProvider.getUriForFile(context, "com.inspur.playwork.fileprovider", file);
-            Log.i(TAG, "getOpenFileIntent: "+uri.toString());
+            Log.i(TAG, "getOpenFileIntent: " + uri.toString());
             intent.setDataAndType(uri, mime);
         } else {
             Uri uri = Uri.fromFile(file);
@@ -987,5 +999,32 @@ public class FileUtil {
         for (String name : no) {
             System.out.println(name);
         }
+    }
+
+    public static void writeContentToFile(String content, String filePath) throws IOException {
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(filePath));
+            writer.write(content);
+        } finally {
+            Util.closeQuietly(writer);
+        }
+    }
+
+    public static String readContent(String filePath) throws IOException {
+
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(filePath));
+            StringBuilder builder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+            return builder.toString();
+        } finally {
+            Util.closeQuietly(reader);
+        }
+
     }
 }

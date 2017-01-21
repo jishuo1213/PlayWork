@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.Gravity;
@@ -57,6 +58,11 @@ public class ChoseFileDialogFragment extends DialogFragment implements ChoseLoca
 
     private BitmapCacheManager photoCache;
 
+    private boolean singleSelectMode = false;
+
+    public void setSingleSelectMode(boolean singleSelectMode) {
+        this.singleSelectMode = singleSelectMode;
+    }
 
     public interface ChoseFileResListener {
         void onFileSelect(ArrayList<LocalFileBean> choseFileList);
@@ -104,10 +110,17 @@ public class ChoseFileDialogFragment extends DialogFragment implements ChoseLoca
         adapter.setListener(this);
         adapter.setPhotoCache(photoCache);
         adapter.show(fileBeanArrayList, false);
+        adapter.setSingleSelectedMode(singleSelectMode);
         fileList.setAdapter(adapter);
         confrimChose.setOnClickListener(this);
+        if(!TextUtils.isEmpty(okBtnText)) confrimChose.setText(okBtnText);
         tv_left.setVisibility(View.VISIBLE);
         tv_left.setOnClickListener(this);
+    }
+
+    private String okBtnText;
+    public void setOkBtnText(String btnName){
+        okBtnText = btnName;
     }
 
     @NonNull
@@ -132,21 +145,31 @@ public class ChoseFileDialogFragment extends DialogFragment implements ChoseLoca
     @Override
     public void onFileSelected(LocalFileBean choseBean, boolean isSelected) {
         if (isSelected) {
-            totalSize += choseBean.size;
+            if(singleSelectMode) {
+                totalSize = choseBean.size;
+                selectFileList.clear();
+            }else{
+                totalSize += choseBean.size;
+            }
             selectFileList.add(choseBean);
         } else {
             totalSize -= choseBean.size;
             selectFileList.remove(choseBean);
         }
         choseInfo.setText("已选" + FileUtil.getFileSizeStr(totalSize));
-        if (selectFileList.size() > 0) {
-            confrimChose.setSelected(true);
-            confrimChose.setTextColor(ResourcesUtil.getInstance().getColor(R.color.white));
-            confrimChose.setText("发送(" + selectFileList.size() + ")");
-        } else {
-            confrimChose.setSelected(false);
-            confrimChose.setTextColor(ResourcesUtil.getInstance().getColor(R.color.text_gray));
-            confrimChose.setText("发送(" + 0 + ")");
+        if(TextUtils.isEmpty(okBtnText)) {
+            if (selectFileList.size() > 0) {
+                confrimChose.setSelected(true);
+                confrimChose.setTextColor(ResourcesUtil.getInstance().getColor(R.color.white));
+                confrimChose.setText("发送(" + selectFileList.size() + ")");
+            } else {
+                confrimChose.setSelected(false);
+                confrimChose.setTextColor(ResourcesUtil.getInstance().getColor(R.color.text_gray));
+                confrimChose.setText("发送(" + 0 + ")");
+            }
+        }else{
+            confrimChose.setSelected(isSelected);
+            confrimChose.setTextColor(ResourcesUtil.getInstance().getColor(isSelected?R.color.white:R.color.text_gray));
         }
         titleView.setText("已选" + selectFileList.size() + "个");
     }

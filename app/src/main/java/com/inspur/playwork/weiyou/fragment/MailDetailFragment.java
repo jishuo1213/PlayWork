@@ -4,7 +4,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +26,8 @@ import com.inspur.playwork.weiyou.adapter.MailDetailPagerAdapter;
 import com.inspur.playwork.weiyou.store.MailDetailOperation;
 import com.inspur.playwork.weiyou.utils.WeiYouUtil;
 import com.inspur.playwork.weiyou.view.InsideListView;
+import com.inspur.playwork.weiyou.view.VUConfirmDialog;
 import com.inspur.playwork.weiyou.view.WordWrapView;
-import com.inspur.playwork.weiyou.viewpager.MyViewPager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,18 +38,20 @@ import java.util.List;
 /**
  * Created by 孙 on 2015/11/16 0016.
  */
-public class MailDetailFragment extends Fragment implements MailDetailOperation{
+public class MailDetailFragment extends Fragment implements ViewPager.OnPageChangeListener,MailDetailOperation,VUConfirmDialog.ConfirmDialogListener{
     private static final String TAG = "MailDetailFragment-->";
 //    private static final int DOWNLOAD_MAIL_OVER = 0x20;
 //    private static final int DOWNLOAD_WP_ATTACHEMNT_SUCCESS = 0x03;
 //    private static final int DOWNLOAD_ATTACHEMNT_FAIL = 0x00;
 //    private ServiceHandler handler;
     private WeiYouMainActivity wyma;
-    private MyViewPager mdViewPager;
+    private ViewPager mdViewPager;
     private ArrayList<View> mdViewList;
     private MailDetailPagerAdapter mdpAdapter;
     private InsideListView currAttachmentLV;
     private WebView currContentWV;
+    private View hideView;
+    public VUConfirmDialog downloadConfirmDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,11 @@ public class MailDetailFragment extends Fragment implements MailDetailOperation{
         View v = inflater.inflate(R.layout.wy_fragment_mail_detail, container, false);
 //        Log.i(TAG, "onCreateView: MailDetailFragment onCreateView------------");
         initViewPager(v);
+
+        downloadConfirmDialog = new VUConfirmDialog(wyma,"当前未连接WIFI,要下载的邮件大于5MB，是否继续下载？","不下载了","继续下载");
+        downloadConfirmDialog.setOutsideTouchDisable();
+        downloadConfirmDialog.setConfirmDialogListener(this);
+        hideView = v.findViewById(R.id.md_hideView);
         return v;
     }
 
@@ -81,33 +88,29 @@ public class MailDetailFragment extends Fragment implements MailDetailOperation{
     }
 
     public void initViewPager(View v) {
-        mdViewPager = (MyViewPager) v.findViewById(R.id.mail_detail_viewpager);
-
-        mdpAdapter = new MailDetailPagerAdapter(mdViewList);
+        mdViewPager = (ViewPager) v.findViewById(R.id.mail_detail_viewpager);
+        int count = wyma.vuStores.showingMailIdList.size();
+        int l = count>5?5:count;
+        for (int i = 0; i < l; i++) {
+            View view = LayoutInflater.from(getActivity()).inflate(R.layout.wy_view_mail_detail, null);
+            mdViewList.add(view);
+        }
+        mdpAdapter = new MailDetailPagerAdapter();
+        mdpAdapter.setViewList(mdViewList);
+        mdpAdapter.setCount(count);
         mdViewPager.setAdapter(mdpAdapter);
 //        logi(currIndex + "---setCurrentItem---" + currMail.getSubject());
         mdViewPager.setCurrentItem(wyma.vuStores.getCurrIndex());
-        mdViewPager.addOnPageChangeListener(new MyViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                wyma.vuStores.onPageChanged(position);
-            }
-            @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {}
-            @Override
-            public void onPageScrollStateChanged(int arg0) {}
-        });
+        mdViewPager.addOnPageChangeListener(this);
         wyma.vuStores.requestMailDetail();
     }
+
     @Override
     public void renderCurrentView(final MailDetail md){
 //        此处删附件···
 //        FileUtil.getCurrMailAttachmentsPath(email)
-        wyma.showProgressDialog("正在加载邮件详情...");
-        LayoutInflater lif = LayoutInflater.from(wyma);
-        final View currView = lif.inflate(R.layout.wy_view_mail_detail, null);
-//        mdViewList.set(currIndex,currView);
-//        currView = mdViewList.get(currIndex);
+
+        final View currView = mdViewList.get(wyma.vuStores.getCurrIndex() % 5);
         String senderText = "";
         try {
             JSONObject from = new JSONObject(md.getFrom());
@@ -137,9 +140,8 @@ public class MailDetailFragment extends Fragment implements MailDetailOperation{
             @Override
             public void run() {
                 final int toLayoutHeight = toTVs.getHeight();
-                Log.i(TAG, "run: toTVs toLayoutHeight = "+ toLayoutHeight);
+//                Log.i(TAG, "run: toTVs toLayoutHeight = "+ toLayoutHeight);
                 if(toTVs.isExpandable()){
-                    Log.i(TAG, "run: 111111");
                     toFoldingTV.setVisibility(View.VISIBLE);
                     toFoldingTV.setText(R.string.unfold_rcpts);
                     toMaskTV.setVisibility(View.VISIBLE);
@@ -172,7 +174,7 @@ public class MailDetailFragment extends Fragment implements MailDetailOperation{
             @Override
             public void run() {
                 final int ccLayoutHeight = ccTVs.getHeight();
-                Log.i(TAG, "run: ccTVs ccLayoutHeight = "+ ccLayoutHeight);
+//                Log.i(TAG, "run: ccTVs ccLayoutHeight = "+ ccLayoutHeight);
                 if(ccTVs.isExpandable()){
                     ccFoldingTV.setVisibility(View.VISIBLE);
                     ccFoldingTV.setText(R.string.unfold_rcpts);
@@ -212,19 +214,19 @@ public class MailDetailFragment extends Fragment implements MailDetailOperation{
         currView.findViewById(R.id.md_reply_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wyma.gotoWriteMail(WeiYouMainActivity.QUOTE_TYPE_REPLY);
+                wyma.innerWriteMail(WeiYouMainActivity.QUOTE_TYPE_REPLY);
             }
         });
         currView.findViewById(R.id.md_reply_all_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wyma.gotoWriteMail(WeiYouMainActivity.QUOTE_TYPE_REPLY_ALL);
+                wyma.innerWriteMail(WeiYouMainActivity.QUOTE_TYPE_REPLY_ALL);
             }
         });
         currView.findViewById(R.id.md_forward_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wyma.gotoWriteMail(WeiYouMainActivity.QUOTE_TYPE_FORWARD);
+                wyma.innerWriteMail(WeiYouMainActivity.QUOTE_TYPE_FORWARD);
             }
         });
         currView.findViewById(R.id.md_delete_btn).setOnClickListener(new View.OnClickListener() {
@@ -268,13 +270,13 @@ public class MailDetailFragment extends Fragment implements MailDetailOperation{
 //        是加密邮件的话 显示 加密图标
         currView.findViewById(R.id.md_encrypt_icon).setVisibility(md.getEncrypted()?View.VISIBLE:View.GONE);
         currView.findViewById(R.id.md_signed_icon).setVisibility(md.getSigned()?View.VISIBLE:View.GONE);
-        mdViewList.set(wyma.vuStores.getCurrIndex(), currView);
+        mdViewList.set(wyma.vuStores.getCurrIndex()%5, currView);
         mdpAdapter.notifyDataSetChanged();
 
         currView.post(new Runnable() {
             @Override
             public void run() {
-                wyma.vuStores.renderMailDetail(currView, currContentWV);
+                wyma.vuStores.renderMailDetail(currContentWV);
             }
         });
     }
@@ -313,9 +315,18 @@ public class MailDetailFragment extends Fragment implements MailDetailOperation{
     }
 
     @Override
-    public void onDestroyView() {
-        wyma.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        super.onDestroyView();
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        wyma.vuStores.onPageChanged(position);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 
     //    重写WebViewClient 页面加载完前显示加载中动画
@@ -335,8 +346,10 @@ public class MailDetailFragment extends Fragment implements MailDetailOperation{
             if(wyma!=null) {
                 if (url.startsWith("mailto:")) {
                     String _email = url.split("mailto:")[1];
-                    wyma.vuStores.setTargetRcpt(_email, _email);
-                    wyma.gotoWriteMail(WeiYouMainActivity.QUOTE_TYPE_NO_QUOTE);//写邮件
+                    Intent intent = new Intent();
+                    intent.putExtra("type",0);
+                    intent.putExtra("to",WeiYouUtil.getUserJSON(_email,null));
+                    wyma.gotoWriteMail(intent);//写邮件
                 } else if (url.startsWith("http") || url.startsWith("https")) {
                     Intent i = new Intent(Intent.ACTION_VIEW);
                     i.setData(uri);
@@ -351,6 +364,24 @@ public class MailDetailFragment extends Fragment implements MailDetailOperation{
             if(wyma!=null) {wyma.dismissProgressDialog();}
         }
     }
+
+    @Override
+    public void onButton1Click() {
+        Log.i(TAG, "onButton1Click: cancelDownloadMail");
+        wyma.vuStores.cancelDownloadMail();
+    }
+
+    @Override
+    public void onButton2Click() {
+        Log.i(TAG, "onButton2Click: continueDownloadMail");
+        wyma.vuStores.continueDownloadMail();
+    }
+
+    @Override
+    public void showDownloadComfirmDialog() {
+        downloadConfirmDialog.showPopWindow(hideView);
+    }
+
 
 //    //下载微盘附件件
 //    private void downloadMailAttachment(String url, final String filePath) throws Exception {
@@ -400,5 +431,6 @@ public class MailDetailFragment extends Fragment implements MailDetailOperation{
 //            }
 //        }
 //    }
+
 
 }

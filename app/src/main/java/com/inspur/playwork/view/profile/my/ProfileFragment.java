@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.inspur.playwork.R;
 import com.inspur.playwork.config.AppConfig;
 import com.inspur.playwork.model.common.UserInfoBean;
 import com.inspur.playwork.utils.PreferencesHelper;
+import com.inspur.playwork.view.common.GuideActivity;
 import com.inspur.playwork.view.profile.setting.SettingActivity;
 
 import java.io.File;
@@ -48,8 +50,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private void initViews(View view) {
         RelativeLayout mReMyInfo = (RelativeLayout) view.findViewById(R.id.re_my_info);
         RelativeLayout mReSettings = (RelativeLayout) view.findViewById(R.id.re_settings);
+        RelativeLayout help = (RelativeLayout) view.findViewById(R.id.re_help);
         view.findViewById(R.id.re_recommend).setOnClickListener(this);
         view.findViewById(R.id.re_login_web).setOnClickListener(this);
+
 
         UserInfoBean user = PreferencesHelper.getInstance().getCurrentUser();
         TextView myName = (TextView) view.findViewById(R.id.tv_topic);
@@ -65,7 +69,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         }
         myName.setText(user.name);
-        myDept.setText(user.subDepartment);
+        if (TextUtils.isEmpty(user.subDepartment))
+            myDept.setText(user.department);
+        else
+            myDept.setText(user.subDepartment);
 
 //        ArrayMap<String, Long> avatars = ((PlayWorkApplication) getActivity().getApplication()).getAvatars();
 
@@ -88,6 +95,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         mReMyInfo.setOnClickListener(this);
         mReSettings.setOnClickListener(this);
+        help.setOnClickListener(this);
         logoutTextView.setOnClickListener(this);
     }
 
@@ -112,7 +120,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             case R.id.re_recommend:
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, AppConfig.SHARE_MESSAGE_TO_OTHERS + PreferencesHelper.getInstance().getCurrentUser().id);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, AppConfig.SHARE_MESSAGE_TO_OTHERS +
+                        PreferencesHelper.getInstance().getCurrentUser().id);
                 sendIntent.setType("text/plain");
                 startActivity(sendIntent);
                 break;
@@ -120,6 +129,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 Dialog dialog = new Dialog(getActivity(), R.style.normal_dialog);
                 dialog.setContentView(R.layout.two_code_dialog);
                 dialog.show();
+                break;
+            case R.id.re_help:
+                Intent guideIntent = new Intent(getActivity(), GuideActivity.class);
+                guideIntent.putExtra(GuideActivity.USER_OPEN, true);
+                startActivity(guideIntent);
                 break;
             default:
                 break;

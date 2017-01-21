@@ -3,6 +3,7 @@ package com.inspur.playwork.weiyou.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,13 +28,12 @@ import java.util.Date;
 /**
  * Created by 孙 on 2015/11/12 0012.
  */
-public class MailHeadListAdapter extends SwipeMenuAdapter<MailHeadListAdapter.DefaultViewHolder> {
+public class MailHeadListAdapter extends SwipeMenuAdapter<MailHeadListAdapter.MailHeadViewHolder> {
 
     private static final String TAG = "MailHeadListAdapter-->";
     public static final int ITEM_TYPE_CONTENT = 1;
     public static final int ITEM_TYPE_BOTTOM = 2;
     private LayoutInflater mLayoutInflater;
-    private Context mContext;
 
     private ArrayList<MailDetail> dataSourceAll = new ArrayList<>();
     private static ArrayList<MailDetail> dataSource = new ArrayList<>();
@@ -43,7 +43,6 @@ public class MailHeadListAdapter extends SwipeMenuAdapter<MailHeadListAdapter.De
     private ItemClickListener icListener;
 
     public MailHeadListAdapter(Context context,ArrayList<MailDetail> mailListData,boolean showFooterView) {
-        this.mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
         this.mFilteredArrayList = new ArrayList<>();
         this.showFooterView = showFooterView;
@@ -75,12 +74,12 @@ public class MailHeadListAdapter extends SwipeMenuAdapter<MailHeadListAdapter.De
     }
 
     @Override
-    public DefaultViewHolder onCompatCreateViewHolder(View realContentView, int viewType) {
-        return new DefaultViewHolder(realContentView,viewType == ITEM_TYPE_BOTTOM);
+    public MailHeadViewHolder onCompatCreateViewHolder(View realContentView, int viewType) {
+        return new MailHeadViewHolder(realContentView,viewType == ITEM_TYPE_BOTTOM);
     }
 
     @Override
-    public void onBindViewHolder(DefaultViewHolder holder, final int position) {
+    public void onBindViewHolder(MailHeadViewHolder holder, final int position) {
         if(!holder.isFooter) {
             final MailDetail _md = getItem(position);
             holder.setData(_md, position);
@@ -91,7 +90,10 @@ public class MailHeadListAdapter extends SwipeMenuAdapter<MailHeadListAdapter.De
     private static MailDetail getItem(int position){
         if(position>-1 && position<dataSource.size())
             return dataSource.get(position);
-        else return null;
+        else {
+            Log.i(TAG, "getItem失败 position="+ position);
+            return null;
+        }
     }
 
     public Filter getFilter() {
@@ -99,6 +101,10 @@ public class MailHeadListAdapter extends SwipeMenuAdapter<MailHeadListAdapter.De
             mFilter = new MailFilter();
         }
         return mFilter;
+    }
+
+    public void setFooterViewVisible(boolean showFooter) {
+        this.showFooterView = showFooter;
     }
 
     //过滤数据
@@ -132,7 +138,7 @@ public class MailHeadListAdapter extends SwipeMenuAdapter<MailHeadListAdapter.De
         }
     }
 
-    static class DefaultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    static class MailHeadViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView mailHeadAvatarIv;
         ImageView mailHeadAttachmentIv;
         ImageView mailHeadMarkedStarIv;
@@ -147,7 +153,7 @@ public class MailHeadListAdapter extends SwipeMenuAdapter<MailHeadListAdapter.De
         boolean isFooter;
         ItemClickListener icListener;
 
-        public DefaultViewHolder(View itemView,boolean isFooter) {
+        public MailHeadViewHolder(View itemView,boolean isFooter) {
             super(itemView);
             if(!isFooter) {
                 mailHeadAvatarIv = (TextView) itemView.findViewById(R.id.mail_head_avatar);

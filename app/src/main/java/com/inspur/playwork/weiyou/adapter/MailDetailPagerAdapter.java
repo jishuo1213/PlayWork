@@ -1,9 +1,8 @@
 package com.inspur.playwork.weiyou.adapter;
 
+import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.inspur.playwork.weiyou.viewpager.PagerAdapter;
 
 import java.util.ArrayList;
 
@@ -13,34 +12,33 @@ import java.util.ArrayList;
 public class MailDetailPagerAdapter extends PagerAdapter {
     private static final String TAG = "MailDetailPagerAdapter";
 
-    private ArrayList<View> mdViewList;
+    private ArrayList<View> viewList;
+    private int count;
 
-    public MailDetailPagerAdapter(ArrayList<View> mdvl) {
-        this.mdViewList = mdvl;
+    public void setViewList(ArrayList<View> viewList) {
+        this.viewList = viewList;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     @Override
     public int getCount() {
-        return mdViewList.size();
+        return count;
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        View view = mdViewList.get(position);
-        container.addView(view);
-        return view;
+        int length = viewList.size();
+        container.addView(viewList.get(position % length));
+        return viewList.get(position % length);
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-//        container.removeView(mdViewList.get(position));
-        container.removeView((View) object);
-    }
-
-    @Override
-    public int getItemPosition(Object object) {
-//        return mdViewList.indexOf(object);
-        return POSITION_NONE;
+        int length = viewList.size();
+        container.removeView(viewList.get(position % length));
     }
 
     @Override

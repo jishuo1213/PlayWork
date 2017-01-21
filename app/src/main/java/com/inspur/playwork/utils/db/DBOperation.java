@@ -17,6 +17,7 @@ import com.inspur.playwork.model.message.MessageBean;
 import com.inspur.playwork.model.message.SmallMailBean;
 import com.inspur.playwork.model.message.VChatBean;
 import com.inspur.playwork.model.timeline.UnReadMessageBean;
+import com.inspur.playwork.utils.FileUtil;
 import com.inspur.playwork.utils.PreferencesHelper;
 import com.inspur.playwork.utils.db.bean.MailAccount;
 import com.inspur.playwork.utils.db.bean.MailAttachment;
@@ -37,6 +38,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -282,7 +287,7 @@ public class DBOperation {
                 break;
             //获取用户的邮箱账号列表
             case DataBaseActions.QUERY_MAIL_ACCOUNT_LIST:
-                getMailAccounts((String)data.get(0));
+                getMailAccounts((String) data.get(0));
                 break;
             //保存用户的一个邮箱账号信息（插入或更新）
             case DataBaseActions.SAVE_ONE_MAIL_ACCOUNT:
@@ -329,6 +334,31 @@ public class DBOperation {
                 updateMailTaskRcpts((MailTask) data.get(0));
                 break;
         }
+    }
+
+    public void printAllMessageHistory() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query(SQLSentence.TABLE_CHAT_MESSAGE, null, SQLSentence.MESSAGE_GROUP_ID + "= ? ", new String[]{"5865daed54ffdd91066579b6"}, null, null, null);
+        DBHelper.MessageBeanCursor messageBeanCursor = new DBHelper.MessageBeanCursor(cursor);
+        int count = messageBeanCursor.getCount();
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(FileUtil.getDownloadPath() + "history.txt")));
+            if (count > 0 && messageBeanCursor.moveToFirst()) {
+                writer.write("[");
+                do {
+                    MessageBean messageBean = messageBeanCursor.getMessageBean(null);
+                    writer.write(messageBean.toJson());
+                    writer.write(",");
+                    writer.newLine();
+                } while (cursor.moveToNext());
+            }
+            writer.write("]");
+
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        cursor.close();
     }
 
     private void deleteOnUnReadByMsgId(String groupId, String msgId) {
@@ -572,7 +602,7 @@ public class DBOperation {
         if (upsertChatSummaryStatement == null)
             upsertChatSummaryStatement = db.compileStatement(SQLSentence.getUpsertChatSummarySql());
         fillVChatBeanData(upsertChatSummaryStatement, vChatBean);
-        upsertChatSummaryStatement.bindString(9,vChatBean.groupId);
+        upsertChatSummaryStatement.bindString(9, vChatBean.groupId);
         long result = upsertChatSummaryStatement.executeInsert();
         Log.i(TAG, "doInsertVChatBean: result" + result);
     }
@@ -1050,7 +1080,7 @@ public class DBOperation {
     private void getMailListByDirID(String email, long dirId) {
         //获取邮件列表
         List<MailDetail> mailList = mailDetailDao.queryBuilder().where(MailDetailDao.Properties.Email.eq(email), MailDetailDao.Properties.DirectoryId.eq(dirId), MailDetailDao.Properties.IsDeleted.eq(false)).orderDesc(MailDetailDao.Properties.UpdateTime).list();
-        Log.i(TAG, "get mail list, Count: " + mailList.size());
+        Log.i(TAG, "getMailListByDirID, Count: " + mailList.size());
         if (mailList.size() > 0)
             Dispatcher.getInstance().dispatchStoreActionEvent(DataBaseActions.QUERY_MAIL_LIST_BY_DIR_ID_SUCCESS, mailList);
         else
@@ -1067,7 +1097,7 @@ public class DBOperation {
     private void getOutBoxMailList(String email) {
         //获取邮件列表
         List<MailDetail> mailList = mailDetailDao.queryBuilder().where(MailDetailDao.Properties.Email.eq(email), MailDetailDao.Properties.DirectoryId.eq(-995), MailDetailDao.Properties.IsDeleted.eq(false)).orderDesc(MailDetailDao.Properties.UpdateTime).list();
-        Log.i(TAG, "get mail list, Count: " + mailList.size());
+        Log.i(TAG, "getOutBoxMailList, Count: " + mailList.size());
         if (mailList.size() > 0)
             Dispatcher.getInstance().dispatchStoreActionEvent(DataBaseActions.QUERY_OUT_BOX_MAIL_LIST_SUCCESS, mailList);
         else
@@ -1121,7 +1151,7 @@ public class DBOperation {
     private void getMailListByDirIDWithPage(String email, long dirId, int page, int size) {
         //获取邮件列表（分页）
         List<MailDetail> mailList = mailDetailDao.queryBuilder().where(MailDetailDao.Properties.Email.eq(email), MailDetailDao.Properties.DirectoryId.eq(dirId)).orderDesc(MailDetailDao.Properties.SentDate).limit(size).offset((page - 1) * size).list();
-        Log.i(TAG, "get mail list, Count: " + mailList.size());
+        Log.i(TAG, "getMailListByDirIDWithPage, Count: " + mailList.size());
         if (mailList.size() > 0)
             Dispatcher.getInstance().dispatchStoreActionEvent(DataBaseActions.QUERY_MAIL_LIST_BY_DIR_ID_WITH_PAGE_SUCCESS, mailList);
         else
@@ -1409,13 +1439,13 @@ public class DBOperation {
             return;
         }
         long result = mailContactsDao.insertOrReplace(mailContacts);
-        Log.i(TAG, "Save mail contacts   " + mailContacts.toString());
-        Log.i(TAG, "Save result   " + result);
+//        Log.i(TAG, "Save mail contacts   " + mailContacts.toString());
+//        Log.i(TAG, "Save result   " + result);
         if (result > 0)
             Dispatcher.getInstance().dispatchStoreActionEvent(DataBaseActions.SAVE_ONE_MAIL_CONTACTS_SUCCESS, mailContacts.getId());
         else
             Dispatcher.getInstance().dispatchStoreActionEvent(DataBaseActions.SAVE_ONE_MAIL_CONTACTS_FAILED, mailContacts.getId());
-        Log.i(TAG, "Saved mail contacts, ID: " + mailContacts.getId());
+//        Log.i(TAG, "Saved mail contacts, ID: " + mailContacts.getId());
     }
 
     /**

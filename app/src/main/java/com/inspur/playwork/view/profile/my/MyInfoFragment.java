@@ -97,8 +97,8 @@ public class MyInfoFragment extends Fragment implements View.OnClickListener {
                 .placeholder(R.drawable.icon_chat_default_avatar).
                 diskCacheStrategy(DiskCacheStrategy.NONE).into(avatarImageView);
         p_nameTextView.setText(userInfoJsonObject.name);
-        p_companyTextView.setText(userInfoJsonObject.department);
-        p_deptTextView.setText(userInfoJsonObject.subDepartment);
+        p_companyTextView.setText(userInfoJsonObject.company);
+        p_deptTextView.setText(userInfoJsonObject.department);
         p_codeTextView.setText(userInfoJsonObject.uid.substring(1));
         p_phoneTextView.setText("");
         p_emailTextView.setText(userInfoJsonObject.id + AppConfig.EMAIL_SUFFIX);

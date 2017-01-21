@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.inspur.playwork.R;
 import com.inspur.playwork.model.common.UserInfoBean;
 import com.inspur.playwork.model.message.GroupInfoBean;
-import com.inspur.playwork.weiyou.WeiYouMainActivity;
+import com.inspur.playwork.weiyou.WriteMailActivity;
 import com.inspur.playwork.weiyou.adapter.AddMemberListener;
 import com.inspur.playwork.weiyou.adapter.ContactListPagerAdapter;
 import com.inspur.playwork.weiyou.adapter.ContactListRecyclerAdapter;
@@ -42,7 +42,7 @@ public class ContactSelectorFragment extends Fragment implements AddMemberListen
     private static final String TAG = "ContactSelectorFragment";
 //    private static final String USER_ID = PreferencesHelper.getInstance().readStringPreference(PreferencesHelper.USER_NAME);
 
-    private WeiYouMainActivity wyma;
+    private WriteMailActivity wyma;
 
 //    private RecyclerView contactListRecyclerView;
 
@@ -69,9 +69,8 @@ public class ContactSelectorFragment extends Fragment implements AddMemberListen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        wyma = (WeiYouMainActivity)getActivity();
+        wyma = (WriteMailActivity)getActivity();
         wyma.vuStores.setContactSelectOperation(this);
-//        GroupStores.getInstance().register();
         wyma.vuStores.initContactSelectorData();
         handler = new ContactHandler();
     }
@@ -84,12 +83,6 @@ public class ContactSelectorFragment extends Fragment implements AddMemberListen
         wyma.showProgressDialog("正在加载...");
         initView(rootView);
         return rootView;
-    }
-
-    @Override
-    public void onDetach() {
-//        GroupStores.getInstance().unRegister();
-        super.onDetach();
     }
 
     private void initView(View v) {

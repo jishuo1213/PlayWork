@@ -58,6 +58,13 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         Thread.setDefaultUncaughtExceptionHandler(this);
         //获取Context，方便内部使用
 //        mContext = context.getApplicationContext();
+
+        File filePath = new File(FILE_PATH);
+        File[] files = filePath.listFiles();
+        Log.i(TAG, "init: " + files.length);
+        for (int i = 0; i < files.length; i++) {
+            uploadExceptionToServer(files[i]);
+        }
     }
 
     /**

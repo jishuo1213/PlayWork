@@ -17,7 +17,7 @@ public class AppConfig {
     private static final String WP_BASE_URI_HOST = "http://htime.inspur.com";
 //    public static final String WP_BASE_URI_HOST = "http://10.110.9.46";
 
-//        public static final String HTTP_SERVER_IP = "http://10.47.1.20:6382/";
+    //        public static final String HTTP_SERVER_IP = "http://10.47.1.20:6382/";
 //    public static final String HTTP_SERVER_IP = "http://218.57.135.45:55166/";
     public static final String HTTP_SERVER_IP = "http://218.57.135.45:9080/";
 
@@ -59,10 +59,11 @@ public class AppConfig {
 //    public static final String DOWNLOAD_APK_FILE = BASE_SERVER + "mobile/getNewMobileVersionHandler.ashx";
 
     private static final String SHARE_APK_FILE = "http://htime.inspur.com/m";
-    public static String SHARE_MESSAGE_TO_OTHERS = "好时光可以帮助你把事管起来，很方便，推荐您用一下，下载地址：" + SHARE_APK_FILE + " ,记得安装后加我的好号：";
+    public static String SHARE_MESSAGE_TO_OTHERS = "好时光可以帮助你把事管起来，很方便，推荐您用一下，下载地址：" + SHARE_APK_FILE + " ," +
+            "记得在微聊中联系我哦:";
 
     // 检查更新版本信息
-    public static final String CHECK_NEW_VERSION = BASE_SERVER + "CheckNewVersion_mobil.ashx?AppId=0";
+    public static final String CHECK_NEW_VERSION = BASE_SERVER + "CheckNewVersion_mobil.ashx?";
 
     // 查询部门成员
     public static final String SEARCH_BY_DEPT = BASE_SERVER + "search/searchbyDept.ashx";

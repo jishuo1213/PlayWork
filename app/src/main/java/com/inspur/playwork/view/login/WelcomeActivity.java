@@ -22,6 +22,7 @@ import com.inspur.playwork.model.common.UserInfoBean;
 import com.inspur.playwork.stores.login.LoginStores;
 import com.inspur.playwork.utils.PreferencesHelper;
 import com.inspur.playwork.utils.UItoolKit;
+import com.inspur.playwork.view.common.GuideActivity;
 
 /**
  * Created by Fan on 15-9-25.
@@ -35,10 +36,10 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate: " + (Dispatcher.getInstance() == null));
         if (((PlayWorkApplication) getApplication()).isLogOut()) {
             ((PlayWorkApplication) getApplication()).resume();
         }
-        Log.i(TAG, "onCreate: " + (Dispatcher.getInstance() == null));
         LoginStores.getInstance().register();
         Dispatcher.getInstance().register(this);
 //        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//去掉信息栏
@@ -137,7 +138,12 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private void startMainActivity() {
         LoginStores.getInstance().unRegister();
-        startActivity(new Intent(this, MainActivity.class));
+        if (PreferencesHelper.getInstance().readBooleanPreference(PreferencesHelper.IS_GUIDE_PAGE_SHOW)) {
+            startActivity(new Intent(this, MainActivity.class));
+        } else {
+            startActivity(new Intent(this, GuideActivity.class));
+        }
+//        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 }

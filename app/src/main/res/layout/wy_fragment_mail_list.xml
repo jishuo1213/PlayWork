@@ -7,6 +7,7 @@
                                                               android:layout_width="match_parent"
                                                               android:layout_height="match_parent"
                                                               android:background="@color/whitesmoke"
+                                                              android:clickable="true"
                                                               android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -209,6 +210,5 @@
                 android:textSize="16sp" />
         </LinearLayout>
     </RelativeLayout>
-
 
 </com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout>

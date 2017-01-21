@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * NetWork Utils
@@ -47,9 +48,9 @@ public class NetWorkUtils {
                 String proxyHost = System.getProperty("http.proxyHost");
                 type = TextUtils.isEmpty(proxyHost) ? (isFastMobileNetwork(context) ? NETWORK_TYPE_3G : NETWORK_TYPE_2G)
                         : NETWORK_TYPE_WAP;
-            } else if("Ethernet".equalsIgnoreCase(typeName)){
-                type= NETWORK_TYPE_ETHERNET ;
-            }else{
+            } else if ("Ethernet".equalsIgnoreCase(typeName)) {
+                type = NETWORK_TYPE_ETHERNET;
+            } else {
                 type = NETWORK_TYPE_UNKNOWN;
             }
         }
@@ -106,8 +107,11 @@ public class NetWorkUtils {
         }
     }
 
+    private static final String TAG = "NetWorkUtils";
+
     public static boolean isNetWorkAvailable(Context context) {
         String type = getNetWorkType(context);
+        Log.i(TAG, "isNetWorkAvailable: " + type);
         return isNetWorkAvailable(type);
     }
 

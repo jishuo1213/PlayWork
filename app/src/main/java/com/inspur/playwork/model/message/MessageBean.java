@@ -448,4 +448,18 @@ public class MessageBean implements Parcelable {
         dest.writeParcelable(imgSrc, flags);
         dest.writeInt(sendType);
     }
+
+    public String toJson() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("content", content);
+            jsonObject.put("createTime", createTime);
+            jsonObject.put("from", sendMessageUser.getUserJson());
+            jsonObject.put("sendTime", sendTime);
+            jsonObject.put("to", new JSONArray(to));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
+    }
 }

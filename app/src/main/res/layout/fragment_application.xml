@@ -30,7 +30,7 @@
                     <ImageView
                         android:id="@+id/iv_weekly_plan"
                         style="@style/app_item_image_style"
-                        android:src="@drawable/icon_app_weekly_plan" />
+                        android:src="@drawable/inspur_news" />
 
                     <TextView
                         style="@style/app_item_text_style"

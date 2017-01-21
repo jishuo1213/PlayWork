@@ -20,4 +20,5 @@ public interface MailDetailOperation {
 
     void renderAttachmentList(List<MailAttachment> currAttachmentList);
 
+    void showDownloadComfirmDialog();
 }

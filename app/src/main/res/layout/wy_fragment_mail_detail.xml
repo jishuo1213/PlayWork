@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/snow"
     android:fitsSystemWindows="true"
+    android:clickable="true"
     android:orientation="vertical">
 
     <!--<android.support.design.widget.AppBarLayout-->
@@ -21,10 +22,14 @@
     <!--</android.support.design.widget.AppBarLayout>-->
 
 
-    <com.inspur.playwork.weiyou.viewpager.MyViewPager
+    <android.support.v4.view.ViewPager
         android:id="@+id/mail_detail_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <View
+        android:id="@+id/md_hideView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
 
 </com.inspur.playwork.view.timeline.addtask.FragmentAnimLayout>

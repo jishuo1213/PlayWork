@@ -5,13 +5,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.inspur.playwork.R;
+import com.inspur.playwork.config.AppConfig;
 import com.inspur.playwork.model.common.UserInfoBean;
 import com.inspur.playwork.utils.db.bean.MailContacts;
 import com.inspur.playwork.weiyou.view.WordWrapView;
@@ -179,8 +179,11 @@ public class WeiYouUtil {
     }
 
     public static String getUserJSON(String email,String name){
-        if (TextUtils.isEmpty(name)) name = email;
-        return "{\"id\":\"" + email.split("@")[0] + "\",\"name\":\"" + name + "\",\"email\":\"" + email + "\"}";
+        if(isEmail(email)) {
+            if (TextUtils.isEmpty(name)) name = email;
+            String id = email.endsWith(AppConfig.EMAIL_SUFFIX) ? email.split("@")[0] : email;
+            return "[{\"id\":\"" + id + "\",\"name\":\"" + name + "\",\"email\":\"" + email + "\"}]";
+        }else return "[]";
     }
 
     /**

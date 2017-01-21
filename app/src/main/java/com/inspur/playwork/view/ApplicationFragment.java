@@ -49,10 +49,11 @@ public class ApplicationFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
+        Intent intent;
         switch (v.getId()) {
             case R.id.relative_weiyou:
 //                Log.i(TAG, "onClick:/**/ " + s.length());
-                Intent intent = new Intent(getActivity(), WeiYouMainActivity.class);
+                intent = new Intent(getActivity(), WeiYouMainActivity.class);
                 startActivity(intent);
                 break;
             case R.id.relative_weizhi:
@@ -81,24 +82,30 @@ public class ApplicationFragment extends Fragment implements View.OnClickListene
 
     public Intent getInitedIntent(int id) {
         Intent intent = null;
-        if (id == R.id.relative_weizhi) {
-            intent = new Intent(getActivity(), AppContainerActivity.class);
-            intent.putExtra("app_name", "微知");
-            intent.putExtra("app_code", 1);
-            intent.putExtra("app_url", AppConfig.APP_KW_LOGIN);
-        } else if (id == R.id.relative_weipan) {
-            intent = new Intent(getActivity(), AppContainerActivity.class);
-            intent.putExtra("app_name", "微盘");
-            intent.putExtra("app_code", 2);
-            intent.putExtra("app_url", AppConfig.APP_DISK_LOGIN);
-        } else if (id == R.id.relative_inspur_weekplan) {
-            intent = new Intent(getActivity(), AppContainerPortiaActivity.class);
-            intent.putExtra("app_name", "集团周计划");
-            intent.putExtra("app_code", 3);
-        } else if (id == R.id.relative_inspur_mbo) {
-            intent = new Intent(getActivity(), AppContainerPortiaActivity.class);
-            intent.putExtra("app_name", "集团MBO");
-            intent.putExtra("app_code", 4);
+        switch (id) {
+            case R.id.relative_weizhi:
+                intent = new Intent(getActivity(), AppContainerActivity.class);
+                intent.putExtra("app_name", "微知");
+                intent.putExtra("app_code", 1);
+                intent.putExtra("app_url", AppConfig.APP_KW_LOGIN);
+                break;
+            case R.id.relative_weipan:
+                intent = new Intent(getActivity(), AppContainerActivity.class);
+                intent.putExtra("app_name", "微盘");
+                intent.putExtra("app_code", 2);
+                intent.putExtra("app_url", AppConfig.APP_DISK_LOGIN);
+                break;
+            case R.id.relative_inspur_weekplan:
+                intent = new Intent(getActivity(), AppContainerPortiaActivity.class);
+                intent.putExtra("app_name", "集团周计划");
+                intent.putExtra("app_code", 3);
+//                intent = new Intent(getActivity(), WeekPlanActivity.class);
+                break;
+            case R.id.relative_inspur_mbo:
+                intent = new Intent(getActivity(), AppContainerPortiaActivity.class);
+                intent.putExtra("app_name", "集团MBO");
+                intent.putExtra("app_code", 4);
+                break;
         }
         return intent;
     }

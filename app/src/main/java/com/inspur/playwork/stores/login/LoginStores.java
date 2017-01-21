@@ -4,6 +4,7 @@ package com.inspur.playwork.stores.login;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.inspur.playwork.BuildConfig;
 import com.inspur.playwork.actions.StoreAction;
 import com.inspur.playwork.actions.login.LoginActions;
 import com.inspur.playwork.actions.network.NetWorkActions;
@@ -96,7 +97,7 @@ public class LoginStores extends Stores {
      * 登录外网服务器
      */
     private void loginToADServer(String userName, String password, boolean needEncypt) {
-        this.userName = userName;
+        this.userName = userName.toLowerCase();
 /*        if (PreferencesHelper.getInstance().readBooleanPreference(PreferencesHelper.HAVE_LOGIN_AD_SERVER)) {
             dispatcher.dispatchUpdateUIEvent(LoginActions.LOGIN_AD_SERVER_SUCCESS);
             return;
@@ -106,7 +107,7 @@ public class LoginStores extends Stores {
         } else {
             this.password = password;
         }
-        String loginPath = AppConfig.AD_SERVER_URI + "&loginName=" + userName + "&password=" + this.password;
+        String loginPath = AppConfig.AD_SERVER_URI + "version=" + BuildConfig.VERSION_CODE + "&loginName=" + userName + "&password=" + this.password;
 //        dispatcher.dispatchNetWorkAction(CommonActions.GET_DATA_BY_HTTP_GET, loginPath, loginCallBack);
         OkHttpClientManager.getInstance().getAsyn(loginPath, loginCallBack);
     }
@@ -162,9 +163,9 @@ public class LoginStores extends Stores {
                             infoObj.put("Password", password);
                             JSONObject versionJson = new JSONObject();
 
-                            versionJson.put("Version", infoJson.optString("version"));
-                            versionJson.put("VersionName", infoJson.optString("versioname"));
-                            versionJson.put("Updatecontent", infoJson.optString("updatecontent"));
+                            versionJson.put("version", infoJson.optString("version"));
+                            versionJson.put("versioname", infoJson.optString("versioname"));
+                            versionJson.put("updatecontent", infoJson.optString("updatecontent"));
                             versionJson.put("VURL", infoJson.optString("VURL"));
                             PreferencesHelper.getInstance().writeToPreferences(PreferencesHelper.VERSION_INFO, versionJson.toString());
                         } catch (JSONException e) {

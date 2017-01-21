@@ -30,9 +30,11 @@ import com.inspur.playwork.utils.DateUtils;
 import com.inspur.playwork.utils.IMMLeaks;
 import com.inspur.playwork.utils.PreferencesHelper;
 import com.inspur.playwork.utils.UItoolKit;
+import com.inspur.playwork.utils.db.DBOperation;
 import com.inspur.playwork.versionUpdate.VersionPlaywork;
 import com.inspur.playwork.view.ApplicationFragment;
 import com.inspur.playwork.view.UnReadMsgChangeListener;
+import com.inspur.playwork.view.application.addressbook.AddressBookActivity;
 import com.inspur.playwork.view.common.BadgeView;
 import com.inspur.playwork.view.common.ChoseYearMonthAdapter;
 import com.inspur.playwork.view.common.SpinerWindow;
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements UnReadMsgChangeLi
     private TextView todayTextView;
     private TextView monthTextView;
     private ImageButton rightImageButton;
+    private ImageButton searchImageButton;
 
     private boolean isCrossViewShow;
 
@@ -108,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements UnReadMsgChangeLi
         initTabView(savedInstanceState);
         Dispatcher.getInstance().register(this);
 //        Log.i(TAG, "onCreate: " + EncryptUtil.aesDecrypt("n6tykwhelMpiFWrL/F4atjvUol4YrDK+CtTvM2dZ0Vg="));
+//        (((PlayWorkApplication) getApplicationContext()).getDbOperation()).printAllMessageHistory();
     }
 
     @Override
@@ -203,6 +207,8 @@ public class MainActivity extends AppCompatActivity implements UnReadMsgChangeLi
         mTvTitle.setOnClickListener(this);
 
         netErrorLayout = findViewById(R.id.error_layout);
+        searchImageButton = (ImageButton) findViewById(R.id.iv_search);
+        searchImageButton.setOnClickListener(this);
     }
 
     /**
@@ -248,6 +254,7 @@ public class MainActivity extends AppCompatActivity implements UnReadMsgChangeLi
             getFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, mTimeLineFragment, TIME_LINE_TAG)
                     .commit();
+            Log.i(TAG, "initTabView: update version");
             new VersionPlaywork(MainActivity.this, PreferencesHelper.getInstance().getVersionInfo(), new Handler());
         } else {
             int index = 0;
@@ -280,6 +287,7 @@ public class MainActivity extends AppCompatActivity implements UnReadMsgChangeLi
                     monthTextView.setVisibility(View.VISIBLE);
                     setYearMonth(((TimeLineFragmentNew2) mTimeLineFragment).selectedDay);
                     rightImageButton.setVisibility(View.GONE);
+                    searchImageButton.setVisibility(View.GONE);
                 } else {
                     if (System.currentTimeMillis() - firstClickTabTime < 500) {//双击触发
                         ((TimeLineFragmentNew2) mTimeLineFragment).showNetUnReadDay();
@@ -296,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements UnReadMsgChangeLi
                 todayTextView.setVisibility(View.GONE);
                 monthTextView.setVisibility(View.GONE);
                 rightImageButton.setVisibility(View.VISIBLE);
+                searchImageButton.setVisibility(View.VISIBLE);
                 if (viewFragments[index] == null) {
                     viewFragments[1] = new VChatFragment();
                     mMessageFragment = viewFragments[1];
@@ -307,6 +316,7 @@ public class MainActivity extends AppCompatActivity implements UnReadMsgChangeLi
                 todayTextView.setVisibility(View.GONE);
                 monthTextView.setVisibility(View.GONE);
                 rightImageButton.setVisibility(View.GONE);
+                searchImageButton.setVisibility(View.GONE);
                 if (viewFragments[index] == null)
                     viewFragments[2] = new ApplicationFragment();
                 break;
@@ -316,6 +326,7 @@ public class MainActivity extends AppCompatActivity implements UnReadMsgChangeLi
                 todayTextView.setVisibility(View.GONE);
                 monthTextView.setVisibility(View.GONE);
                 rightImageButton.setVisibility(View.GONE);
+                searchImageButton.setVisibility(View.GONE);
                 if (viewFragments[index] == null)
                     viewFragments[3] = new ProfileFragment();
                 break;
@@ -498,6 +509,10 @@ public class MainActivity extends AppCompatActivity implements UnReadMsgChangeLi
                     PlayWorkServiceNew playWorkService = (PlayWorkServiceNew) binder.getService();
                     playWorkService.reconnectToServer();
                 }
+                break;
+            case R.id.iv_search:
+                startActivity(new Intent(this, AddressBookActivity.class));
+
                 break;
         }
     }

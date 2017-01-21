@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.inspur.playwork.R;
 import com.inspur.playwork.model.news.DepartmentNewsBean;
@@ -28,16 +29,19 @@ import java.util.UUID;
  * Created by fan on 17-1-15.
  */
 public class NewListFragment extends Fragment implements TabRecyAdapter.TabEventListener,
-        ViewPager.OnPageChangeListener, SwipeRefreshLayout.OnRefreshListener, NewsViewOperation, RecyclerNewsAdapter.NewsListEventListener {
+        ViewPager.OnPageChangeListener, SwipeRefreshLayout.OnRefreshListener, NewsViewOperation, RecyclerNewsAdapter.NewsListEventListener, View.OnClickListener {
     private static final String TAG = "NewListFragment";
 
     public static final String TAB_COUNT = "tab_count";
     public static final String TAB_NAMES = "tab_name";
 
+
     public interface NewsListEventListener {
         void onTabChange(int index);
 
-        void onNewsClick(DepartmentNewsBean newsBean);
+        void onNewsClick(int pos, ArrayList<DepartmentNewsBean> newsList);
+
+        String getCompanyName(String name);
     }
 
     private NewsListEventListener eventListener;
@@ -121,13 +125,32 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
         ApplicationStores.getInstance().setNewsWeakReference(null);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    private TextView[] tabArray;
+
     private void initView(View view) {
-        RecyclerView tabViews = (RecyclerView) view.findViewById(R.id.recy_tabs);
-        tabViews.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        TabRecyAdapter adapter = new TabRecyAdapter(tabViews);
-        adapter.setTabNames(tab_names);
-        adapter.setListener(this);
-        tabViews.setAdapter(adapter);
+//        RecyclerView tabViews = (RecyclerView) view.findViewById(R.id.recy_tabs);
+//        tabViews.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+//        TabRecyAdapter adapter = new TabRecyAdapter(tabViews);
+//        adapter.setTabNames(tab_names);
+//        adapter.setListener(this);
+//        tabViews.setAdapter(adapter);
+
+        TextView tab1 = (TextView) view.findViewById(R.id.tv_tab1);
+        TextView tab2 = (TextView) view.findViewById(R.id.tv_tab2);
+        TextView tab3 = (TextView) view.findViewById(R.id.tv_tab3);
+        TextView tab4 = (TextView) view.findViewById(R.id.tv_tab4);
+        tabArray = new TextView[]{tab1, tab2, tab3, tab4};
+        int length = tab_names.length;
+        for (int i = 0; i < length; i++) {
+            tabArray[i].setText(tab_names[i]);
+            tabArray[i].setOnClickListener(this);
+        }
+
         recyclerViews = new ArrayList<>();
         viewPager = (ViewPager) view.findViewById(R.id.page_main_view);
         for (int i = 0; i < tabCount; i++) {
@@ -140,6 +163,7 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
         viewPager.setAdapter(viewPageAdapter);
         viewPager.setCurrentItem(currentPage);
         viewPager.addOnPageChangeListener(this);
+        tabArray[currentPage].setSelected(true);
 
         RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(0);
         currentRecyclerView.setHasFixedSize(true);
@@ -165,8 +189,8 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
         currentNeedRequestId = uuid;
         LoadNewsRequest request = new LoadNewsRequest(uuid, page, currentType, loadType);
         requestArrayMap.put(uuid, request);
-        ApplicationStores.getInstance().getNews(uuid, request.newsType.ordinal(), request.page, PreferencesHelper.
-                getInstance().getCurrentUser().company);
+        ApplicationStores.getInstance().getNews(uuid, request.newsType.ordinal(), request.page, eventListener.getCompanyName(PreferencesHelper.
+                getInstance().getCurrentUser().company));
     }
 
     @Override
@@ -179,15 +203,44 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
     }
 
     @Override
+    public void onClick(View v) {
+        int pos = 0;
+        tabArray[currentPage].setSelected(false);
+        switch (v.getId()) {
+            case R.id.tv_tab1:
+                pos = 0;
+                break;
+            case R.id.tv_tab2:
+                pos = 1;
+                break;
+            case R.id.tv_tab3:
+                pos = 2;
+                break;
+            case R.id.tv_tab4:
+                pos = 3;
+                break;
+        }
+
+        tabArray[pos].setSelected(true);
+        if (eventListener != null) {
+            eventListener.onTabChange(pos);
+        }
+        viewPager.setCurrentItem(pos);
+    }
+
+
+    @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
     }
 
     @Override
     public void onPageSelected(int position) {
+        tabArray[currentPage].setSelected(false);
         if (eventListener != null)
             eventListener.onTabChange(position);
         currentPage = position;
+        tabArray[position].setSelected(true);
         currentType = NewsType.getItem(position);
         RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(position);
         if (currentRecyclerView.getLayoutManager() == null) {//还没有加载过数据
@@ -201,8 +254,13 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
             }
         } else {
             Log.i(TAG, "onPageSelected: " + refreshLayout.isRefreshing());
-            if (refreshLayout.isRefreshing()) {
-                refreshLayout.setRefreshing(false);
+            if (currentRecyclerView.getAdapter() == null) {
+                loadingPages[currentPage] = 1;
+                loadMoreNews(LoadNewsRequest.INIT_LOAD, 1);
+            } else {
+                if (refreshLayout.isRefreshing()) {
+                    refreshLayout.setRefreshing(false);
+                }
             }
         }
     }
@@ -264,32 +322,33 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
 
     @SuppressWarnings("unchecked")
     private void setCurrentTabResult(LoadNewsRequest request, ArrayList<DepartmentNewsBean> newsBeanArrayList) {
+        int index = currentPage;
         if (request.loadType == LoadNewsRequest.PULL_REFRESH_LOAD) {//下拉刷新，此时需要刷新数据
-            newsListArray[currentPage] = newsBeanArrayList;
-            RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(currentPage);
+            newsListArray[index] = newsBeanArrayList;
+            RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(index);
             if (currentRecyclerView.getAdapter() == null) {
-                setRecyclerViewInitAdapter(currentRecyclerView, currentPage);
+                setRecyclerViewInitAdapter(currentRecyclerView, index);
             } else {
                 RecyclerNewsAdapter adapter = (RecyclerNewsAdapter) currentRecyclerView.getAdapter();
-                adapter.setNewsBeanArrayList(newsListArray[currentPage]);
+                adapter.setNewsBeanArrayList(newsListArray[index]);
                 adapter.notifyDataSetChanged();
             }
             refreshLayout.setRefreshing(false);
-            loadingPages[currentPage] = 1;
+            loadingPages[index] = 1;
         } else if (request.loadType == LoadNewsRequest.LOAD_MORE_LOAD) {//加载更多
-            RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(currentPage);
-            loadingPages[currentPage] = request.page;
+            RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(index);
+            loadingPages[index] = request.page;
             int prviousNewsLength;
-            prviousNewsLength = newsListArray[currentPage].size();
-            newsListArray[currentPage].addAll(newsBeanArrayList);
+            prviousNewsLength = newsListArray[index].size();
+            newsListArray[index].addAll(newsBeanArrayList);
             RecyclerNewsAdapter adapter = (RecyclerNewsAdapter) currentRecyclerView.getAdapter();
             adapter.notifyItemRangeInserted(prviousNewsLength, newsBeanArrayList.size());
             adapter.setFooterViewRefresh(false);
         } else {
-            RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(currentPage);
-            loadingPages[currentPage] = request.page;
-            newsListArray[currentPage] = newsBeanArrayList;
-            setRecyclerViewInitAdapter(currentRecyclerView, currentPage);
+            RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(index);
+            loadingPages[index] = request.page;
+            newsListArray[index] = newsBeanArrayList;
+            setRecyclerViewInitAdapter(currentRecyclerView, index);
             refreshLayout.setRefreshing(false);
         }
     }
@@ -344,10 +403,15 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
                     case NewsViewOperation.NET_ERROR:
                         if (request.loadType == LoadNewsRequest.INIT_LOAD) {
                             UItoolKit.showToastShort(getActivity(), "加载新闻失败，请检查网络");
+                            refreshLayout.setRefreshing(false);
                         } else if (request.loadType == LoadNewsRequest.LOAD_MORE_LOAD) {
                             UItoolKit.showToastShort(getActivity(), "加载更多新闻失败，请检查网络");
+                            RecyclerView currentRecyclerView = (RecyclerView) recyclerViews.get(currentPage);
+                            RecyclerNewsAdapter adapter = (RecyclerNewsAdapter) currentRecyclerView.getAdapter();
+                            adapter.setFooterViewRefresh(false);
                         } else {
                             UItoolKit.showToastShort(getActivity(), "刷新新闻失败，请检查网络");
+                            refreshLayout.setRefreshing(false);
                         }
                         break;
                 }
@@ -364,10 +428,11 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
         currentRecyclerView.setAdapter(adapter);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void onNewsClick(DepartmentNewsBean newsBean) {
+    public void onNewsClick(int pos) {
         if (eventListener != null) {
-            eventListener.onNewsClick(newsBean);
+            eventListener.onNewsClick(pos, newsListArray[currentPage]);
         }
     }
 

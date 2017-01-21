@@ -3,7 +3,6 @@ package com.inspur.playwork.weiyou.fragment;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,7 @@ import com.inspur.playwork.R;
 import com.inspur.playwork.dispatcher.Dispatcher;
 import com.inspur.playwork.utils.FileUtil;
 import com.inspur.playwork.utils.db.bean.MailAttachment;
-import com.inspur.playwork.weiyou.WeiYouMainActivity;
+import com.inspur.playwork.weiyou.WriteMailActivity;
 import com.inspur.playwork.weiyou.adapter.MailAttachmentAdapter;
 
 import java.io.File;
@@ -36,15 +35,15 @@ public class SelectLocalAttachmentFragment extends Fragment{
     private MailAttachmentAdapter maAdapter;
     private ArrayList<MailAttachment> mailAttachmentListData;
     private ArrayList<MailAttachment> selectedAttachmentList;
-    private WeiYouMainActivity wyma;
+    private WriteMailActivity wyma;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        wyma = (WeiYouMainActivity)getActivity();
+        wyma = (WriteMailActivity)getActivity();
         mailAttachmentListData= new ArrayList<>();
         selectedAttachmentList= new ArrayList<>();
 //        DBUtil.queryMailAttachmentList(wyma.currMailAccount.getEmail());File file = new File(getMailCachePath());
-        String email = wyma.currMailAccount.getEmail();
+        String email = wyma.vuStores.currEmail;
         File file = new File(FileUtil.getCurrMailAttachmentsPath(email));
         File[] files = file.listFiles();
         if (files != null && files.length >= 0) {
@@ -55,9 +54,6 @@ public class SelectLocalAttachmentFragment extends Fragment{
             }
         }
         Collections.sort(mailAttachmentListData);
-//        关闭侧边栏手势滑动
-        if(wyma.drawer!=null)
-            wyma.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
     @Nullable

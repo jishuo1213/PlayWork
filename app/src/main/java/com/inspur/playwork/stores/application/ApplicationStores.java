@@ -1,7 +1,7 @@
 package com.inspur.playwork.stores.application;
 
 import android.database.MatrixCursor;
-import android.text.TextUtils;
+import android.net.Uri;
 import android.util.Log;
 
 import com.inspur.playwork.actions.common.CommonActions;
@@ -12,11 +12,13 @@ import com.inspur.playwork.model.news.DepartmentNewsBean;
 import com.inspur.playwork.model.weekplan.WeekPlanHeader;
 import com.inspur.playwork.stores.Stores;
 import com.inspur.playwork.utils.DateUtils;
+import com.inspur.playwork.utils.FileUtil;
 import com.inspur.playwork.utils.OkHttpClientManager;
 import com.inspur.playwork.utils.PreferencesHelper;
 import com.inspur.playwork.utils.SingleRefreshManager;
 import com.inspur.playwork.view.application.addressbook.AddressBookViewOperation;
 import com.inspur.playwork.view.application.news.NewListFragment;
+import com.inspur.playwork.view.application.news.NewsDetailOperation;
 import com.inspur.playwork.view.application.news.NewsViewOperation;
 import com.inspur.playwork.view.application.weekplan.WeekPlanViewOperation;
 
@@ -24,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -40,8 +43,6 @@ import okhttp3.Response;
 public class ApplicationStores extends Stores {
     private static final String TAG = "ApplicationStores";
 
-    private static final int GET_SHARE_WEEK_PLAN = 0x01;
-    private static final int GET_PLAN_DETAIL = 0x02;
     private static final String GET_OTHER_PLANS = "getOtherPlans";
     private static final String GET_WEEK_PLAN_DETAIL = "getWeekPlanByWeeks";
     private static final String QUERY_NEWS = "getNews";
@@ -60,6 +61,7 @@ public class ApplicationStores extends Stores {
     private WeakReference<AddressBookViewOperation> addressBookReference = new WeakReference<>(null);
     private WeakReference<WeekPlanViewOperation> weekPlanWeakReference = new WeakReference<>(null);
     private WeakReference<NewsViewOperation> newsWeakReference = new WeakReference<>(null);
+    private WeakReference<NewsDetailOperation> newsDetailWeakReference = new WeakReference<>(null);
     private ArrayList<SearchPersonInfo> resultList;
 
 
@@ -170,6 +172,9 @@ public class ApplicationStores extends Stores {
         this.newsWeakReference = new WeakReference<>(operation);
     }
 
+    public void setNewsDetailWeakReference(NewsDetailOperation operation) {
+        this.newsDetailWeakReference = new WeakReference<>(operation);
+    }
 
     public void getNews(String uuid, int type, int page, String departMent) {
         JSONObject requsetJson = new JSONObject();
@@ -178,8 +183,11 @@ public class ApplicationStores extends Stores {
             requsetJson.put("type", type + 1);
             requsetJson.put("department", departMent);
             requsetJson.put("length", 10);
-            OkHttpClientManager.getInstance().getAsyn(AppConfig.NEWS_URL + "query.page",
-                    getNewsCallback, requsetJson, QUERY_NEWS + "&" + uuid);
+            JSONObject headerJson = new JSONObject();
+            headerJson.put("name", QUERY_NEWS);
+            headerJson.put("uuid", uuid);
+            OkHttpClientManager.getInstance().newGetAsyn(AppConfig.NEWS_URL + "query.page",
+                    getNewsCallback, requsetJson, headerJson.toString());
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -187,28 +195,43 @@ public class ApplicationStores extends Stores {
     }
 
     public void getNewsDetail(String id, String key) {
+        Log.i(TAG, "getNewsDetail: exist");
+        if (FileUtil.isFileExist(FileUtil.getNewsFilePath() + id + ".html")) {
+            if (newsDetailWeakReference.get() != null) {
+                newsDetailWeakReference.get().getDetail(id, Uri.fromFile(new File(FileUtil.getNewsFilePath() + id + ".html")).toString());
+//                try {
+//                    newsDetailWeakReference.get().getDetail(id, FileUtil.readContent(FileUtil.getNewsFilePath() + id + ".html"));
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+            }
+            return;
+        }
         JSONObject requestJson = new JSONObject();
         try {
             requestJson.put("id", id);
             requestJson.put("key", key);
+            JSONObject headerJson = new JSONObject();
+            headerJson.put("name", QUERY_NEWS_DETAIL);
+            headerJson.put("id", id);
+            OkHttpClientManager.getInstance().newGetAsyn(AppConfig.NEWS_URL + "detail",
+                    getNewsDetailCallback, requestJson, headerJson.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        OkHttpClientManager.getInstance().postFormData(AppConfig.NEWS_URL + "detail",
-                getNewsDetailCallback, requestJson, QUERY_NEWS_DETAIL);
     }
 
     public void getShareWeekPlanList(int weekNum) {
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTimeInMillis(time);
-//        int weekNum = calendar.get(Calendar.WEEK_OF_YEAR);
         JSONObject requestJson = new JSONObject();
         try {
             requestJson.put("userId", PreferencesHelper.getInstance().getCurrentUser().id);
             requestJson.put("WeekNumber", weekNum);
-            createHttpRequestJson(requestJson, GET_SHARE_WEEK_PLAN, "" + weekNum);
-            OkHttpClientManager.getInstance().getAsyn(AppConfig.HTTP_SERVER_IP + GET_OTHER_PLANS,
-                    httpCallback, requestJson, GET_OTHER_PLANS);
+            createHttpRequestJson(requestJson);
+            JSONObject headerJson = new JSONObject();
+            headerJson.put("name", GET_OTHER_PLANS);
+            headerJson.put("weekNum", weekNum);
+            OkHttpClientManager.getInstance().newGetAsyn(AppConfig.HTTP_SERVER_IP + GET_OTHER_PLANS,
+                    httpCallback, requestJson, headerJson.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -241,9 +264,11 @@ public class ApplicationStores extends Stores {
             requestJson.put("weekNumbers", weekArray);
             requestJson.put("type", 2);
 
-            createHttpRequestJson(requestJson, GET_PLAN_DETAIL, "");
-            OkHttpClientManager.getInstance().getAsyn(AppConfig.HTTP_SERVER_IP + GET_WEEK_PLAN_DETAIL,
-                    httpCallback, requestJson, GET_WEEK_PLAN_DETAIL);
+            createHttpRequestJson(requestJson);
+            JSONObject headerJson = new JSONObject();
+            headerJson.put("name", GET_WEEK_PLAN_DETAIL);
+            OkHttpClientManager.getInstance().newGetAsyn(AppConfig.HTTP_SERVER_IP + GET_WEEK_PLAN_DETAIL,
+                    httpCallback, requestJson, headerJson.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -252,7 +277,7 @@ public class ApplicationStores extends Stores {
     private Callback httpCallback = new Callback() {
         @Override
         public void onFailure(Call call, IOException e) {
-            String requestId = call.request().header("requestId");
+            String requestId = (String) call.request().tag();
             errorHandle(requestId);
         }
 
@@ -260,23 +285,19 @@ public class ApplicationStores extends Stores {
         public void onResponse(Call call, Response response) throws IOException {
             if (response.isSuccessful()) {
                 try {
+                    String requestId = (String) call.request().tag();
                     JSONObject res = new JSONObject(response.body().string());
-                    JSONObject cleentId = new JSONObject(res.optString("ClientId"));
-                    int type = cleentId.optInt("type");
-                    String clientId = cleentId.optString("ClientId", "");
-                    if (!TextUtils.isEmpty(clientId)) {
-                        res.put("ClientId", clientId);
-                    } else {
-                        res.remove("ClientId");
-                    }
+                    JSONObject cleentId = new JSONObject(requestId);
+                    String type = cleentId.optString("name");
+
                     Log.i(TAG, "onResponse: " + res);
 
                     switch (type) {
-                        case GET_SHARE_WEEK_PLAN:
-                            parseGetShareWeekPlanList(res);
+                        case GET_OTHER_PLANS:
+                            parseGetShareWeekPlanList(res, cleentId);
                             break;
-                        case GET_PLAN_DETAIL:
-                            parseWeekPlanDetail(res);
+                        case GET_WEEK_PLAN_DETAIL:
+                            parseWeekPlanDetail(res, cleentId);
                             break;
                     }
 
@@ -291,12 +312,19 @@ public class ApplicationStores extends Stores {
     };
 
     private void errorHandle(String requestId) {
-        String uuid = null;
-        if (requestId.contains("&")) {
-            requestId = requestId.split("&")[0];
-            uuid = requestId.split("&")[1];
+//        if (requestId.contains("&")) {
+//            requestId = requestId.split("&")[0];
+//            uuid = requestId.split("&")[1];
+//        }
+        JSONObject headerJson = null;
+        try {
+            headerJson = new JSONObject(requestId);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        switch (requestId) {
+        assert headerJson != null;
+        String requsetType = headerJson.optString("name");
+        switch (requsetType) {
             case GET_OTHER_PLANS:
                 if (weekPlanWeakReference.get() != null) {
                     weekPlanWeakReference.get().showShareWeekPlanList(null);
@@ -304,18 +332,23 @@ public class ApplicationStores extends Stores {
                 break;
             case QUERY_NEWS:
                 if (newsWeakReference.get() != null) {
-                    newsWeakReference.get().showNewsError(uuid, NewListFragment.NET_ERROR);
+                    newsWeakReference.get().showNewsError(headerJson.optString("uuid"), NewListFragment.NET_ERROR);
                 }
                 break;
         }
     }
 
-    private void parseWeekPlanDetail(JSONObject res) {
+    private void parseWeekPlanDetail(JSONObject res, JSONObject requstId) {
+        try {
+            FileUtil.writeContentToFile(res.toString(),FileUtil.getSDCardRoot() + "test.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
-    private void parseGetShareWeekPlanList(JSONObject res) {
-        String clientWeekNum = res.optString("ClientId");
+    private void parseGetShareWeekPlanList(JSONObject res, JSONObject requstId) {
+        int clientWeekNum = requstId.optInt("weekNum");
         if (res.optBoolean("type")) {
             JSONArray planList = res.optJSONArray("data");
             int length = planList.length();
@@ -340,10 +373,46 @@ public class ApplicationStores extends Stores {
                 weekPlanWeakReference.get().showShareWeekPlanList(planArrayList);
             }
         } else {
-            errorHandle(GET_OTHER_PLANS);
+            errorHandle(requstId.toString());
         }
     }
 
+
+    private Callback getNewsDetailCallback = new Callback() {
+        @Override
+        public void onFailure(Call call, IOException e) {
+            String requestId = (String) call.request().tag();
+            errorHandle(requestId);
+        }
+
+        @Override
+        public void onResponse(Call call, Response response) throws IOException {
+            if (response.isSuccessful()) {
+                String requestId = (String) call.request().tag();
+//                String newsId = requestId.split("&")[1]
+                try {
+                    JSONObject headJson = new JSONObject(requestId);
+                    JSONObject res = new JSONObject(response.body().string());
+                    Log.i(TAG, "onResponse: " + res.toString());
+                    JSONObject data = res.optJSONObject("data");
+                    if (data != null) {
+                        String content = data.optString("content");
+                        String filePath = FileUtil.getNewsFilePath() + headJson.optString("id") + ".html";
+                        FileUtil.writeContentToFile(content, filePath);
+                        if (newsDetailWeakReference.get() != null) {
+                            newsDetailWeakReference.get().getDetail(headJson.optString("id"), Uri.fromFile(new File(filePath)).toString());
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                String requestId = call.request().header("requestId");
+                errorHandle(requestId);
+            }
+        }
+    };
 
 
     private Callback getNewsCallback = new Callback() {
@@ -357,8 +426,9 @@ public class ApplicationStores extends Stores {
         public void onResponse(Call call, Response response) throws IOException {
             if (response.isSuccessful()) {
                 try {
-                    String requestId = call.request().header("requestId");
-                    String uuid = requestId.split("&")[1];
+                    String requestId = (String) call.request().tag();
+                    JSONObject header = new JSONObject(requestId);
+                    String uuid = header.optString("uuid");
 
                     JSONObject res = new JSONObject(response.body().string());
                     JSONArray newsArray = res.optJSONArray("data");
@@ -393,13 +463,8 @@ public class ApplicationStores extends Stores {
     public void clean() {
     }
 
-    private void createHttpRequestJson(JSONObject body, int type, String clientId) throws JSONException {
+    private void createHttpRequestJson(JSONObject body) throws JSONException {
         JSONObject clientJson = new JSONObject();
-        clientJson.put("type", type);
-        if (!TextUtils.isEmpty(clientId)) {
-            clientJson.put("ClientId", clientId);
-        }
         body.put("isPhone", true);
-        body.put("ClientId", clientJson.toString());
     }
 }

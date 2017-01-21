@@ -329,10 +329,12 @@ public class MailDetail {
                 throw new DaoException("Entity is detached from DAO context");
             }
             MailAttachmentDao targetDao = daoSession.getMailAttachmentDao();
-            List<MailAttachment> attachmentsNew = targetDao._queryMailDetail_Attachments(id);
-            synchronized (this) {
-                if(attachments == null) {
-                    attachments = attachmentsNew;
+            if(id != null) {
+                List<MailAttachment> attachmentsNew = targetDao._queryMailDetail_Attachments(id);
+                synchronized (this) {
+                    if (attachments == null) {
+                        attachments = attachmentsNew;
+                    }
                 }
             }
         }

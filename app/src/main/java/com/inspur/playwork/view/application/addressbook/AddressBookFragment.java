@@ -33,6 +33,8 @@ import com.inspur.playwork.utils.CommonUtils;
 import com.inspur.playwork.utils.UItoolKit;
 import com.inspur.playwork.view.common.progressbar.CommonDialog;
 import com.inspur.playwork.view.message.chat.ChatActivityNew;
+import com.inspur.playwork.weiyou.WriteMailActivity;
+import com.inspur.playwork.weiyou.utils.WeiYouUtil;
 
 import java.util.ArrayList;
 
@@ -317,6 +319,14 @@ public class AddressBookFragment extends Fragment implements SearchView.OnCloseL
         }
     }
 
+    @Override
+    public void onSendEmailClick(String email,String name) {
+        Log.i(TAG, "onSendEmailClick: email="+email+", name="+name);
+        Intent intent = new Intent(getActivity(), WriteMailActivity.class);
+        intent.putExtra("type", 0);
+        intent.putExtra("to", WeiYouUtil.getUserJSON(email, name));
+        startActivity(intent);
+    }
 
     private static class AddressBookHandler extends Handler {
 

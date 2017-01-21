@@ -9,7 +9,7 @@
     <string name="message">微聊</string>
     <string name="application">应用</string>
     <string name="profile">我</string>
-    <string name="weekly_plan">好时光周计划</string>
+    <string name="weekly_plan">集团新闻</string>
     <string name="weiyou">微邮</string>
     <string name="weizhi">微知</string>
     <string name="weipan">微盘</string>
@@ -24,7 +24,7 @@
     <string name="collection">收藏</string>
     <string name="company">公司</string>
     <string name="login_web">面对面</string>
-    <string name="help">帮助和反馈</string>
+    <string name="help">教程</string>
     <string name="recommend">推荐给好友</string>
     <string name="settings">设置</string>
     <string name="in_group">正在聊天</string>

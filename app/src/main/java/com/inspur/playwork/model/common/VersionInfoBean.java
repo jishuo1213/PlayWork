@@ -17,6 +17,13 @@ public class VersionInfoBean implements Parcelable {
     public String Updatecontent;
 
 
+//    public VersionInfoBean(JSONObject versionJson) {
+//        VURL = versionJson.optString("VURL");
+//        Version = versionJson.optString("version");
+//        VersionName = versionJson.optString("versioname");
+//        Updatecontent = versionJson.optString("updatecontent");
+//    }
+
     public VersionInfoBean(JSONObject versionJson) {
         VURL = versionJson.optString("VURL");
         Version = versionJson.optString("version");
@@ -54,5 +61,16 @@ public class VersionInfoBean implements Parcelable {
         dest.writeString(Version);
         dest.writeString(VersionName);
         dest.writeString(Updatecontent);
+    }
+
+
+    @Override
+    public String toString() {
+        return "VersionInfoBean{" +
+                "VURL='" + VURL + '\'' +
+                ", Version='" + Version + '\'' +
+                ", VersionName='" + VersionName + '\'' +
+                ", Updatecontent='" + Updatecontent + '\'' +
+                '}';
     }
 }

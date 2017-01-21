@@ -44,6 +44,7 @@ import com.inspur.playwork.utils.DeviceUtil;
 import com.inspur.playwork.utils.FileUtil;
 import com.inspur.playwork.utils.PreferencesHelper;
 import com.inspur.playwork.utils.UItoolKit;
+import com.inspur.playwork.view.common.GuideActivity;
 import com.inspur.playwork.view.common.progressbar.CommonDialog;
 
 
@@ -150,6 +151,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Rad
     private void disconnectTimeLine(int type) {
         Log.i(TAG, "disconnectTimeLine: ");
         ((PlayWorkServiceNew) binder.getService()).logout();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -280,7 +286,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Rad
     private void loginSuccessHandler() {
         pfh.writeToPreferences(PreferencesHelper.HAVE_LOGIN_TIME_LINE, true);
         dismissProgressDialog();
-        startActivity(new Intent(getActivity(), MainActivity.class));
+        if (pfh.readBooleanPreference(PreferencesHelper.IS_GUIDE_PAGE_SHOW)) {
+            startActivity(new Intent(getActivity(), MainActivity.class));
+        } else {
+            startActivity(new Intent(getActivity(), GuideActivity.class));
+        }
         getActivity().finish();
     }
 

@@ -36,6 +36,7 @@ class ChoseLocalFileAdapter extends RecyclerView.Adapter<ChoseLocalFileAdapter.V
     private RecyclerView recyclerView;
 
     private Set<String> selectFiles;
+    private int selectedPosition = -1;
     private ChoseFileEventListener listener;
 
     private BitmapCacheManager photoCache;
@@ -172,6 +173,12 @@ class ChoseLocalFileAdapter extends RecyclerView.Adapter<ChoseLocalFileAdapter.V
             notifyDataSetChanged();
     }
 
+    public void setSingleSelectedMode(boolean singleSelectedMode) {
+        this.singleSelectedMode = singleSelectedMode;
+    }
+
+    private boolean singleSelectedMode;
+
     private View.OnClickListener normalFileClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -179,10 +186,20 @@ class ChoseLocalFileAdapter extends RecyclerView.Adapter<ChoseLocalFileAdapter.V
             ViewHolder viewHolder = (ViewHolder) recyclerView.findViewHolderForAdapterPosition(pos);
             viewHolder.selectStatus.setSelected(!viewHolder.selectStatus.isSelected());
             LocalFileBean clickBean = getItem(pos);
-            listener.onFileSelected(clickBean, viewHolder.selectStatus.isSelected());
-            if (viewHolder.selectStatus.isSelected())
+            boolean isSelected = viewHolder.selectStatus.isSelected();
+            listener.onFileSelected(clickBean, isSelected);
+            Log.i(TAG, "normalFileClickListener: "+isSelected);
+            if (isSelected) {
+                if(singleSelectedMode) {
+                    selectFiles.clear();
+                    if (selectedPosition > -1 && selectedPosition != pos) {
+                        ViewHolder preSelectedViewHolder = (ViewHolder) recyclerView.findViewHolderForAdapterPosition(selectedPosition);
+                        preSelectedViewHolder.selectStatus.setSelected(false);
+                    }
+                    selectedPosition = pos;
+                }
                 selectFiles.add(clickBean.currentPath);
-            else
+            }else
                 selectFiles.remove(clickBean.currentPath);
         }
     };

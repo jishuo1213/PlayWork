@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.UserManager;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,6 +35,7 @@ import com.inspur.playwork.utils.loadfile.LoadFileHandlerThread;
 import com.inspur.playwork.weiyou.store.VUStores;
 import com.squareup.leakcanary.LeakCanary;
 
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 
@@ -74,7 +76,7 @@ public class PlayWorkApplication extends Application {
     private ApplicationStores applicationStores;
 
     //TODO:建立人员对象缓存
-    private LruCache<String,UserInfoBean> usersCache;
+    private LruCache<String, UserInfoBean> usersCache;
 
     @Override
     public void onCreate() {
@@ -91,8 +93,25 @@ public class PlayWorkApplication extends Application {
             BlockCanary.install(this, new AppBlockCanaryContext()).start();
             init(false);
             CrashHandler.getInstance().init();
+
+            fixUserManagerLeaked();
         }
 //        KLog.init(BuildConfig.LOG_DEBUG);
+    }
+
+    private void fixUserManagerLeaked() {
+        try {
+            final Method m = UserManager.class.getMethod("get", Context.class);
+            m.setAccessible(true);
+            m.invoke(null, this);
+
+            //above is reflection for below...
+            //UserManager.get();
+        } catch (Throwable e) {
+            if (BuildConfig.DEBUG) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private void init(boolean isResume) {

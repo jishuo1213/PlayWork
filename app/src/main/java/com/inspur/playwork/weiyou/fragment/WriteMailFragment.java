@@ -7,13 +7,10 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.MediaStore;
-import android.support.v4.widget.DrawerLayout;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -44,14 +41,13 @@ import com.inspur.playwork.utils.DeviceUtil;
 import com.inspur.playwork.utils.db.bean.MailAttachment;
 import com.inspur.playwork.utils.db.bean.MailDetail;
 import com.inspur.playwork.view.common.chosepicture.ChosePictureFragment;
-import com.inspur.playwork.weiyou.WeiYouMainActivity;
+import com.inspur.playwork.weiyou.WriteMailActivity;
 import com.inspur.playwork.weiyou.adapter.MailAttachmentAdapter;
 import com.inspur.playwork.weiyou.adapter.SearchPersonAdapter;
 import com.inspur.playwork.weiyou.store.VUStores;
 import com.inspur.playwork.weiyou.store.WriteMailOperation;
 import com.inspur.playwork.weiyou.utils.WeiYouUtil;
 import com.inspur.playwork.weiyou.view.ColorPickerDialog;
-import com.inspur.playwork.weiyou.view.ContactInputView;
 import com.inspur.playwork.weiyou.view.FlowLayout;
 import com.inspur.playwork.weiyou.view.FontSizeSelectorSpinner;
 import com.inspur.playwork.weiyou.view.InsideListView;
@@ -61,7 +57,6 @@ import com.inspur.playwork.weiyou.view.VUNoPbkWarnDialog;
 import com.inspur.playwork.weiyou.view.VURemindSubjectDialog;
 import com.inspur.playwork.weiyou.view.ass.FontSizeSpinnerAdapter;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,7 +82,7 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
     private static final int VIDEO_REQUEST_CODE = 5;
 
     //    private AttachmentUploadHandler auHandler;
-    private WeiYouMainActivity wyma;
+    private WriteMailActivity wyma;
 
     private View preSelectedView;
     private SearchPersonAdapter currSPA;
@@ -103,13 +98,9 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
     private FlowLayout toCIV;
     private FlowLayout ccCIV;
     public FlowLayout currFocusingCIV;
-//    private ContactInputView toCIV;
-//    private ContactInputView ccCIV;
-//    public ContactInputView currFocusingCIV;
 
     private AutoCompleteTextView toACTV;
     private AutoCompleteTextView ccACTV;
-    //    private AutoCompleteTextView scACTV;
     private AutoCompleteTextView currFocusingACTV;
 
     private Button cancelSendMailBtn;
@@ -123,7 +114,6 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
     private TextView subjectTV;
     private RichEditor contentRichEditor;
     private HorizontalScrollView editorToolsLL;
-//    private WebView quoteMailWV;
 
     private int currFontColor = 0;
     private int currFontBackgroundColor = 0;
@@ -143,10 +133,10 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        wyma = (WeiYouMainActivity) getActivity();
+        wyma = (WriteMailActivity) getActivity();
         wyma.vuStores.setWriteMailReference(this);
-        super.onCreate(savedInstanceState);
         handler = new WriteMailHandler();
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -154,27 +144,32 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
         Log.i(TAG, "WriteMailFragment onCreateView");
         View v = inflater.inflate(R.layout.wy_fragment_write_mail, container, false);
 //        auHandler = new AttachmentUploadHandler(new WeakReference<>(this));
-        initView(v);
+        initDialogs();
+        initHeadView(v);
+        initRichEditor(v);
+        initSaftyPopupWindow();
+//        wyma.vuStores.initWriteMailData();
+        v.post(new Runnable() {
+            @Override
+            public void run() {
+                wyma.vuStores.initVUData(true);
+            }
+        });
+        return v;
+    }
+
+    public void initDialogs() {
+//        auHandler = new AttachmentUploadHandler(new WeakReference<>(this));
         vuConfirmDialog = new VUConfirmDialog(wyma, "是否保存草稿", "不保存", "保存");
         vuConfirmDialog.setConfirmDialogListener(this);
         remindSubjectDialog = new VURemindSubjectDialog(wyma);
         remindSubjectDialog.setConfirmDialogListener(this);
         vuFileSelectorDialog = new VUFileSelectorDialog(wyma, this);
-        selectLocalAttachmentFragment = new SelectLocalAttachmentFragment();
-        selectLocalAttachmentFragment.setOnFinishSelectListener(this);
-
-        initPopuptWindow();
-        wyma.vuStores.initWriteMailData();
-        initAttachmentListView();
-        return v;
+//        selectLocalAttachmentFragment = new SelectLocalAttachmentFragment();
+//        selectLocalAttachmentFragment.setOnFinishSelectListener(this);
     }
 
-    private void initView(View v) {
-//        initPopWindow(v);
-        editorToolsLL = (HorizontalScrollView) v.findViewById(R.id.wm_editor_tools);
-
-//        toCIV = (ContactInputView) v.findViewById(R.id.wm_to_civ);
-//        ccCIV = (ContactInputView) v.findViewById(R.id.wm_cc_civ);
+    private void initHeadView(View v) {
         toCIV = (FlowLayout) v.findViewById(R.id.wm_to_civ);
         ccCIV = (FlowLayout) v.findViewById(R.id.wm_cc_civ);
 //        scCIV = (ContactInputView) v.findViewById(R.id.wm_sc_civ);
@@ -203,12 +198,17 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
         openScSelectorBtn.setOnClickListener(this);
         openAttachmentSelectorBtn.setOnClickListener(this);
 
+        subjectTV = (TextView) v.findViewById(R.id.wm_subject_et);
+//        quoteMailWV = (WebView) v.findViewById(R.id.wm_quote_mail_wv);
+
         attachmentLV = (InsideListView) v.findViewById(R.id.wm_attachment_lv);
         //手动调整listview高度（为了兼容scrollview内嵌套的listView）
         WeiYouUtil.setListViewHeightBasedOnChildren(attachmentLV);
+        attachmentLV.setDividerHeight(0);
+    }
 
-        subjectTV = (TextView) v.findViewById(R.id.wm_subject_et);
-//        quoteMailWV = (WebView) v.findViewById(R.id.wm_quote_mail_wv);
+    private void initRichEditor(View v){
+        editorToolsLL = (HorizontalScrollView) v.findViewById(R.id.wm_editor_tools);
         contentRichEditor = (RichEditor) v.findViewById(R.id.wm_content_et);
         contentRichEditor.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -364,23 +364,23 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
                 contentRichEditor.setBlockquote();
             }
         });
-//        插入图片
-        v.findViewById(R.id.action_insert_image).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (DeviceUtil.getPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, 105)) {
-                    isInsertImage = true;
-                    wyma.showImageSelector();
-                }
-            }
-        });
-//        插入超链接
-        v.findViewById(R.id.action_insert_link).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                contentRichEditor.insertLink("https://github.com/wasabeef", "wasabeef");
-            }
-        });
+////        插入图片
+//        v.findViewById(R.id.action_insert_image).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (DeviceUtil.getPermission(this.con, Manifest.permission.WRITE_EXTERNAL_STORAGE, 105)) {
+//                    isInsertImage = true;
+//                    this.showImageSelector();
+//                }
+//            }
+//        });
+////        插入超链接
+//        v.findViewById(R.id.action_insert_link).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                contentRichEditor.insertLink("https://github.com/wasabeef", "wasabeef");
+//            }
+//        });
 //        下标
         v.findViewById(R.id.action_subscript).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -398,7 +398,59 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
         hideTV = (TextView) v.findViewById(R.id.wm_hide_tv);
     }
 
-    private void initAttachmentListView() {
+    /**
+     * 创建PopupWindow
+     */
+    protected void initSaftyPopupWindow() {
+        View popupWindow_view = wyma.getLayoutInflater().inflate(R.layout.wy_pw_safe_option, null, false);
+        safetyOptPW = new PopupWindow(popupWindow_view, WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT, true);
+
+        safetyOptPW.setAnimationStyle(R.style.MenuAnimationFade);
+        safetyOptPW.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            //在dismiss中恢复透明度
+            public void onDismiss() {
+                WindowManager.LayoutParams lp = wyma.getWindow().getAttributes();
+                lp.alpha = 1f;
+                wyma.getWindow().setAttributes(lp);
+            }
+        });
+        encryptCB = (CheckBox) popupWindow_view.findViewById(R.id.mail_encrypt_checkbox);
+        signCB = (CheckBox) popupWindow_view.findViewById(R.id.mail_sign_checkbox);
+        popupWindow_view.findViewById(R.id.wy_confirm_ok_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                safetyOptPW.dismiss();
+            }
+        });
+    }
+
+    @Override
+    public void fillDraftData(String subject, ArrayList<UserInfoBean> toList, ArrayList<UserInfoBean> ccList,
+                              String quoteMailHead, boolean encrypted, boolean signed, boolean hasCurrUsingCa) {
+        subjectTV.setText(subject);
+        initAutoCompleteTextView(toList, ccList, new ArrayList<UserInfoBean>());
+        generateContactTV(toList, 1);
+        generateContactTV(ccList, 2);
+
+        encryptCB.setEnabled(hasCurrUsingCa);
+        encryptCB.setChecked(encrypted);
+        encryptCB.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                wyma.vuStores.handleEncryptItemClick(((CheckBox) view).isChecked());
+            }
+        });
+        signCB.setEnabled(hasCurrUsingCa);
+        signCB.setChecked(signed);
+        signCB.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                wyma.vuStores.handleSignItemClick(((CheckBox) view).isChecked());
+            }
+        });
+        contentRichEditor.setHtml(quoteMailHead);
+
         maAdapter = new MailAttachmentAdapter(wyma, wyma.vuStores.getDraftAttachmentList(), true, false);
         maAdapter.setRemoveButtonListener(this);
         attachmentLV.setAdapter(maAdapter);
@@ -476,7 +528,6 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
             }
         }
     }
-
 
     @Override
     public void emptyInputText() {
@@ -709,8 +760,9 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
 
     @Override
     public void onPictureSelect(String path) {
+        Log.i(TAG, "onPictureSelect: path = "+path);
         String[] filePaths = path.split(":");
-        int l = filePaths.length;
+//        int l = filePaths.length;
         if (isInsertImage) {//编辑器的插入图像 按钮回调
             for (String filePath : filePaths) {
                 contentRichEditor.insertImage(wyma.vuStores.getBase64Image(filePath), "");
@@ -740,8 +792,7 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
 
     @Override
     public void closeWriteMailFragment() {
-        wyma.isWritingMail = false;
-        wyma.onBackPressed();
+        wyma.finishWriteMail();
     }
 
     @Override
@@ -788,6 +839,7 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
     public void choseFile() {
         ChoseFileDialogFragment dialogFragment = new ChoseFileDialogFragment();
         dialogFragment.show(getFragmentManager(), null);
+        dialogFragment.setOkBtnText("确定");
         dialogFragment.setListener(WriteMailFragment.this);
     }
 
@@ -806,33 +858,6 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
     @Override
     public void onFinishSelect(List<MailAttachment> selectedAttacmentList) {
         wyma.vuStores.addToAttachmentList(selectedAttacmentList);
-    }
-
-    @Override
-    public void fillDraftData(String subject, ArrayList<UserInfoBean> toList, ArrayList<UserInfoBean> ccList,
-                              String quoteMailHead, boolean encrypted, boolean signed, boolean hasCurrUsingCa) {
-        subjectTV.setText(subject);
-        initAutoCompleteTextView(toList, ccList, new ArrayList<UserInfoBean>());
-        generateContactTV(toList, 1);
-        generateContactTV(ccList, 2);
-
-        encryptCB.setEnabled(hasCurrUsingCa);
-        encryptCB.setChecked(encrypted);
-        encryptCB.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                wyma.vuStores.handleEncryptItemClick(((CheckBox) view).isChecked());
-            }
-        });
-        signCB.setEnabled(hasCurrUsingCa);
-        signCB.setChecked(signed);
-        signCB.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                wyma.vuStores.handleSignItemClick(((CheckBox) view).isChecked());
-            }
-        });
-        contentRichEditor.setHtml(quoteMailHead);
     }
 
 //    /**
@@ -890,34 +915,6 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
         wyma.vuStores.removeAttachment(position);
     }
 
-    /**
-     * 创建PopupWindow
-     */
-    protected void initPopuptWindow() {
-        // TODO Auto-generated method stub
-        View popupWindow_view = wyma.getLayoutInflater().inflate(R.layout.wy_pw_safe_option, null, false);
-        safetyOptPW = new PopupWindow(popupWindow_view, WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT, true);
-
-        safetyOptPW.setAnimationStyle(R.style.MenuAnimationFade);
-        safetyOptPW.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            //在dismiss中恢复透明度
-            public void onDismiss() {
-                WindowManager.LayoutParams lp = wyma.getWindow().getAttributes();
-                lp.alpha = 1f;
-                wyma.getWindow().setAttributes(lp);
-            }
-        });
-        encryptCB = (CheckBox) popupWindow_view.findViewById(R.id.mail_encrypt_checkbox);
-        signCB = (CheckBox) popupWindow_view.findViewById(R.id.mail_sign_checkbox);
-        popupWindow_view.findViewById(R.id.wy_confirm_ok_btn).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                safetyOptPW.dismiss();
-            }
-        });
-    }
-
     /***
      * 开启安全选项窗口
      */
@@ -960,9 +957,18 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
     }
 
     @Override
-    public void onDestroy() {
-        wyma.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        super.onDestroy();
+    public void toast(String msg) {
+        wyma.toast(msg);
+    }
+
+    @Override
+    public List<MailAttachment> getParamAttachments() {
+        return wyma.paramAttachments;
+    }
+
+    @Override
+    public MailDetail getParamMailDetail() {
+        return wyma.paramMailDetail;
     }
 
 //    private static class AttachmentUploadHandler extends Handler {
@@ -980,13 +986,13 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
 //            switch (msg.what) {
 //                case FILE_UPLOAD_FAILURE:
 ////                    wmf.wyma.toast("上传附件失败，请检查网络及手机存储");
-//                    statusTV = (TextView) wmf.attachmentLV.getChildAt(msg.arg1).findViewById(R.id.wy_attachment_status);
+//                    statusTV = (TextView) wmf.attachmentLV.getChildAt(msg.arg1).v.findViewById(R.id.wy_attachment_status);
 //                    wmf.wyma.dismissProgressDialog();
 //                    wmf.wyma.toast("附件" + wmf.attachmentList.get(msg.arg1).getName() + "上传失败，请重新上传或删除该附件后再发送邮件");
 //                    statusTV.setText("重新上传");
 //                    break;
 //                case FILE_UPLOAD_SUCCESS:
-//                    statusTV = (TextView) wmf.attachmentLV.getChildAt(msg.arg1).findViewById(R.id.wy_attachment_status);
+//                    statusTV = (TextView) wmf.attachmentLV.getChildAt(msg.arg1).v.findViewById(R.id.wy_attachment_status);
 //                    statusTV.setText("已上传");
 //                    MailAttachment ma = (MailAttachment) msg.obj;
 //                    DBUtil.saveMailAttachment(ma);
@@ -1021,7 +1027,7 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
 //                    break;
 //                case FILE_UPLOAD_PROGRESS:
 ////                    显示文件下载进度
-//                    statusTV = (TextView) wmf.attachmentLV.getChildAt(msg.arg1).findViewById(R.id.wy_attachment_status);
+//                    statusTV = (TextView) wmf.attachmentLV.getChildAt(msg.arg1).v.findViewById(R.id.wy_attachment_status);
 //                    statusTV.setText(msg.obj + "%");
 //                    break;
 //

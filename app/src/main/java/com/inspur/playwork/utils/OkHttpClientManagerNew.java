@@ -25,6 +25,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -167,13 +168,43 @@ public class OkHttpClientManagerNew {
         if (!TextUtils.isEmpty(token)) {
             url = url + "&token=" + token;
         }
-//        RequestBody body = RequestBody.create(JSON_TYPE, jsonParam.toString());
         Request.Builder builder = new Request.Builder();
+//        if (!TextUtils.isEmpty(token)) {
+//            builder.header("token", token);
+//        }
+        if (!TextUtils.isEmpty(requestId)) {
+            builder.header("requestId", requestId);
+        }
+        Log.i(TAG, "getAsyn: " + url);
+        Request request = builder.get().url(url).build();
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(responseCallback);
+        return call;
+    }
+
+    Call newGetAsyn(String url, Callback responseCallback, JSONObject jsonParam, String requestId) {
+        Iterator<String> keys = jsonParam.keys();
+        url += "?";
+        Log.i(TAG, "getAsyn: " + jsonParam.toString());
+        while (keys.hasNext()) {
+            String key = keys.next();
+            String value = jsonParam.optString(key);
+            url = url + "&" + key + "=" + value;
+        }
+
+        if (!TextUtils.isEmpty(token)) {
+            url = url + "&token=" + token;
+        }
+        Request.Builder builder = new Request.Builder();
+
         if (!TextUtils.isEmpty(token)) {
             builder.header("token", token);
         }
-        if (!TextUtils.isEmpty(requestId))
-            builder.header("requestId", requestId);
+
+        if (!TextUtils.isEmpty(requestId)) {
+            builder.tag(requestId);
+        }
+
         Log.i(TAG, "getAsyn: " + url);
         Request request = builder.get().url(url).build();
         Call call = mOkHttpClient.newCall(request);
@@ -233,7 +264,7 @@ public class OkHttpClientManagerNew {
      * @param jsonStr         请求参数json字符串
      * @param requestCallback 回调方法
      */
-    public void post(String url, JSONObject jsonStr, Callback requestCallback, String requestId) {
+    void post(String url, JSONObject jsonStr, Callback requestCallback, String requestId) {
         Log.i(TAG, "post: " + url + jsonStr.toString());
         if (!TextUtils.isEmpty(token)) {
             try {
@@ -247,6 +278,24 @@ public class OkHttpClientManagerNew {
         Request.Builder builder = new Request.Builder();
         if (!TextUtils.isEmpty(requestId))
             builder.header("requestId", requestId);
+        Request request = builder.url(url).post(requestBody).build();
+        mOkHttpClient.newCall(request).enqueue(requestCallback);
+    }
+
+    void newPost(String url, JSONObject jsonStr, Callback requestCallback, String requestId) {
+        Log.i(TAG, "post: " + url + jsonStr.toString());
+        if (!TextUtils.isEmpty(token)) {
+            try {
+                jsonStr.put("token", token);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        RequestBody requestBody = RequestBody.create(JSON_TYPE, jsonStr.toString());
+        Log.i(TAG, "post: " + jsonStr.toString());
+        Request.Builder builder = new Request.Builder();
+        if (!TextUtils.isEmpty(requestId))
+            builder.tag(requestId);
         Request request = builder.url(url).post(requestBody).build();
         mOkHttpClient.newCall(request).enqueue(requestCallback);
     }

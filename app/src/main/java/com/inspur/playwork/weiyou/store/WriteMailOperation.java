@@ -1,9 +1,11 @@
 package com.inspur.playwork.weiyou.store;
 
 import com.inspur.playwork.model.common.UserInfoBean;
+import com.inspur.playwork.utils.db.bean.MailAttachment;
 import com.inspur.playwork.utils.db.bean.MailDetail;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by sunyuan on 2016/11/23 0023 11:18.
@@ -36,4 +38,11 @@ public interface WriteMailOperation {
     void closeWriteMailFragment();
 
     void showRemindSubjectDialog();
+
+    void toast(String msg);
+
+    MailDetail getParamMailDetail();
+
+    List<MailAttachment> getParamAttachments();
+
 }

@@ -34,4 +34,6 @@ public interface VUActivityOperation {
     void openMailAccountSettingFragment();
 
     void initSettingButton();
+
+    int getNetworkType();
 }

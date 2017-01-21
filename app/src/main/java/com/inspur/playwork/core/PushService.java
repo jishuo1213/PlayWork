@@ -63,7 +63,6 @@ public class PushService extends Service implements Emitter.Listener {
     private static final String TAG = "PushServiceFan";
 
 
-
     private static final String NEW_GROUP_MSG = "newGroupMsg";
     private static final String NEW_TASK = "newTask";
 
@@ -222,7 +221,10 @@ public class PushService extends Service implements Emitter.Listener {
                     handler.sendMessage(handler.obtainMessage(LOG_OUT));
                     return;
                 case "-9998":
-                    handler.sendEmptyMessage(CONNECT_TIME_LINE);
+                    if (TextUtils.isEmpty(info))
+                        handler.sendEmptyMessage(CONNECT_TIME_LINE);
+                    else
+                        handler.sendMessage(handler.obtainMessage(CONNECT_TIME_LINE, info));
                     return;
                 case "-9997": //从后台恢复
                     handler.sendMessage(handler.obtainMessage(APP_RESUME_FROM_BACk));
@@ -249,6 +251,7 @@ public class PushService extends Service implements Emitter.Listener {
     public IBinder onBind(Intent intent) {
         Log.i(TAG, "onBind: ");
         if (intent != null) {
+            isAppExit = false;
             connectedToTimeLineServer();
             return binder;
         } else {
@@ -604,6 +607,8 @@ public class PushService extends Service implements Emitter.Listener {
         }
         if (socket.connected()) {
             sendSocketRequest("login", requestJson);
+        } else {
+
         }
     }
 
@@ -704,6 +709,8 @@ public class PushService extends Service implements Emitter.Listener {
                 case CONNECT_TIME_LINE:
                     Log.i(TAG, "dispatchMessage: CONNECT_TIME_LINE");
                     if (weakReference.get() != null) {
+                        if (!TextUtils.isEmpty((String) msg.obj) && msg.obj.equals("resume"))
+                            weakReference.get().isAppExit = false;
                         weakReference.get().connectedToTimeLineServer();
                     }
                     break;
@@ -731,6 +738,7 @@ public class PushService extends Service implements Emitter.Listener {
     private void cancelConnect() {
         isConnecting = false;
         if (socket == null || !socket.connected()) {
+            Log.i(TAG, "cancelConnect: ");
             connectedToTimeLineServer();
         }
     }
@@ -749,9 +757,16 @@ public class PushService extends Service implements Emitter.Listener {
 
     }
 
-    private boolean islogout = false;
+    private boolean isAppExit = false;
 
+    /**
+     * 如果此方法被调用，说明用户在应用中点击了退出登录
+     * 或者在登录页直接退出了
+     * 在这种情况下，用户已经看不到应用了，此时socket不用保持连接
+     * 网络变化时也不用重新连接
+     */
     private void logout() {
+        handler.removeMessages(CANCEL_CONNECT);
         if (socket != null) {
             Log.i(TAG, "socket != null" + socket.connected());
             socket.disconnect();
@@ -763,11 +778,15 @@ public class PushService extends Service implements Emitter.Listener {
 //        isLogin = false;
         token = "";
         isConnecting = false;
-        islogout = true;
+        isAppExit = true;
         needSendEvent.clear();
 //        needNotifyEventList.clear();
 //        pushSeviceDB = null;
         pushSeviceDB.logout();
+
+
+//        unregisterReceiver(netWorkReceiver);
+//        unregisterReceiver(mScreenReceiver);
     }
 
     private void loginTimeLineSuccess(String token) {
@@ -806,7 +825,7 @@ public class PushService extends Service implements Emitter.Listener {
 
     private void setEventProcessed(String fbId) {
         Log.i(TAG, "setEventProcessed: " + fbId);
-        islogout = false;
+        isAppExit = false;
         SocketEvent event;
         event = getProcessedSocketEvent(fbId);
         Log.i(TAG, "setEventProcessed: " + (event == null));
@@ -897,16 +916,6 @@ public class PushService extends Service implements Emitter.Listener {
         }
     }
 
-//    private JSONObject createRequestJson(JSONObject body, String clentId) throws JSONException {
-//        JSONObject requestJson = new JSONObject();
-//        requestJson.put("ConnectionId", connectId);
-//        requestJson.put("Body", body);
-//        requestJson.put("isPhone", true);
-//        requestJson.put("ClientId", clentId);
-//        return requestJson;
-//    }
-
-
     private BroadcastReceiver netWorkReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -915,7 +924,8 @@ public class PushService extends Service implements Emitter.Listener {
             NetworkInfo info = intent.getParcelableExtra("networkInfo");
             if (info != null) {
                 if (info.isConnected()) {
-                    if (!islogout) {
+                    Log.i(TAG, "onReceive: info.isConnected() true" + isAppExit);
+                    if (!isAppExit) {
                         if (!handler.hasMessages(CONNECT_TIME_LINE)) {
                             isConnecting = false;
                             handler.sendEmptyMessage(CONNECT_TIME_LINE);
@@ -978,20 +988,6 @@ public class PushService extends Service implements Emitter.Listener {
             return -1;
         }
     }
-//
-//    public void getUnReadMessage() {
-//        if (connectId == null)
-//            return;
-//        JSONObject body = new JSONObject();
-//        try {
-//            body.put("userId", currentUser.id);
-//            body.put("isPhone", true);
-//            sendSocketRequest("getMcUnReadMsg", createRequestJson(body, null));
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
 
     private BroadcastReceiver mScreenReceiver = new BroadcastReceiver() {
         private String action = null;
@@ -1019,7 +1015,9 @@ public class PushService extends Service implements Emitter.Listener {
 //                if ((appStatus & APP_BACK_MASK) > 0) {//此时app处于后台
 //
 //                }
-                if ((socket == null || !socket.connected()) && !islogout) {
+
+                Log.i(TAG, "onReceive: " + isAppExit);
+                if ((socket == null || !socket.connected()) && !isAppExit) {
 //                    connectedToTimeLineServer();
                     if (isConnecting) {
                         isConnecting = false;

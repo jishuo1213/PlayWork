@@ -54,7 +54,6 @@ public class EmojiHandler {
     }
 
     public void initEmjiMap(Context context) {
-//        JsonReader reader = new JsonReader(new InputStreamReader(context.getResources().openRawResource(R.raw.encode_mapping)));
         StringBuilder builder = new StringBuilder();
         InputStreamReader reader = new InputStreamReader(context.getResources().openRawResource(R.raw.encode_mapping));
         JSONObject jsonObject = null;

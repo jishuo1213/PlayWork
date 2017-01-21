@@ -1,6 +1,7 @@
 package com.inspur.playwork.weiyou.fragment;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -17,6 +18,7 @@ import com.inspur.playwork.utils.db.bean.MailDetail;
 import com.inspur.playwork.weiyou.WeiYouMainActivity;
 import com.inspur.playwork.weiyou.adapter.MailHeadListAdapter;
 import com.inspur.playwork.weiyou.store.ExchangeMailListOperation;
+import com.inspur.playwork.weiyou.utils.WeiYouUtil;
 import com.yanzhenjie.recyclerview.swipe.Closeable;
 import com.yanzhenjie.recyclerview.swipe.OnSwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
@@ -39,7 +41,7 @@ public class ExchangeListFragment extends Fragment implements ExchangeMailListOp
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         wyma = (WeiYouMainActivity)getActivity();
-        wyma.vuStores.setExchangeMailListOperation(this);
+//        wyma.vuStores.setExchangeMailListOperation(this);
 //        关闭侧边栏手势滑动
         if(wyma.drawer!=null)
             wyma.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -155,8 +157,10 @@ public class ExchangeListFragment extends Fragment implements ExchangeMailListOp
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.el_write_mail_btn) {
-            wyma.vuStores.setTargetRcpt(wyma.vuStores.getExchangeEmailAddress(),wyma.vuStores.getExchangeName());
-            wyma.gotoWriteMail(WeiYouMainActivity.QUOTE_TYPE_NO_QUOTE);//写邮件
+            Intent intent = new Intent();
+            intent.putExtra("type",0);
+            intent.putExtra("to",WeiYouUtil.getUserJSON(wyma.vuStores.getExchangeEmailAddress(),wyma.vuStores.getExchangeName()));
+            wyma.gotoWriteMail(intent);//来往邮件写邮件
         }else if (id == R.id.wy_back_btn) {
             wyma.onBackPressed();//返回
         }

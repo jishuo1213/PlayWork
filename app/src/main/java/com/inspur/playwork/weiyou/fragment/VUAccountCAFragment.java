@@ -188,6 +188,8 @@ public class VUAccountCAFragment extends Fragment implements AccountCaOperation,
 
     public void choseFile() {
         ChoseFileDialogFragment dialogFragment = new ChoseFileDialogFragment();
+        dialogFragment.setSingleSelectMode(true);
+        dialogFragment.setOkBtnText("确定");
         dialogFragment.show(getFragmentManager(), null);
         dialogFragment.setListener(VUAccountCAFragment.this);
     }

@@ -20,7 +20,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="90dp"
                 android:layout_marginTop="13dp"
-                android:background="@color/white">
+                android:background="@drawable/setting_item_selector">
 
                 <ImageView
                     android:id="@+id/iv_vchat_avatar"
@@ -65,7 +65,8 @@
 
                 <RelativeLayout
                     android:id="@+id/re_collection"
-                    style="@style/me_item_style">
+                    style="@style/me_item_style"
+                    android:visibility="gone">
 
                     <ImageView
                         android:id="@+id/iv_collection"
@@ -84,7 +85,8 @@
 
                 <RelativeLayout
                     android:id="@+id/re_company"
-                    style="@style/me_item_style">
+                    style="@style/me_item_style"
+                    android:visibility="gone">
 
                     <ImageView
                         android:id="@+id/iv_company"
@@ -101,24 +103,6 @@
 
                 <View style="@style/me_dividing_line_style" />
 
-                <RelativeLayout
-                    android:id="@+id/re_help"
-                    style="@style/me_item_style">
-
-                    <ImageView
-                        android:id="@+id/iv_help"
-                        style="@style/me_item_image_style"
-                        android:src="@drawable/icon_me_help" />
-
-                    <TextView
-                        style="@style/me_item_text_style"
-                        android:layout_toRightOf="@id/iv_help"
-                        android:text="@string/help" />
-
-                    <ImageView style="@style/app_item_right_button" />
-                </RelativeLayout>
-
-                <View style="@style/me_dividing_line_style" />
 
                 <RelativeLayout
                     android:id="@+id/re_recommend"
@@ -160,9 +144,30 @@
             <View style="@style/me_dividing_line_style" />
 
             <RelativeLayout
+                android:id="@+id/re_help"
+                style="@style/me_item_style"
+                android:background="@drawable/setting_item_selector">
+
+                <ImageView
+                    android:id="@+id/iv_help"
+                    style="@style/me_item_image_style"
+                    android:src="@drawable/icon_me_help" />
+
+                <TextView
+                    style="@style/me_item_text_style"
+                    android:layout_toRightOf="@id/iv_help"
+                    android:text="@string/help" />
+
+                <ImageView style="@style/app_item_right_button" />
+            </RelativeLayout>
+
+            <View style="@style/me_dividing_line_style" />
+
+            <RelativeLayout
                 android:id="@+id/re_settings"
                 style="@style/me_item_style"
-                android:layout_marginTop="17dp">
+                android:layout_marginTop="17dp"
+                android:background="@drawable/setting_item_selector">
 
                 <ImageView
                     android:id="@+id/iv_settings"
@@ -183,16 +188,16 @@
                 android:id="@+id/tv_logout"
                 style="@style/TxtTitle"
                 android:layout_width="match_parent"
-                android:layout_marginLeft="13dp"
                 android:layout_height="43dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="13dp"
+                android:layout_marginRight="13dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/selector_exit_down"
-                android:layout_marginRight="13dp"
                 android:gravity="center"
                 android:text="@string/logout"
                 android:textColor="#ffFF0000"
-                android:textSize="16sp"
-                android:layout_gravity="center_horizontal" />
+                android:textSize="16sp" />
 
         </LinearLayout>
     </ScrollView>

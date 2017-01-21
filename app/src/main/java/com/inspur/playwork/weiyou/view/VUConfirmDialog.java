@@ -93,11 +93,16 @@ public class VUConfirmDialog {
         });
     }
 
+    public void setOutsideTouchDisable(){
+        pop.setOutsideTouchable (false);// 设置点击屏幕Dialog不消失
+        pop.setFocusable(false);
+    }
+
     public void showPopWindow(View targetView) {
         ColorDrawable cd = new ColorDrawable(0x000000);
         pop.setBackgroundDrawable(cd);
         WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
-        lp.alpha = 0.4f;
+        lp.alpha = 0.3f;
         activity.getWindow().setAttributes(lp);
         pop.showAtLocation(targetView, Gravity.BOTTOM, 0, 0);
     }

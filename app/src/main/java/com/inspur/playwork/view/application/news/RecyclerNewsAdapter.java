@@ -31,7 +31,7 @@ class RecyclerNewsAdapter extends RecyclerView.Adapter<RecyclerNewsAdapter.ViewH
 
 
     interface NewsListEventListener {
-        void onNewsClick(DepartmentNewsBean newsBean);
+        void onNewsClick(int pos);
 
         void onLoadMoreClick();
     }
@@ -137,9 +137,9 @@ class RecyclerNewsAdapter extends RecyclerView.Adapter<RecyclerNewsAdapter.ViewH
         @Override
         public void onClick(View v) {
             int pos = recyclerView.getChildLayoutPosition(v);
-            DepartmentNewsBean bean = getItem(pos);
+//            DepartmentNewsBean bean = getItem(pos);
             if (listEventListener != null) {
-                listEventListener.onNewsClick(bean);
+                listEventListener.onNewsClick(pos);
             }
         }
     };
@@ -156,7 +156,7 @@ class RecyclerNewsAdapter extends RecyclerView.Adapter<RecyclerNewsAdapter.ViewH
 
     void setFooterViewRefresh(boolean isRefresh) {
         ViewHolder viewHolder = (ViewHolder) recyclerView.findViewHolderForLayoutPosition(getItemCount() - 1);
-        if(viewHolder == null)
+        if (viewHolder == null)
             return;
         if (isRefresh) {
             if (viewHolder.type == FOOTER_VIEW) {

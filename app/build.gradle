@@ -124,8 +124,8 @@ android {
         applicationId "com.inspur.playwork"
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 128
-        versionName "2.0.1"
+        versionCode 131
+        versionName "2.0.4"
 
 
         ndk {
@@ -189,10 +189,9 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'de.greenrobot:greendao:2.0.0'
     compile 'com.google.code.gson:gson:2.4'
-    compile('io.socket:socket.io-client:0.8.2') {
+    compile('io.socket:socket.io-client:0.8.3') {
         exclude group: 'org.json', module: 'json'
     }
-//    compile 'com.squareup.okhttp:okhttp:2.7.4'
     compile 'com.sun.mail:android-mail:1.5.5'
     compile 'com.sun.mail:android-activation:1.5.5'
     compile 'me.leolin:ShortcutBadger:1.1.10@aar'
@@ -202,7 +201,7 @@ dependencies {
     compile 'id.zelory:compressor:1.0.4'
 
     compile project(':richeditor')
-    compile project(path: ':recyclerview-swipe')
+    compile project(':recyclerview-swipe')
 
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'

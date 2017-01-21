@@ -124,9 +124,12 @@ public class PlayWorkServiceNew extends Service {
         } else if (intent.getBooleanExtra("resume", false)) {
             try {
                 Log.i(TAG, "onStartCommand: resume");
-                pushService.sendSocketRequest(SOCKET_CONNECT, null);
+                pushService.sendSocketRequest(SOCKET_CONNECT, "resume");
             } catch (RemoteException e) {
                 e.printStackTrace();
+                Intent bindIntent = new Intent(this, PushService.class);
+                bindIntent.setAction("android.intent.action.push");
+                bindService(bindIntent, conn, Context.BIND_AUTO_CREATE);
             }
             dispatcher = Dispatcher.getInstance();
             dispatcher.register(this);

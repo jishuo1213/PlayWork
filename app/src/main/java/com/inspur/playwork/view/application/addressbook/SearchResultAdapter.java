@@ -37,6 +37,8 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         void onTelClick(String telNum);
 
         void onSendMsgClick(String email);
+
+        void onSendEmailClick(String email,String name);
     }
 
     SearchResultAdapter(RecyclerView recyclerView) {
@@ -69,6 +71,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         holder.mobile.setOnClickListener(mobileClickListener);
         holder.infoView.setOnClickListener(itemClickListener);
         holder.sendChatView.setOnClickListener(sendChatListener);
+        holder.email.setOnClickListener(sendEmailListener);
     }
 
     @Override
@@ -164,6 +167,17 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             SearchPersonInfo info = getItem(pos);
             if (listener != null) {
                 listener.onSendMsgClick(info.email);
+            }
+        }
+    };
+
+    private View.OnClickListener sendEmailListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int pos = recyclerView.getChildLayoutPosition((View) v.getParent().getParent());
+            SearchPersonInfo info = getItem(pos);
+            if (listener != null) {
+                listener.onSendEmailClick(info.email,info.name);
             }
         }
     };

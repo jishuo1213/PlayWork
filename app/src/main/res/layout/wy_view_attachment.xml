@@ -4,8 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white">
-    <View
-        style="@style/common_horizontal_dividing_line_style"/>
     <ImageView
         android:id="@+id/wy_attachment_icon"
         android:layout_width="36dp"
@@ -92,4 +90,7 @@
         android:textColor="@color/wy_common_text_light_color"
         tools:text="374k" />
 
+    <View
+        android:layout_alignParentBottom="true"
+        style="@style/common_horizontal_dividing_line_style"/>
 </RelativeLayout>

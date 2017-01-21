@@ -125,29 +125,11 @@ public class OkHttpClientManager {
     }
 
     public Call getAsyn(String url, Callback responseCallback, JSONObject jsonParam, String requestId) {
-//        Iterator<String> keys = jsonParam.keys();
-//        url += "?";
-//        Log.i(TAG, "getAsyn: " + jsonParam.toString());
-//        while (keys.hasNext()) {
-//            String key = keys.next();
-//            String value = jsonParam.optString(key);
-//            url = url + "&" + key + "=" + value;
-//        }
-//
-//        if (!TextUtils.isEmpty(token)) {
-//            url = url + "&token=" + token;
-//        }
-////        RequestBody body = RequestBody.create(JSON_TYPE, jsonParam.toString());
-//        Request.Builder builder = new Request.Builder();
-//        if (!TextUtils.isEmpty(token)) {
-//            builder.header("token", token);
-//        }
-//        if (!TextUtils.isEmpty(requestId))
-//            builder.header("requestId", requestId);
-//        Log.i(TAG, "getAsyn: " + url);
-//        Request request = builder.get().url(url).build();
-//        mOkHttpClient.newCall(request).enqueue(responseCallback);
         return newManager.getAsyn(url, responseCallback, jsonParam, requestId);
+    }
+
+    public Call newGetAsyn(String url, Callback responseCallback, JSONObject jsonParam, String requestId) {
+        return newManager.newGetAsyn(url, responseCallback, jsonParam, requestId);
     }
 
     public void postFormData(String url, Callback responseCallback, JSONObject params, String requestId) {
@@ -175,6 +157,10 @@ public class OkHttpClientManager {
      */
     public void post(String url, JSONObject jsonStr, Callback requestCallback, String requestId) {
         newManager.post(url, jsonStr, requestCallback, requestId);
+    }
+
+    public void newPost(String url, JSONObject jsonStr, Callback requestCallback, String requestId) {
+        newManager.newPost(url, jsonStr, requestCallback, requestId);
     }
 
 

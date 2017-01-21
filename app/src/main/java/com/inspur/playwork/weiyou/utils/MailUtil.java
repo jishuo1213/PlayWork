@@ -194,7 +194,7 @@ public class MailUtil {
     }
 
     private static void execSendEncryptedMailToOnRcpt(Session session, MailTask mailTask, Map<String, String> publicKeyMap,
-                                                      ArrayList<UserInfoBean> toList, ArrayList<UserInfoBean> ccList, DecryptMail dm, Transport transport) throws
+                  ArrayList<UserInfoBean> toList, ArrayList<UserInfoBean> ccList, DecryptMail dm, Transport transport) throws
             JSONException, IOException, MessagingException, InterruptedException {
         Log.i(TAG, "execSendEncryptedMailToOnRcpt: mailTask.getMailRcpts() = "+mailTask.getMailRcpts());
         JSONArray ja = new JSONArray(mailTask.getMailRcpts());
@@ -322,38 +322,6 @@ public class MailUtil {
     /**
      * 【保存附件】
      */
-    public static void getAttachmentPart(Part part, Multipart mal){
-        try {
-            if (part.isMimeType("multipart/*")) {
-                Multipart mp = (Multipart) part.getContent();
-                for (int i = 0; i < mp.getCount(); i++) {
-                    MimeBodyPart mpart = (MimeBodyPart) mp.getBodyPart(i);
-                    String disposition = mpart.getDisposition();
-                    // 如果该BodyPart对象包含附件，则应该解析出来
-                    if (disposition != null) {
-                        mal.addBodyPart(mpart);
-                    } else if (mpart.isMimeType("multipart/*")) {
-                        getAttachmentPart(mpart, mal);
-                    } else {
-                        String fileName = mpart.getFileName();
-                        if (fileName != null) {
-                            mal.addBodyPart(mpart);
-                        }
-                    }
-                }
-            } else if (part.isMimeType("message/rfc822")) {
-                getAttachmentPart((Part) part.getContent(), mal);
-            }
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 【保存附件】
-     */
     public static void saveAttachments(Part part, String email, List<MailAttachment> mal) throws Exception {
         String fileName = "";
         if (part.isMimeType("multipart/*")) {
@@ -408,9 +376,10 @@ public class MailUtil {
             setContentTextType("text/plain");
             getMailTextContent(msg, textContent, cidList);
 
+//            Log.i(TAG, "getMailText: ```````````````获取文本完毕 textContent ="+textContent);
 //            Log.i(TAG, "getMailText: ```````````````获取文本完毕，开始页面编码转换 hasHtml ="+hasHtml);
             String text = replaceInnerSource(textContent,cidList);
-// 获取邮件内容
+            // 获取邮件内容
             if(text.length()>1024*1024) {
                 String filePath = FileUtil.getMailCachePath() + md.getUid() + ".xhw";
                 FileOutputStream fos = new FileOutputStream(filePath);
@@ -466,16 +435,21 @@ public class MailUtil {
         boolean isContainTextAttach = part.getContentType().indexOf("name") != -1;
 //        Log.i(TAG, isContainTextAttach + "---getMailTextContent: part.getContentType();"+part.getContentType());
         if (part.isMimeType("text/*") && !isContainTextAttach) {// 邮件内容是纯文本
-            String textContent;
+            String textContent="";
             try{
                 MimePart mpart = (MimePart)part;
                 Log.i(TAG, "getMailTextContent: "+mpart.getEncoding());
                 if(mpart.getEncoding().equals("quotedprintable")){
                     mpart.setHeader("Content-Transfer-Encoding","quoted-printable");
                 }
+                else if(mpart.getEncoding().equals("x-unknown")){
+                    mpart.setHeader("Content-Transfer-Encoding","binary");
+                }
                 textContent = (String)(mpart.getContent());
             }catch(Exception e){
-                textContent = (String)part.getContent();
+                e.printStackTrace();
+//                if(((MimePart) part).getEncoding().equals("x-unknown"))
+//                textContent = (String)part.getgetContent();
             }
             content.append(textContent);
 //            Log.i(TAG, "getMailTextContent: text/* ");
@@ -567,25 +541,32 @@ public class MailUtil {
 
     /**
      * 获取邮件正文内容
-     *
-     * @param part    邮件体
+     * @param part
+     * @param md
+     * @return int encType 0：不加密不签名；1：先加密 2：先签名
      * @throws Exception
      */
-    public static void getMailEncType(Part part,MailDetail md) throws Exception {
+    public static int getMailEncType(Part part,MailDetail md) throws Exception {
+        int encType = 0;
         // 如果是文本类型的附件，通过getContent方法可以取到文本内容，但这不是我们需要的结果，所以在这里要做判断
         if (part.isMimeType("message/rfc822")) {
             getMailEncType((Part) part.getContent(),md);
-        } else if (part.isMimeType("multipart/signed")||
-                part.isMimeType("application/pkcs7-signature")||
+        } else if ( part.isMimeType("application/pkcs7-signature")||
                 part.isMimeType("application/x-pkcs7-signature")||
                 part.getContentType().contains("smime-type=signed-data")) {
-            // 返回加密类型：仅签名邮件
+            if(encType==0) encType = 2;
+            // 是签名邮件
             md.setSigned(true);
         } else if (part.isMimeType("application/pkcs7-mime")
                 || part.isMimeType("application/x-pkcs7-mime")) {
-            // 返回加密类型：加密邮件
+            if(encType==0) encType = 1;
+            // 是加密邮件
             md.setEncrypted(true);
         } else if (part.isMimeType("multipart/*")) {
+            if(part.isMimeType("multipart/signed")) {
+                if(encType==0) encType = 2;
+                md.setSigned(true);
+            }
             Multipart multipart = (Multipart) part.getContent();
             int partCount = multipart.getCount();
             for (int i = 0; i < partCount; i++) {
@@ -593,6 +574,7 @@ public class MailUtil {
                 getMailEncType(bodyPart,md);
             }
         }
+        return encType;
     }
 
     /**

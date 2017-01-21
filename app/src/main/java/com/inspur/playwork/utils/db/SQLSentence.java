@@ -572,52 +572,7 @@ public class SQLSentence {
 
 
     public static void main(String[] argc) {
-//        double  res = 0.7 + 0.1;
-//        double num = res * 1000000;
-//        System.out.println(num);
-        Calendar calendar1 = Calendar.getInstance();
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2006, 11, 31);
-        calendar1.setTimeInMillis(calendar.getTimeInMillis());
-        int dateNums = calendar.get(Calendar.DAY_OF_YEAR);
-        System.out.println(dateNums);
-//        int weekNum = dateNums / 7;
-//        System.out.println(weekNum);
-        calendar.set(Calendar.MONTH, 0);
-        calendar.set(Calendar.DATE, 1);
-        int dayofweek = calendar.get(Calendar.DAY_OF_WEEK);
-        System.out.println(dayofweek);
-
-        if (dayofweek <= 5 && dayofweek != 1) {
-//            weekNum++;
-            dateNums += (dayofweek - 2);
-        } else {
-            if (dayofweek == 1) {
-                dateNums -= 1;
-            } else {
-                dateNums -= (7 - dayofweek + 2);
-            }
-        }
-
-        calendar.set(Calendar.MONTH, 11);
-        calendar.set(Calendar.DATE, 31);
-
-        int lastDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-
-        int weekNum = dateNums / 7;
-        if (dateNums % 7 != 0) {
-            weekNum++;
-        } else {
-            System.out.println(weekNum);
-            return;
-        }
-//        calendar.add(Calendar.YEAR,1);
-
-        System.out.println(weekNum);
-//        if (weekNum == 0) {
-//            weekNum = 52;
-//        }
-//        System.out.println(weekNum);
-
+        String s = "AAAAA&BBBBB";
+        System.out.println(s.substring(6));
     }
 }

@@ -1,6 +1,7 @@
 package com.inspur.playwork.weiyou.fragment;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -38,7 +39,8 @@ import java.util.ArrayList;
 /**
  * Created by 孙 on 2015/12/2 0002.
  */
-public class MailListFragment extends Fragment implements MailListOperation,View.OnClickListener,MailHeadListAdapter.ItemClickListener {
+public class MailListFragment extends Fragment implements MailListOperation,View.OnClickListener,
+        MailHeadListAdapter.ItemClickListener {
     private static final String TAG = "MailListFragment-->";
     private WeiYouMainActivity wyma;
 
@@ -56,7 +58,7 @@ public class MailListFragment extends Fragment implements MailListOperation,View
     private TextView downloadInfoTV;
 
     private LinearLayout guidePageLL;
-    private boolean isExitedVU = false;
+//    public boolean isExitedVU = false;
 
     private boolean isFirstSetup = true;
     private ArrayList<MailDetail> mailListData;
@@ -89,26 +91,6 @@ public class MailListFragment extends Fragment implements MailListOperation,View
         dirNameTV = (TextView) view.findViewById(R.id.ml_dir_name);
         dirNameTV.setText(wyma.vuStores.currDirName);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
-        mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
-        mailListLv = (SwipeMenuRecyclerView) view.findViewById(R.id.ml_recycler_view);
-        llManager = new LinearLayoutManager(wyma);
-        llManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mailListLv.setLayoutManager(llManager);// 布局管理器。
-        mailListLv.setHasFixedSize(true);// 如果Item够简单，高度是确定的，打开FixSize将提高性能。
-        mailListLv.addItemDecoration(new ListViewDecoration(wyma));// 添加分割线。
-//        // 添加滚动监听。
-//        mailListLv.addOnScrollListener(mOnScrollListener);
-
-        // 设置菜单创建器。
-        mailListLv.setSwipeMenuCreator(swipeMenuCreator);
-        // 设置菜单Item点击监听。
-        mailListLv.setSwipeMenuItemClickListener(menuItemClickListener);
-//        if(mMenuAdapter == null) {
-//            mMenuAdapter = new MailHeadListAdapter(wyma,mailListData,isShowFooterView);
-//            mMenuAdapter.setIcListener(this);
-//            mailListLv.setAdapter(mMenuAdapter);
-//        }
         emptyView = (LinearLayout) view.findViewById(R.id.ml_empty_view);
         emptyView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,6 +103,22 @@ public class MailListFragment extends Fragment implements MailListOperation,View
                 }
             }
         });
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
+        mailListLv = (SwipeMenuRecyclerView) view.findViewById(R.id.ml_recycler_view);
+        llManager = new LinearLayoutManager(wyma);
+        llManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mailListLv.setLayoutManager(llManager);// 布局管理器。
+        mailListLv.setHasFixedSize(true);// 如果Item够简单，高度是确定的，打开FixSize将提高性能。
+        mailListLv.addItemDecoration(new ListViewDecoration(wyma));// 添加分割线。
+//        // 添加滚动监听。
+//        mailListLv.addOnScrollListener(mOnScrollListener);
+        // 设置菜单创建器。
+        mailListLv.setSwipeMenuCreator(swipeMenuCreator);
+        // 设置菜单Item点击监听。
+        mailListLv.setSwipeMenuItemClickListener(menuItemClickListener);
+
         mailSearchBox = (AutoCompleteTextView) view.findViewById(R.id.ml_search_mail_actv);
         initMailSearchBox();
         downloadInfoTV = (TextView) view.findViewById(R.id.download_info_tv);
@@ -140,8 +138,20 @@ public class MailListFragment extends Fragment implements MailListOperation,View
             Log.i(TAG, "onCreateView: is first setup...");
             wyma.vuStores.loadListData();
             isFirstSetup = false;
-        } else
+        } else {
             Log.i(TAG, "onCreateView: is not first setup...");
+            boolean mlistIsEmpty = mailListData.size() == 0;
+            Log.i(TAG, "mailListFragment renderMailListView: " + mailListData);
+            if(mlistIsEmpty) {
+                emptyView.setVisibility(View.VISIBLE);
+                emptyView.findViewById(R.id.ml_no_mail_tv).setVisibility(View.VISIBLE);
+                emptyView.findViewById(R.id.click_to_load_tv).setVisibility(wyma.vuStores!=null && wyma.vuStores.currDirIsInbox()?View.VISIBLE:View.GONE);
+                emptyView.findViewById(R.id.ml_is_loading_rl).setVisibility(View.GONE);
+            }else emptyView.setVisibility(View.GONE);
+            mMenuAdapter = new MailHeadListAdapter(wyma, mailListData, !mlistIsEmpty && wyma.vuStores.currDirIsInbox());
+            mMenuAdapter.setIcListener(MailListFragment.this);
+            mailListLv.setAdapter(mMenuAdapter);
+        }
         return view;
     }
 
@@ -202,9 +212,16 @@ public class MailListFragment extends Fragment implements MailListOperation,View
                     emptyView.findViewById(R.id.ml_is_loading_rl).setVisibility(View.GONE);
                 }else
                     emptyView.setVisibility(View.GONE);
-                mMenuAdapter = new MailHeadListAdapter(wyma,mailListData,!mlistIsEmpty&&wyma.vuStores.currDirIsInbox());
-                mMenuAdapter.setIcListener(MailListFragment.this);
-                mailListLv.setAdapter(mMenuAdapter);
+                if(mMenuAdapter == null) {
+                    mMenuAdapter = new MailHeadListAdapter(wyma, mailListData, !mlistIsEmpty && wyma.vuStores.currDirIsInbox());
+                    mMenuAdapter.setIcListener(MailListFragment.this);
+                    mailListLv.setAdapter(mMenuAdapter);
+                }else{
+                    Log.i(TAG, "run: mailListData.size() = "+mailListData.size());
+                    Log.i(TAG, "run: mMenuAdapter == null ? "+(mMenuAdapter == null));
+                    mMenuAdapter.setFooterViewVisible(!mlistIsEmpty && wyma.vuStores.currDirIsInbox());
+                    mMenuAdapter.notifyDataSetChanged();
+                }
             }
         });
     }
@@ -332,11 +349,13 @@ public class MailListFragment extends Fragment implements MailListOperation,View
         int id = view.getId();
         Log.i(TAG, "onClick---" + id);
         if (id == R.id.ml_write_mail_btn) {
-            wyma.gotoWriteMail(WeiYouMainActivity.QUOTE_TYPE_NO_QUOTE);
+            Intent intent = new Intent();
+            intent.putExtra("type",0);
+            wyma.gotoWriteMail(intent);
             //写邮件
         } else if (id == R.id.ml_exit_mail_btn) {
             Log.i(TAG, "微邮关闭按钮被点击了: ");
-            isExitedVU = true;
+//            isExitedVU = true;
             wyma.finish();
             //关闭微邮
         } else if (id == R.id.ml_search_mail_btn) {
@@ -397,17 +416,17 @@ public class MailListFragment extends Fragment implements MailListOperation,View
         super.onDestroy();
     }
 
-    /**@Override
+    @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if(!hidden){
+            wyma.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            renderMailListView();
         }
-    }*/
+    }
     @Override
     public void onResume(){
         super.onResume();
-        wyma.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        renderMailListView();
     }
 }
 

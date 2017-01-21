@@ -43,6 +43,9 @@ public class PreferencesHelper {
 
     public static final String SERVICE_NUM_GROUP_ID = "service_num_groupId";
 
+    public static final String IS_GUIDE_PAGE_SHOW = "isguildpageshow";
+
+
     private SharedPreferences sp;
 
     private Context context;
@@ -132,10 +135,10 @@ public class PreferencesHelper {
             if (user == null)
                 return null;
             currentUser = new UserInfoBean();
-            currentUser.id = user.getUserId();
+            currentUser.id = user.getUserId().toLowerCase();
             currentUser.uid = user.getEId();
             currentUser.avatar = user.getAvatar();
-            currentUser.email = user.getUserId() + AppConfig.EMAIL_SUFFIX;
+            currentUser.email = user.getUserId().toLowerCase() + AppConfig.EMAIL_SUFFIX;
             currentUser.name = user.getUserName();
             currentUser.passWord = user.getPassword();
             currentUser.department = user.getDepartment();
@@ -155,10 +158,10 @@ public class PreferencesHelper {
             if (user == null)
                 return null;
             currentUser = new UserInfoBean();
-            currentUser.id = user.getUserId();
+            currentUser.id = user.getUserId().toLowerCase();
             currentUser.uid = user.getEId();
             currentUser.avatar = user.getAvatar();
-            currentUser.email = user.getUserId() + AppConfig.EMAIL_SUFFIX;
+            currentUser.email = user.getUserId().toLowerCase() + AppConfig.EMAIL_SUFFIX;
             currentUser.name = user.getUserName();
             currentUser.passWord = user.getPassword();
             currentUser.department = user.getDepartment();
@@ -175,6 +178,7 @@ public class PreferencesHelper {
     public VersionInfoBean getVersionInfo() {
         try {
             JSONObject jsonObject = new JSONObject(readStringPreference(VERSION_INFO));
+            Log.i(TAG, "getVersionInfo: " + jsonObject.toString());
             return new VersionInfoBean(jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
