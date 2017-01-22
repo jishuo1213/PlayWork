@@ -128,13 +128,14 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         OkHttpClientManager.getInstance().getAsyn(AppConfig.CHECK_NEW_VERSION + "userId=" + PreferencesHelper.getInstance().getCurrentUser().id, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        isCanCheckVersion = true;
-                        UItoolKit.showToastShort(getActivity(), "检查更新失败，可能是网络问题");
-                    }
-                });
+                if (getActivity() != null)
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            isCanCheckVersion = true;
+                            UItoolKit.showToastShort(getActivity(), "检查更新失败，可能是网络问题");
+                        }
+                    });
             }
 
             @Override
@@ -147,6 +148,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                         double newVersion = Double.parseDouble(newBean.Version);
                         double oldVersion = BuildConfig.VERSION_CODE / 100.0;
                         Log.i(TAG, "onResponse: " + res + newBean.toString() + newVersion + "-----" + oldVersion);
+                        if (getActivity() == null)
+                            return;
                         if (newVersion > oldVersion) {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -167,6 +170,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                         e.printStackTrace();
                     }
                 } else {
+                    if (getActivity() == null)
+                        return;
                     isCanCheckVersion = true;
                     getActivity().runOnUiThread(new Runnable() {
                         @Override

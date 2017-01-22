@@ -2,7 +2,6 @@ package com.inspur.playwork.utils;
 
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -22,10 +21,8 @@ import java.io.PrintStream;
 import java.net.FileNameMap;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -45,9 +42,6 @@ import okhttp3.internal.Util;
 import okio.BufferedSink;
 import okio.Okio;
 import okio.Source;
-
-//import okhttp3.MediaType;
-//import okhttp3.OkHttpClient;
 
 /**
  * okhttp工具类

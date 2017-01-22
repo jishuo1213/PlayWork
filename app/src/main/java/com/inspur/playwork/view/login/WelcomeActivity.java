@@ -13,6 +13,7 @@ import android.util.Log;
 import com.inspur.playwork.MainActivity;
 import com.inspur.playwork.R;
 import com.inspur.playwork.actions.UpdateUIAction;
+import com.inspur.playwork.actions.common.CommonActions;
 import com.inspur.playwork.actions.login.LoginActions;
 import com.inspur.playwork.actions.network.NetWorkActions;
 import com.inspur.playwork.core.PlayWorkApplication;
@@ -33,6 +34,12 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private boolean isLogin;
 
+    private boolean isCreate;
+
+    private boolean isStartMainActivity = false;
+
+    private boolean isStartLoginActivity = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +52,7 @@ public class WelcomeActivity extends AppCompatActivity {
 //        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//去掉信息栏
         setContentView(R.layout.layout_welcome);
         isLogin = checkNeedLogin();
+        isCreate = true;
         if (!isLogin) {
             startLoginActivity();
         }
@@ -53,18 +61,19 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (isLogin)
+        if (isLogin && isCreate) {
             bindService(new Intent(this, PlayWorkServiceNew.class), connection, Context.BIND_AUTO_CREATE);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (isLogin)
-            unbindService(connection);
+
     }
 
     private void startLoginActivity() {
+        isStartLoginActivity = true;
         startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
@@ -73,6 +82,10 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Dispatcher.getInstance().unRegister(this);
+        if (!isStartMainActivity && !isStartLoginActivity)
+            ((PlayWorkServiceNew) binder.getService()).logout();
+        if (isLogin)
+            unbindService(connection);
     }
 
     private PlayWorkServiceNew.Binder binder;
@@ -81,7 +94,11 @@ public class WelcomeActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             binder = (PlayWorkServiceNew.Binder) service;
-            checkPasswordToServer();
+            Log.i(TAG, "onServiceConnected: ----------=======");
+            if (isCreate) {
+                checkPasswordToServer();
+                isCreate = false;
+            }
         }
 
         @Override
@@ -110,6 +127,7 @@ public class WelcomeActivity extends AppCompatActivity {
 //                    Dispatcher.getInstance().dispatchNetWorkAction(NetWorkActions.SEND_CONNECT_TO_TIMELINE_SERVER, ConnectType.CONNECT_FROM_WELCOME);
 //                }
 
+                Log.i(TAG, "onEventMainThread: " + ((PlayWorkServiceNew) binder.getService()).getConnectedState());
                 if (((PlayWorkServiceNew) binder.getService()).getConnectedState() == 2) {
                     startMainActivity();
                     return;
@@ -130,13 +148,15 @@ public class WelcomeActivity extends AppCompatActivity {
                 startMainActivity();
                 break;
             case NetWorkActions.CONNECT_TO_TIMELINE_SERVER_TIME_OUT:
-                UItoolKit.showToastShort(this, "连接时间轴服务器超时,请检查是否需要切换内外网");
+                UItoolKit.showToastShort(this, "连接时间轴服务器超时");
                 startLoginActivity();
                 break;
         }
     }
 
     private void startMainActivity() {
+        isStartMainActivity = true;
+
         LoginStores.getInstance().unRegister();
         if (PreferencesHelper.getInstance().readBooleanPreference(PreferencesHelper.IS_GUIDE_PAGE_SHOW)) {
             startActivity(new Intent(this, MainActivity.class));

@@ -29,6 +29,7 @@ import com.inspur.playwork.utils.OkHttpClientManager;
 import com.inspur.playwork.utils.PreferencesHelper;
 import com.inspur.playwork.utils.ResourcesUtil;
 import com.inspur.playwork.utils.SingleRefreshManager;
+import com.inspur.playwork.utils.ThreadPool;
 import com.inspur.playwork.utils.db.DBOperation;
 import com.inspur.playwork.utils.loadfile.FileLoader;
 import com.inspur.playwork.utils.loadfile.LoadFileHandlerThread;
@@ -109,7 +110,8 @@ public class PlayWorkApplication extends Application {
             //UserManager.get();
         } catch (Throwable e) {
             if (BuildConfig.DEBUG) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
+//                throw new RuntimeException(e);
             }
         }
     }

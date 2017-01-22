@@ -19,10 +19,6 @@ public class LoginActivity extends AppCompatActivity {
         getFragmentManager().beginTransaction().add(R.id.login_container, new LoginFragment()).commit();
     }
 
-/*    private void unBindAppFromService() {
-        ((PlayWorkApplication) getApplication()).unBindPlayWorkService();
-    }*/
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -31,6 +27,5 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        startActivity(new Intent(this, DummyActivity.class));
     }
 }

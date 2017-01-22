@@ -27,12 +27,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
 
 import com.inspur.playwork.MainActivity;
 import com.inspur.playwork.R;
 import com.inspur.playwork.actions.UpdateUIAction;
-import com.inspur.playwork.actions.common.ConnectType;
 import com.inspur.playwork.actions.login.LoginActions;
 import com.inspur.playwork.actions.network.NetWorkActions;
 import com.inspur.playwork.core.PlayWorkApplication;
@@ -54,9 +52,15 @@ import java.lang.ref.WeakReference;
 /**
  * Created by Fan on 15-9-11.
  */
-public class LoginFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+public class LoginFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "LoginFragmentFan";
+
+    private static final int LOGIN_SUCCESS = 0;
+    private static final int LOGIN_FAILED = 1;
+    private static final int DO_AFTER_AD_LOGIN = 2;
+    private static final int LOGIN_TIME_LINE_SUCCESS = 3;
+    private static final int CONNECT_TIMELINE_TIMEOUT = 4;
 
     private EditText userName, password;
     private LoginStores loginStores;
@@ -75,6 +79,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Rad
     private UserInfoBean user;
 
     private boolean isNeedEncrypt;
+
+    private boolean isStartMainActivity = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -142,13 +148,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Rad
         if (Dispatcher.getInstance().isRegistered(this))
             dispatcher.unRegister(this);
         Log.i(TAG, "onDestroy: " + pfh.readBooleanPreference(PreferencesHelper.HAVE_LOGIN_AD_SERVER));
-        if (!pfh.readBooleanPreference(PreferencesHelper.HAVE_LOGIN_AD_SERVER)) {
-            disconnectTimeLine(ConnectType.DISCONNECT_WHEN_EXIT_LOGIN);
+        if (!isStartMainActivity) {
+            disconnectTimeLine();
         }
         getActivity().unbindService(connection);
     }
 
-    private void disconnectTimeLine(int type) {
+    private void disconnectTimeLine() {
         Log.i(TAG, "disconnectTimeLine: ");
         ((PlayWorkServiceNew) binder.getService()).logout();
     }
@@ -158,41 +164,36 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Rad
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId) {
-      /*  switch (checkedId) {
-            case R.id.local_net:
-                break;
-            case R.id.wide_net:
-                break;
-        }*/
-    }
-
     private static class LoginHandler extends Handler {
 
         private WeakReference<LoginFragment> reference;
 
-        public LoginHandler(WeakReference<LoginFragment> reference) {
+        LoginHandler(WeakReference<LoginFragment> reference) {
             this.reference = reference;
         }
 
         @Override
         public void dispatchMessage(@NonNull Message msg) {
             switch (msg.what) {
-                case 0:
-                    reference.get().loginSuccessHandler();
+                case LOGIN_SUCCESS:
+                    if (reference.get() != null)
+                        reference.get().loginSuccessHandler();
                     break;
-                case 1:
-                    reference.get().loginFailedHandler(msg.arg1);
+                case LOGIN_FAILED:
+                    if (reference.get() != null)
+                        reference.get().loginFailedHandler(msg.arg1);
                     break;
-                case 2:
-                    reference.get().doAfterAdLog();
+                case DO_AFTER_AD_LOGIN:
+                    if (reference.get() != null)
+                        reference.get().doAfterAdLog();
                     break;
-                case 3:
-                    reference.get().loginTimeLineServer();
+                case LOGIN_TIME_LINE_SUCCESS:
+                    if (reference.get() != null)
+                        reference.get().loginTimeLineServer();
                     break;
-                case 4:
-                    reference.get().connectToTimeLineTimeout();
+                case CONNECT_TIMELINE_TIMEOUT:
+                    if (reference.get() != null)
+                        reference.get().connectToTimeLineTimeout();
                     break;
             }
         }
@@ -226,25 +227,24 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Rad
     public void onEvent(UpdateUIAction updateUIAction) {
         switch (updateUIAction.getActionType()) {
             case LoginActions.LOGIN_AD_SERVER_SUCCESS:
-                handler.sendMessage(handler.obtainMessage(2));
+                handler.sendMessage(handler.obtainMessage(DO_AFTER_AD_LOGIN));
                 break;
             case LoginActions.LOGIN_TIMELINE_SUCCESS:
-                handler.sendMessage(handler.obtainMessage(0));
+                handler.sendMessage(handler.obtainMessage(LOGIN_SUCCESS));
                 break;
             case LoginActions.LOGIN_FAILED:
-                handler.sendMessage(handler.obtainMessage(1, (int) updateUIAction.getActionData().get(0), 0));
+                handler.sendMessage(handler.obtainMessage(LOGIN_FAILED, (int) updateUIAction.getActionData().get(0), 0));
                 break;
             case NetWorkActions.CONNECT_TO_TIMELINE_SERVER_SUCCESS:
-                handler.sendMessage(handler.obtainMessage(3));
+                handler.sendMessage(handler.obtainMessage(LOGIN_TIME_LINE_SUCCESS));
                 break;
             case NetWorkActions.CONNECT_TO_TIMELINE_SERVER_TIME_OUT:
-                handler.sendMessage(handler.obtainMessage(4));
+                handler.sendMessage(handler.obtainMessage(CONNECT_TIMELINE_TIMEOUT));
                 break;
         }
     }
 
     private void connectToTimeLineTimeout() {
-        UItoolKit.showToastShort(getActivity(), "连接时间轴服务器超时,请检查是否需要切换内外网");
         dismissProgressDialog();
     }
 
@@ -255,11 +255,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Rad
     private void doAfterAdLog() {
         ((PlayWorkApplication) getActivity().getApplication()).getDbOperation().init(getActivity().getApplicationContext(), PreferencesHelper.getInstance().getCurrentUser(true).id);
         pfh.writeToPreferences(PreferencesHelper.USER_NAME, userName.getText().toString());
-//        if (((PlayWorkService) binder.getService()).getConnectedState()) {
-//            loginTimeLineServer();
-//        } else {
-//            Dispatcher.getInstance().dispatchNetWorkAction(NetWorkActions.SEND_CONNECT_TO_TIMELINE_SERVER, ConnectType.CONNECT_FROM_LOGIN);
-//        }
+        Log.i(TAG, "doAfterAdLog: ");
         ((PlayWorkServiceNew) binder.getService()).setCurrentUser(PreferencesHelper.getInstance().getCurrentUser());
     }
 
@@ -284,6 +280,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Rad
     }
 
     private void loginSuccessHandler() {
+        isStartMainActivity = true;
         pfh.writeToPreferences(PreferencesHelper.HAVE_LOGIN_TIME_LINE, true);
         dismissProgressDialog();
         if (pfh.readBooleanPreference(PreferencesHelper.IS_GUIDE_PAGE_SHOW)) {
@@ -394,17 +391,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Rad
     private TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//            System.out.println("beforeTextChanged----"+s.toString());
         }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-//            System.out.println("onTextChanged---"+s.toString());
         }
 
         @Override
         public void afterTextChanged(Editable s) {
-//            System.out.println("onTextChanged---"+s.toString());
             String s1 = s.toString().toLowerCase();
             if (s1.length() > 0) {
                 if (user != null && s1.equals(user.id.toLowerCase())) {

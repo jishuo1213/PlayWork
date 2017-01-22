@@ -316,6 +316,7 @@ public class ApplicationStores extends Stores {
 //            requestId = requestId.split("&")[0];
 //            uuid = requestId.split("&")[1];
 //        }
+        Log.d(TAG, "errorHandle() called with: requestId = [" + requestId + "]");
         JSONObject headerJson = null;
         try {
             headerJson = new JSONObject(requestId);
@@ -340,7 +341,7 @@ public class ApplicationStores extends Stores {
 
     private void parseWeekPlanDetail(JSONObject res, JSONObject requstId) {
         try {
-            FileUtil.writeContentToFile(res.toString(),FileUtil.getSDCardRoot() + "test.txt");
+            FileUtil.writeContentToFile(res.toString(), FileUtil.getSDCardRoot() + "test.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -418,7 +419,7 @@ public class ApplicationStores extends Stores {
     private Callback getNewsCallback = new Callback() {
         @Override
         public void onFailure(Call call, IOException e) {
-            String requestId = call.request().header("requestId");
+            String requestId = (String) call.request().tag();
             errorHandle(requestId);
         }
 
@@ -454,7 +455,7 @@ public class ApplicationStores extends Stores {
                     e.printStackTrace();
                 }
             } else {
-                String requestId = call.request().header("requestId");
+                String requestId = (String) call.request().tag();
                 errorHandle(requestId);
             }
         }
@@ -464,7 +465,6 @@ public class ApplicationStores extends Stores {
     }
 
     private void createHttpRequestJson(JSONObject body) throws JSONException {
-        JSONObject clientJson = new JSONObject();
         body.put("isPhone", true);
     }
 }

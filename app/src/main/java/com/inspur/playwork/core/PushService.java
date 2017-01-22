@@ -68,7 +68,8 @@ public class PushService extends Service implements Emitter.Listener {
 
     //    public static final String HTTP_SERVER_IP = "http://10.110.6.64:6382/";
 //    public static final String HTTP_SERVER_IP = "http://218.57.135.45:55166/";
-    public static final String HTTP_SERVER_IP = "http://218.57.135.45:9080/";
+//    public static final String HTTP_SERVER_IP = "http://218.57.135.45:9080/";
+    public static final String HTTP_SERVER_IP = "http://htime.inspur.com:6380/";
 //    public static final String HTTP_SERVER_IP = "http://10.47.1.20:6382/";'
 
     private static final int SOCKET_CONNECT_TO_SERVER = 0;
@@ -194,6 +195,7 @@ public class PushService extends Service implements Emitter.Listener {
         @Override
         public void setCurrentUser(UserInfoBean userInfoBean) throws RemoteException {
 //            isLogin = true;
+            Log.i(TAG, "setCurrentUser: " + userInfoBean + "=========" + (currentUser == null));
             if (currentUser == null || !currentUser.id.equals(userInfoBean.id)) {
                 currentUser = userInfoBean;
                 handler.sendEmptyMessage(INIT_SOCKET_EVENT_DB);
@@ -363,7 +365,9 @@ public class PushService extends Service implements Emitter.Listener {
         try {
 //            socket = IO.socket("http://10.110.6.64:5849", options);
 //            socket = IO.socket("http://218.57.135.45:55165", options);
-            socket = IO.socket("http://218.57.135.45:9090", options);
+//            socket = IO.socket("http://218.57.135.45:9090", options);
+//            socket = IO.socket("http://htime.inspur.com:5848", options);
+            socket = IO.socket("http://htime.inspur.com:5848", options);
 //            socket = IO.socket("http://10.47.1.20:5849", options);
             socket.on(Socket.EVENT_CONNECT, onConnectListener);
             socket.on(Socket.EVENT_DISCONNECT, onDisConnectListener);
@@ -784,6 +788,7 @@ public class PushService extends Service implements Emitter.Listener {
 //        pushSeviceDB = null;
         pushSeviceDB.logout();
 
+        Log.i(TAG, "logout: " + currentUser);
 
 //        unregisterReceiver(netWorkReceiver);
 //        unregisterReceiver(mScreenReceiver);

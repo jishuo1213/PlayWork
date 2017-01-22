@@ -30,6 +30,7 @@ import com.inspur.playwork.actions.db.DataBaseActions;
 import com.inspur.playwork.actions.login.LoginActions;
 import com.inspur.playwork.actions.message.MessageActions;
 import com.inspur.playwork.actions.network.NetAction;
+import com.inspur.playwork.actions.network.NetWorkActions;
 import com.inspur.playwork.actions.timeline.TimeLineActions;
 import com.inspur.playwork.broadcastreciver.NotifyMsgReciver;
 import com.inspur.playwork.config.AppConfig;
@@ -74,6 +75,7 @@ public class PlayWorkServiceNew extends Service {
     private static final int CONNECT_FROM_SERVER = 0x07;
 
     private static final int DISCONNECT_FROM_SERVER = 0x08;
+    private static final int CONNECT_TIMEOUT_FROM_SERVER = 0x09;
 
     EventManager pushService;
 
@@ -228,8 +230,17 @@ public class PlayWorkServiceNew extends Service {
                         reference.get().sendDisconnected();
                     }
                     break;
+                case CONNECT_TIMEOUT_FROM_SERVER:
+                    if (reference.get() != null) {
+                        reference.get().sendTimeOutConnected();
+                    }
+                    break;
             }
         }
+    }
+
+    private void sendTimeOutConnected() {
+        Dispatcher.getInstance().dispatchUpdateUIEvent(NetWorkActions.CONNECT_TO_TIMELINE_SERVER_TIME_OUT);
     }
 
     private void sendDisconnected() {
@@ -302,6 +313,10 @@ public class PlayWorkServiceNew extends Service {
                 case 2:
                     netWorkState = 2;
                     handler.sendMessage(handler.obtainMessage(LOGIN_TIME_LINE, socketEvent.eventInfo));
+                    break;
+                case 3:
+                    netWorkState = -1;
+                    handler.sendMessage(handler.obtainMessage(CONNECT_TIMEOUT_FROM_SERVER));
                     break;
                 case 1:
                     handler.sendMessage(handler.obtainMessage(DISPATCH_NET_RESPONSE, socketEvent.eventInfo));
@@ -537,12 +552,10 @@ public class PlayWorkServiceNew extends Service {
         return !TextUtils.isEmpty(chatWindowId.taskId) && taskId.equals(chatWindowId.taskId);
     }
 
-    private UserInfoBean currentUser;
-
     public void setCurrentUser(UserInfoBean userInfoBean) {
-        this.currentUser = userInfoBean;
+        Log.i(TAG, "setCurrentUser: ");
         try {
-            pushService.setCurrentUser(currentUser);
+            pushService.setCurrentUser(userInfoBean);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

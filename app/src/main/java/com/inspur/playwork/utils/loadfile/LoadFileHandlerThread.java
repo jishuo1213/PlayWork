@@ -243,6 +243,9 @@ public class LoadFileHandlerThread extends HandlerThread implements Handler.Call
 
     @Override
     public void clean() {
+        loadFileHandler.removeMessages(DOWNLOAD_FILE);
+        loadFileHandler.removeMessages(UPLOAD_FILE);
+
         if (clientHandlerMap != null)
             clientHandlerMap.clear();
         if (downLoadFiles != null)
@@ -278,6 +281,7 @@ public class LoadFileHandlerThread extends HandlerThread implements Handler.Call
                 if (request.status == DownloadRequest.Status.PENDING) {
                     cancelMessage(request.loadType, request.clientId);
                     request.status = DownloadRequest.Status.PAUSE;
+                    downLoadFiles.remove(request.savePath);
                 }
             }
         }
@@ -288,15 +292,19 @@ public class LoadFileHandlerThread extends HandlerThread implements Handler.Call
         ArrayList<DownloadRequest> requestArrayList = requstMap.get(uuid);
         if (requestArrayList.size() > 0) {
             for (DownloadRequest request : requestArrayList) {
-                if (request.status == DownloadRequest.Status.PENDING)
+                if (request.status == DownloadRequest.Status.PENDING) {
                     loadFileHandler.removeMessages(request.loadType, request.clientId);
+                    downLoadFiles.remove(request.savePath);
+                }
                 if (request.status == DownloadRequest.Status.RUNNING) {
                     OkHttpClientManager.getInstance().cancelDownload(request.downloadUrl, request.savePath);
+                    downLoadFiles.remove(request.savePath);
                 }
             }
         }
         requestArrayList.clear();
         requstMap.remove(uuid);
+        downLoadFiles.clear();
     }
 
     @Override

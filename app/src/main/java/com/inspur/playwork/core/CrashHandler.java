@@ -25,6 +25,7 @@ import java.sql.BatchUpdateException;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import okhttp3.internal.Util;
 
 /**
  * Created by fan on 17-1-9.
@@ -73,13 +74,9 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
-        try {
-            //导出异常信息到SD卡中
-            dumpExceptionToSDCard(ex);
-            //这里可以通过网络上传异常信息到服务器，便于开发人员分析日志从而解决bug
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //导出异常信息到SD卡中
+        dumpExceptionToSDCard(ex);
+        //这里可以通过网络上传异常信息到服务器，便于开发人员分析日志从而解决bug
 
         //打印出当前调用栈信息
         ex.printStackTrace();
@@ -93,7 +90,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     }
 
-    private void dumpExceptionToSDCard(Throwable ex) throws IOException {
+    private void dumpExceptionToSDCard(Throwable ex) {
         //如果SD卡不存在或无法使用，则无法把异常信息写入SD卡
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             if (DEBUG) {
@@ -106,9 +103,9 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         File file = new File(FILE_PATH + PreferencesHelper.getInstance().getCurrentUser().id + "_" + timestamp + ".txt");
 //        String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(current));
         //以当前时间创建log文件
-
+        PrintWriter pw = null;
         try {
-            PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+            pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
             //导出发生异常的时间
 //            pw.println(time);
 
@@ -119,10 +116,12 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             //导出异常的调用栈信息
             ex.printStackTrace(pw);
 
-            pw.close();
-            uploadExceptionToServer(file);
-        } catch (Exception e) {
-            Log.e(TAG, "dump crash info failed");
+//            pw.close();
+//            uploadExceptionToServer(file);
+        } catch (PackageManager.NameNotFoundException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            Util.closeQuietly(pw);
         }
     }
 
