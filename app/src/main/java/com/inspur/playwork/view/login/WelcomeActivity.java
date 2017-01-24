@@ -23,12 +23,13 @@ import com.inspur.playwork.model.common.UserInfoBean;
 import com.inspur.playwork.stores.login.LoginStores;
 import com.inspur.playwork.utils.PreferencesHelper;
 import com.inspur.playwork.utils.UItoolKit;
+import com.inspur.playwork.view.common.BaseActivity;
 import com.inspur.playwork.view.common.GuideActivity;
 
 /**
  * Created by Fan on 15-9-25.
  */
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeActivity extends BaseActivity {
 
     private static final String TAG = "WelcomeActivityFan";
 

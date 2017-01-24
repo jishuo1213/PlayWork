@@ -20,7 +20,7 @@ import com.inspur.playwork.R;
 import com.inspur.playwork.utils.PreferencesHelper;
 import com.inspur.playwork.utils.UItoolKit;
 
-public class GuideActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, View.OnClickListener {
+public class GuideActivity extends BaseActivity implements ViewPager.OnPageChangeListener, View.OnClickListener {
 
     private static final String TAG = "GuideActivity";
 
@@ -31,7 +31,7 @@ public class GuideActivity extends AppCompatActivity implements ViewPager.OnPage
 
     private int currentIndex;
 
-    private View[] imageViews = new ImageView[5];
+    private View[] imageViews = new View[7];
 
     boolean isCreate = false;
 
@@ -45,9 +45,10 @@ public class GuideActivity extends AppCompatActivity implements ViewPager.OnPage
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_guide_activity);
         viewPager = (ViewPager) findViewById(R.id.page_guide);
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             imageViews[i] = LayoutInflater.from(this).inflate(R.layout.layout_single_imageview, viewPager, false);
         }
+        imageViews[6] = LayoutInflater.from(this).inflate(R.layout.layout_guide_7, viewPager, false);
         currentIndex = 0;
         viewPager.addOnPageChangeListener(this);
         viewPager.setAdapter(new GuideViewPagerAdapter(imageViews));
@@ -65,11 +66,21 @@ public class GuideActivity extends AppCompatActivity implements ViewPager.OnPage
         super.onResume();
         if (isCreate) {
             imageViews[0].setOnClickListener(this);
-            Glide.with(this).load(drawables[0]).into((ImageView) imageViews[0]);
+            Glide.with(this).load(drawables[0]).skipMemoryCache(true).placeholder(R.color.guide_mask).into((ImageView) imageViews[0]);
             Log.i(TAG, "onResume: " + getIntent().getBooleanExtra(USER_OPEN, false));
             if (!getIntent().getBooleanExtra(USER_OPEN, false)) {
                 UItoolKit.showToastShort(this, "引导一定要看完，不然下次还要再看一遍哦");
             }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (currentIndex == 6) {
+            Glide.clear(imageViews[currentIndex].findViewById(R.id.guide7_main_image));
+        } else {
+            Glide.clear(imageViews[currentIndex]);
         }
     }
 
@@ -82,13 +93,25 @@ public class GuideActivity extends AppCompatActivity implements ViewPager.OnPage
     public void onPageSelected(int position) {
         Log.i(TAG, "onPageSelected: " + position);
         int prviousSelcet = currentIndex;
-        ImageView view = (ImageView) imageViews[position % 5];
-        currentIndex = position;
-        Glide.with(this).load(drawables[position]).into(view);
-        if (currentIndex == 6) {
-            view.setOnClickListener(this);
+        if (prviousSelcet == 6) {
+            Glide.clear(imageViews[prviousSelcet].findViewById(R.id.guide7_main_image));
         } else {
+            Glide.clear(imageViews[prviousSelcet]);
+        }
+        currentIndex = position;
+        View view = imageViews[position];
+        if (currentIndex == 6) {
+            view.findViewById(R.id.view_again).setOnClickListener(this);
+            view.findViewById(R.id.view_go).setOnClickListener(this);
+        } else {
+//            ImageView view = (ImageView) imageViews[position % 5];
+            Glide.with(this).load(drawables[position]).placeholder(R.color.guide_mask).skipMemoryCache(true).into((ImageView) view);
             view.setOnClickListener(this);
+        }
+        if (isAgain) {
+            ((TabsAdapter) tabRecyclerView.getAdapter()).setPositionSelect(0);
+            isAgain = false;
+            return;
         }
         if (position > prviousSelcet) {
             ((TabsAdapter) tabRecyclerView.getAdapter()).showNext();
@@ -97,21 +120,32 @@ public class GuideActivity extends AppCompatActivity implements ViewPager.OnPage
         }
     }
 
+
     @Override
     public void onPageScrollStateChanged(int state) {
 
     }
 
+    private boolean isAgain;
+
     @Override
     public void onClick(View v) {
         if (currentIndex == 6) {
-            if (getIntent().getBooleanExtra(USER_OPEN, false)) {
-                finish();
-                return;
+            switch (v.getId()) {
+                case R.id.view_again:
+                    isAgain = true;
+                    viewPager.setCurrentItem(0);
+                    break;
+                case R.id.view_go:
+                    if (getIntent().getBooleanExtra(USER_OPEN, false)) {
+                        finish();
+                        return;
+                    }
+                    PreferencesHelper.getInstance().writeToPreferences(PreferencesHelper.IS_GUIDE_PAGE_SHOW, true);
+                    startActivity(new Intent(this, MainActivity.class));
+                    finish();
+                    break;
             }
-            PreferencesHelper.getInstance().writeToPreferences(PreferencesHelper.IS_GUIDE_PAGE_SHOW, true);
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
         } else {
             int index = currentIndex;
             viewPager.setCurrentItem(++index);
@@ -153,6 +187,14 @@ public class GuideActivity extends AppCompatActivity implements ViewPager.OnPage
         @Override
         public int getItemCount() {
             return 7;
+        }
+
+        void setPositionSelect(int i) {
+            ViewHolder preViewHolder = (ViewHolder) recyclerView.findViewHolderForLayoutPosition(selectIndex);
+            preViewHolder.tab.setSelected(false);
+            ViewHolder newViewHolder = (ViewHolder) recyclerView.findViewHolderForLayoutPosition(i);
+            selectIndex = i;
+            newViewHolder.tab.setSelected(true);
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
@@ -201,13 +243,23 @@ public class GuideActivity extends AppCompatActivity implements ViewPager.OnPage
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            container.addView(imageViews[position % 5]);
-            return imageViews[position % 5];
+            container.addView(imageViews[position]);
+            return imageViews[position];
+//            if (position == 6) {
+//            } else {
+//                container.addView(imageViews[position % 5]);
+//                return imageViews[position % 5];
+//            }
         }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView(imageViews[position % 5]);
+            container.removeView(imageViews[position]);
+//            if (position == 6) {
+//                container.removeView(imageViews[5]);
+//            } else {
+//                container.removeView(imageViews[position % 5]);
+//            }
         }
     }
 }

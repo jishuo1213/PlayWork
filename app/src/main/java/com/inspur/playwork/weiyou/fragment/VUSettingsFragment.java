@@ -101,5 +101,11 @@ public class VUSettingsFragment extends Fragment implements View.OnClickListener
         super.onResume();
         mlAdapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void onDestroy(){
+        wyma.vuStores.setVUSettingsReference(null);
+        super.onDestroy();
+    }
 }
 

@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -33,6 +34,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommonUtils {
+
+    private static final String TAG = "CommonUtils";
 
     private static Pattern urlPattern;
     private static String urlRegex = "^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
@@ -66,6 +69,19 @@ public class CommonUtils {
             return 0;
         }
     }
+
+    public static boolean runPingIProcess(final String ipString) {
+        try {
+            Process p = Runtime.getRuntime().exec("/system/bin/ping -c 1 " + ipString);
+            int status = p.waitFor();
+            Log.i(TAG, "run: " + status);
+            return status == 0;
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     public static void callNum(String num, Context context) {
         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + num));

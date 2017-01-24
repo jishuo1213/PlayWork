@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -29,13 +28,12 @@ import com.inspur.playwork.stores.message.MessageStores;
 import com.inspur.playwork.utils.DateUtils;
 import com.inspur.playwork.utils.IMMLeaks;
 import com.inspur.playwork.utils.PreferencesHelper;
-import com.inspur.playwork.utils.UItoolKit;
-import com.inspur.playwork.utils.db.DBOperation;
 import com.inspur.playwork.versionUpdate.VersionPlaywork;
 import com.inspur.playwork.view.ApplicationFragment;
 import com.inspur.playwork.view.UnReadMsgChangeListener;
 import com.inspur.playwork.view.application.addressbook.AddressBookActivity;
 import com.inspur.playwork.view.common.BadgeView;
+import com.inspur.playwork.view.common.BaseActivity;
 import com.inspur.playwork.view.common.ChoseYearMonthAdapter;
 import com.inspur.playwork.view.common.SpinerWindow;
 import com.inspur.playwork.view.message.VChatFragment;
@@ -51,7 +49,7 @@ import java.util.Calendar;
  *
  * @author 笑面V客(bugcode@foxmail.com)
  */
-public class MainActivity extends AppCompatActivity implements UnReadMsgChangeListener, View.OnClickListener, ChoseYearMonthAdapter.ChoseTimeListener {
+public class MainActivity extends BaseActivity implements UnReadMsgChangeListener, View.OnClickListener, ChoseYearMonthAdapter.ChoseTimeListener {
 
     private static final String TAG = "MainActivity";
 
@@ -110,8 +108,6 @@ public class MainActivity extends AppCompatActivity implements UnReadMsgChangeLi
         MessageStores.getInstance().queryLocalChatList();
         initTabView(savedInstanceState);
         Dispatcher.getInstance().register(this);
-//        Log.i(TAG, "onCreate: " + EncryptUtil.aesDecrypt("n6tykwhelMpiFWrL/F4atjvUol4YrDK+CtTvM2dZ0Vg="));
-//        (((PlayWorkApplication) getApplicationContext()).getDbOperation()).printAllMessageHistory();
     }
 
     @Override
@@ -160,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements UnReadMsgChangeLi
         Log.i(TAG, "onStop: ============");
         unbindService(connection);
     }
+
 
     @Override
     protected void onDestroy() {

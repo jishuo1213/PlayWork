@@ -1,6 +1,5 @@
 package com.inspur.playwork.view.application.news;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.util.ArrayMap;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 
 import com.inspur.playwork.R;
 import com.inspur.playwork.model.news.DepartmentNewsBean;
+import com.inspur.playwork.view.common.BaseActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,7 +24,7 @@ import java.util.Iterator;
 /**
  * Created by fan on 17-1-16.
  */
-public class GroupNewsActivity extends Activity implements View.OnClickListener,
+public class GroupNewsActivity extends BaseActivity implements View.OnClickListener,
         NewListFragment.NewsListEventListener, ViewNewsFragment.DetailNewsEvent {
     private static final String TAG = "GroupNewsActivity";
 

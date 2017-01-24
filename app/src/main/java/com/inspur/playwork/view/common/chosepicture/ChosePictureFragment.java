@@ -186,6 +186,8 @@ public class ChosePictureFragment extends Fragment implements ChosePictureAdapte
             return;
         }
         Uri mImageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        if (getActivity() == null)
+            return;
         ContentResolver mContentResolver = getActivity().getContentResolver();
 
         Cursor mCursor = mContentResolver.query(mImageUri, null,

@@ -60,6 +60,7 @@
     <color name="bageviewback">@android:color/holo_red_light</color>
 
     <color name="mask">#86222222</color>
+    <color name="guide_mask">#404040</color>
 
     <color name="dotted_red">#cd2929</color>
 

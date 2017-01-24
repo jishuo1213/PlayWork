@@ -4,8 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.inspur.playwork.R;
+import com.inspur.playwork.view.common.BaseActivity;
 
-public class ChoseImageActivity extends AppCompatActivity {
+public class ChoseImageActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

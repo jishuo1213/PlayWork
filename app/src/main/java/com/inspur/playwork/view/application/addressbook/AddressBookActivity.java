@@ -9,8 +9,9 @@ import android.widget.TextView;
 
 import com.inspur.playwork.R;
 import com.inspur.playwork.utils.CommonUtils;
+import com.inspur.playwork.view.common.BaseActivity;
 
-public class AddressBookActivity extends AppCompatActivity implements View.OnClickListener {
+public class AddressBookActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

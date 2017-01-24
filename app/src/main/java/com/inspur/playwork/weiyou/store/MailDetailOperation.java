@@ -21,4 +21,6 @@ public interface MailDetailOperation {
     void renderAttachmentList(List<MailAttachment> currAttachmentList);
 
     void showDownloadComfirmDialog();
+
+    void loadMailContentInWebView(String content, String contentType);
 }

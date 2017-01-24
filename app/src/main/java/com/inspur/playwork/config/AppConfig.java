@@ -21,6 +21,7 @@ public class AppConfig {
 //    public static final String HTTP_SERVER_IP = "http://218.57.135.45:55166/";
 //    public static final String HTTP_SERVER_IP = "http://218.57.135.45:9080/";
     public static final String HTTP_SERVER_IP = "http://htime.inspur.com:6380/";
+//    public static final String HTTP_SERVER_IP = "http://htime.inspur.com:55166/";
 
     /* 微知微盘 登录*/
     public static final String APP_CONTAINER_ENTRANCE = "http://dcp.inspur.com" + ":88/common/appContainer.html";

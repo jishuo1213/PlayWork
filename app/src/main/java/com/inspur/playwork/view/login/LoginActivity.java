@@ -5,11 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.inspur.playwork.R;
 import com.inspur.playwork.utils.IMMLeaks;
+import com.inspur.playwork.view.common.BaseActivity;
 
 /**
  * Created by Fan on 15-9-11.
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
 
     protected void onCreate(Bundle savedInstanceState) {

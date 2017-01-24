@@ -326,4 +326,9 @@ public class ContactSelectorFragment extends Fragment implements AddMemberListen
         }
     }
 
+    @Override
+    public void onDestroy() {
+        wyma.vuStores.setContactSelectOperation(null);
+        super.onDestroy();
+    }
 }

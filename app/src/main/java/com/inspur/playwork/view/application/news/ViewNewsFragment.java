@@ -191,6 +191,13 @@ public class ViewNewsFragment extends Fragment implements ViewPager.OnPageChange
         mWebView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY); //取消滚动条白边效果
         mWebView.setWebViewClient(webViewClient);
+        mWebView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return true;
+            }
+        });
+        mWebView.setLongClickable(false);
     }
 
     @Override

@@ -12,15 +12,12 @@ import com.inspur.playwork.utils.FileUtil;
 import com.inspur.playwork.utils.OkHttpClientManager;
 import com.inspur.playwork.utils.PreferencesHelper;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.BatchUpdateException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -30,7 +27,7 @@ import okhttp3.internal.Util;
 /**
  * Created by fan on 17-1-9.
  */
-public class CrashHandler implements Thread.UncaughtExceptionHandler {
+class CrashHandler implements Thread.UncaughtExceptionHandler {
     private static final String TAG = "CrashHandler";
     private static final boolean DEBUG = true;
 
@@ -63,8 +60,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         File filePath = new File(FILE_PATH);
         File[] files = filePath.listFiles();
         Log.i(TAG, "init: " + files.length);
-        for (int i = 0; i < files.length; i++) {
-            uploadExceptionToServer(files[i]);
+        for (File file : files) {
+            uploadExceptionToServer(file);
         }
     }
 

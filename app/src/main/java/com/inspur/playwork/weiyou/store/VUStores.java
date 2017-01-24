@@ -99,11 +99,6 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
 
     public final static String MAIL_ACCOUNT_STORE_KEY = "currUsingMailAccount";
 
-    public static final int CURR_NETWORK_TYPE_WIFI = 0;
-    public static final int CURR_NETWORK_TYPE_2G = 0;
-    public static final int CURR_NETWORK_TYPE_3G = 0;
-    public static final int CURR_NETWORK_TYPE_4G = 0;
-
     private static final int CHECK_MAIL_RESULT = 0x11;
     private static final int DOWNLOAD_MAIL_RESULT = 0x12;
     private static final int FETCH_MESSAGES_RESULT = 0x13;
@@ -116,8 +111,10 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
     private static final int SEND_MAIL_PARTIALLY = 0x93;
     private static final int SEND_MAIL_PBK_ERROR = 0x94;
     private static final int HANDLE_DRAFT_MAIL_TASK = 0x95;
+
     private static final int VERIFY_MAIL_ACCOUNT = 0x96;
-//    private static final int PARSE_MAIL_DETAIL = 0x97;
+
+    private static final int PARSE_MAIL_DETAIL = 0x97;
 
     private static final int INIT_DEFAULT_MAIL_ACCOUNT = 0;
     private static final int SAVE_NEW_MAIL_ACCOUNT = 1;
@@ -2032,7 +2029,8 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
 
     public void initMailDetailData() {
         mailDetailList = new ArrayList<>();
-        currIndex = showingMailIdList.indexOf(currMail.getId());
+        if(currMail != null)
+            currIndex = showingMailIdList.indexOf(currMail.getId());
         Log.i(TAG, "initMailDetailData: currIndex = "+currIndex);
         for (int i = 0; i < showingMailIdList.size(); i++) {
             mailDetailList.add(new MailDetail());
@@ -2080,16 +2078,21 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
             if (!mailFile.exists()) {
                 Log.e(TAG, "refreshCurrentView: mail file is not existed  ");
 //                String content = "<p style='color:#666'>邮件源文件丢失</p>";
-////                currContentWV.loadDataWithBaseURL(null, content, "text/html", "utf-8", null);
+////              currContentWV.loadDataWithBaseURL(null, content, "text/html", "utf-8", null);
 //                quoteMailContent = content;
 //                currContentWV.loadDataWithBaseURL(null, content, "text/html", "utf-8", null);
-                if(Long.parseLong(currMail.getSize())>5*1024*1024){//如果大于5MB，提示用户是否继续下载
-                    int netWorkType = vuActivityOperation.get().getNetworkType();
-                    if(netWorkType == CURR_NETWORK_TYPE_2G || netWorkType == CURR_NETWORK_TYPE_3G || netWorkType == CURR_NETWORK_TYPE_4G ){
-                        mailDetailOperation.get().showDownloadComfirmDialog();
+                if(isNetWorkAvailable()) {
+                    if (Long.parseLong(currMail.getSize()) > 5 * 1024 * 1024) {//如果大于5MB，提示用户是否继续下载
+                        if (isWifiConnected()) {
+                            downloadMailContent();
+                        }else{
+                            mailDetailOperation.get().showDownloadComfirmDialog();
+                        }
+                    } else {
+                        downloadMailContent();
                     }
                 }else{
-                    downloadMailContent();
+                    currContentWV.loadDataWithBaseURL(null, "网络连接不可用，邮件内容下载失败", "text/html", "utf-8", null);
                 }
             } else {
                 parseMailSource(mailFilePath);
@@ -2102,16 +2105,21 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                 currContentWV.loadDataWithBaseURL(null, quoteMailContent, "text/html", "utf-8", null);
 
             } catch (Exception e) {
+                currContentWV.loadDataWithBaseURL(null, "邮件解析失败", "text/html", "utf-8", null);
                 e.printStackTrace();
             }
             mailDetailOperation.get().renderAttachmentList(currAttachmentList);
         }
     }
-
+    Thread mdThread;
     private void downloadMailContent(){
         Log.i(TAG, "downloadMailContent: ...");
         showProgressDialog("正在下载邮件正文...");
-        Thread mdThread = new Thread(new Runnable() {
+        if(mdThread!=null && mdThread.isAlive()){
+            mdThread.interrupt();
+            mdThread = null;
+        }
+        mdThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -2747,7 +2755,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         }
     }
 
-    private class VUMailHandler extends Handler {
+    private static class VUMailHandler extends Handler {
         private WeakReference<VUStores> reference;
 
         public VUMailHandler(WeakReference<VUStores> reference) {
@@ -2759,10 +2767,10 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
             VUStores vuStores = reference.get();
 //            Log.i(TAG, "dispatchMessage: "+msg.what);
 //            Log.i(TAG, "dispatchMessage: "+msg.obj);
-            VUActivityOperation vuao = vuStores.vuActivityOperation.get();
             switch (msg.what) {
                 case CHECK_MAIL_RESULT://检查邮件完毕
 //                    if(msg.arg1 == 0){
+                    VUActivityOperation vuao = vuStores.vuActivityOperation.get();
                     if (vuao!=null && !vuao.isPaused()) {
                         if (msg.obj != null) {
                             MailListOperation mlo = vuStores.mailListOperation.get();
@@ -2773,7 +2781,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                     break;
                 case DOWNLOAD_MAIL_RESULT://下载邮件情况提示
                     MailListOperation mlo = vuStores.mailListOperation.get();
-                    if(mlo!=null) mlo.showDownloadInfo(msg.arg2, downloadingMailCount);
+                    if(mlo!=null) mlo.showDownloadInfo(msg.arg2, vuStores.downloadingMailCount);
                     break;
                 case FETCH_MESSAGES_RESULT://下载指定的邮件
                     Map<String, Object> params = (Map<String, Object>) msg.obj;
@@ -2801,7 +2809,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                     if (msg.arg1 == SEND_MAIL_SUCCESS) {
                     } else if (msg.arg1 == SEND_MAIL_FAILED) {
 //                        vuStores.showProgressDialog(msg.obj.toString());
-                        if(msg.obj!= null && vuao!=null)vuao.toast(msg.obj.toString());
+                        if(msg.obj!= null )vuStores.toast(msg.obj.toString());
                     } else if (msg.arg1 == SEND_MAIL_PARTIALLY) {
 //                        vuStores.toast(msg.obj.toString());
 
@@ -2822,13 +2830,13 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
 //                case PARSE_MAIL_DETAIL:
                 case VERIFY_MAIL_ACCOUNT://验证邮箱账号
                     if(msg.arg1 == 1){
-                        if(vuao!=null)vuao.showProgressDialog("验证通过,正在保存邮箱账号...");
-                        vuStores.saveOneMailAccount(newMailAccount, SAVE_NEW_MAIL_ACCOUNT);
+                        vuStores.showProgressDialog("验证通过,正在保存邮箱账号...");
+                        vuStores.saveOneMailAccount(vuStores.newMailAccount, SAVE_NEW_MAIL_ACCOUNT);
                     }else if(msg.arg1 == 2) {
-                        if(vuao!=null)vuao.toast("邮箱账号验证通过");
-                        vuStores.saveOneMailAccount(newMailAccount, UPDATE_EXISTS_MAIL_ACCOUNT);
+                        vuStores.toast("邮箱账号验证通过");
+                        vuStores.saveOneMailAccount(vuStores.newMailAccount, UPDATE_EXISTS_MAIL_ACCOUNT);
                     }else {
-                        if(vuao!=null)vuao.toast("邮箱账号验证失败");
+                        vuStores.toast("邮箱账号验证失败");
                     }
                     break;
             }
@@ -3005,11 +3013,13 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
     }
 
     private void showProgressDialog(String msg){
-        if(vuActivityOperation.get()!=null) vuActivityOperation.get().showProgressDialog(msg);
+        if(vuActivityOperation.get()!=null && !vuActivityOperation.get().isPaused())
+            vuActivityOperation.get().showProgressDialog(msg);
     }
 
     private void dismissProgressDialog(){
-        if(vuActivityOperation.get()!=null) vuActivityOperation.get().dismissProgressDialog();
+        if(vuActivityOperation.get()!=null && !vuActivityOperation.get().isPaused())
+            vuActivityOperation.get().dismissProgressDialog();
     }
 
     private void refreshSpinner(ArrayList<MailAccount> mailAccountCache, int index){
@@ -3018,6 +3028,16 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
 
     private void renderMailListView(){
         if(mailListOperation.get()!=null) mailListOperation.get().renderMailListView();
+    }
+
+    private boolean isNetWorkAvailable(){
+        if(vuActivityOperation.get() == null) return false;
+        return vuActivityOperation.get().isNetWorkAvailable();
+    }
+
+    private boolean isWifiConnected(){
+        if(vuActivityOperation.get() == null) return false;
+        return vuActivityOperation.get().isWifiConnected();
     }
 
     public boolean needShowGuidePage() {
@@ -3037,6 +3057,11 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         if(vuActivityOperation == null || vuActivityOperation.get() == null){
             unRegister();
         }
+    }
+
+    private void loadMailContentInWebView(String content,String contentType){
+        if(mailDetailOperation.get() != null)
+            mailDetailOperation.get().loadMailContentInWebView(content,contentType);
     }
 
     public void clean() {

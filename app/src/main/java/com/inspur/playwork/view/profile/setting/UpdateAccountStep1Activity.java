@@ -8,11 +8,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.inspur.playwork.R;
+import com.inspur.playwork.view.common.BaseActivity;
 
 /**
  * Created by bugcode on 15-8-13.
  */
-public class UpdateAccountStep1Activity extends Activity implements View.OnClickListener {
+public class UpdateAccountStep1Activity extends BaseActivity implements View.OnClickListener {
 
     private ImageButton backImageView;// 返回按钮
     private TextView titleTextView;// 标题

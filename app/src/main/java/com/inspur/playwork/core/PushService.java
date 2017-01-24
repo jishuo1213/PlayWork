@@ -70,6 +70,7 @@ public class PushService extends Service implements Emitter.Listener {
 //    public static final String HTTP_SERVER_IP = "http://218.57.135.45:55166/";
 //    public static final String HTTP_SERVER_IP = "http://218.57.135.45:9080/";
     public static final String HTTP_SERVER_IP = "http://htime.inspur.com:6380/";
+//    public static final String HTTP_SERVER_IP = "http://htime.inspur.com:55166/";
 //    public static final String HTTP_SERVER_IP = "http://10.47.1.20:6382/";'
 
     private static final int SOCKET_CONNECT_TO_SERVER = 0;
@@ -611,8 +612,6 @@ public class PushService extends Service implements Emitter.Listener {
         }
         if (socket.connected()) {
             sendSocketRequest("login", requestJson);
-        } else {
-
         }
     }
 
@@ -758,7 +757,6 @@ public class PushService extends Service implements Emitter.Listener {
     private void appMoveToBack() {
         appStatus &= ~APP_VISABLE_MASK;
         appStatus |= APP_BACK_MASK;
-
     }
 
     private boolean isAppExit = false;

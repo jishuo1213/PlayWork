@@ -385,4 +385,10 @@ public class VUFeedbackFragment extends Fragment implements OnClickListener, Fee
             }
         }
     }
+
+    @Override
+    public void onDestroy() {
+        wyma.vuStores.setFeedbackReference(null);
+        super.onDestroy();
+    }
 }

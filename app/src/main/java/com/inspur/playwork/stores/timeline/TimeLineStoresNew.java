@@ -825,6 +825,7 @@ public class TimeLineStoresNew extends Stores {
         try {
             body.put("userId", PreferencesHelper.getInstance().readStringPreference(PreferencesHelper.USER_NAME));
             body.put("isPhone", true);
+            body.put("version", 132);
 //            dispatcher.dispatchNetWorkAction(CommonActions.GET_TIMELINE_DATA_FROM_SERVER, GET_UN_READ_MESSAGE, createRequestJson(body));
             OkHttpClientManager.getInstance().getAsyn(AppConfig.HTTP_SERVER_IP + "getMcUnReadMsg", getUnReadCallback, createRequestJson(body), "");
         } catch (JSONException e) {

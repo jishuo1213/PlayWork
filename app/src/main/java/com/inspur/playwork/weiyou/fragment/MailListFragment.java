@@ -413,6 +413,7 @@ public class MailListFragment extends Fragment implements MailListOperation,View
 
     @Override
     public void onDestroy() {
+        wyma.vuStores.setMailListReference(null);
         super.onDestroy();
     }
 

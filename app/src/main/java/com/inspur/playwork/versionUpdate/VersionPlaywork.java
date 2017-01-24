@@ -185,12 +185,13 @@ public class VersionPlaywork {
     private void doNewVersionUpdate() {
         String verName = this.getVerName(viewReference.get());
         StringBuffer sb = new StringBuffer();
-        sb.append("当前版本：（V");
+        sb.append("当前版本:(V");
         sb.append(verName);
         sb.append("）\n");
-        sb.append("发现版本：(V");
+        sb.append("发现版本:(V");
         sb.append(newVerName);
-        sb.append("）, 是否更新\n");
+        sb.append("）\n");
+//        sb.append("）, 是否更新\n");
         sb.append("更新内容：\n");
         sb.append(jsonObj.Updatecontent);
         Dialog dialog = new AlertDialog.Builder(viewReference.get())

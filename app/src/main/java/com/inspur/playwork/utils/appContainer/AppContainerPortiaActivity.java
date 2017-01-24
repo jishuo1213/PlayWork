@@ -16,12 +16,13 @@ import com.inspur.playwork.R;
 import com.inspur.playwork.config.AppConfig;
 import com.inspur.playwork.model.common.UserInfoBean;
 import com.inspur.playwork.utils.PreferencesHelper;
+import com.inspur.playwork.view.common.BaseActivity;
 
 /**
  * Created by sunyuan on 2016/2/29 0029 19:06.
  * Email: sunyuan@inspur.com
  */
-public class AppContainerPortiaActivity extends AppCompatActivity implements View.OnClickListener{
+public class AppContainerPortiaActivity extends BaseActivity implements View.OnClickListener{
     private final static String LOG_TAG = "AppContainerActivity";
     private WebView mWebView;
     private String username;

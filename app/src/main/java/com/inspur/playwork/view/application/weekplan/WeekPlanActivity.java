@@ -8,11 +8,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.inspur.playwork.R;
+import com.inspur.playwork.view.common.BaseActivity;
 
 /**
  * Created by fan on 17-1-11.
  */
-public class WeekPlanActivity extends Activity implements View.OnClickListener, WeekPlanListFragment.WeekPlanListEventListener {
+public class WeekPlanActivity extends BaseActivity implements View.OnClickListener, WeekPlanListFragment.WeekPlanListEventListener {
     private static final String TAG = "WeekPlanActivity";
     TextView titleView;
 

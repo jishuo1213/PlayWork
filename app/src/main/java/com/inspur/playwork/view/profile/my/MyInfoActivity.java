@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +31,7 @@ import com.inspur.playwork.utils.PictureUtils;
 import com.inspur.playwork.utils.PreferencesHelper;
 import com.inspur.playwork.utils.ThreadPool;
 import com.inspur.playwork.utils.UItoolKit;
+import com.inspur.playwork.view.common.BaseActivity;
 import com.inspur.playwork.view.common.chosepicture.ChosePictureFragment;
 
 import org.json.JSONException;
@@ -48,7 +48,7 @@ import okhttp3.Response;
 /**
  * Created by bugcode on 15-8-11.
  */
-public class MyInfoActivity extends AppCompatActivity implements MyInfoFragment.InfoEventListener,
+public class MyInfoActivity extends BaseActivity implements MyInfoFragment.InfoEventListener,
         ChosePictureFragment.SelectedPicureListener, ClipPictureFragment.ClipListener, View.OnClickListener {
 
     private static final String TAG = "MyInfoActivity";
@@ -202,7 +202,7 @@ public class MyInfoActivity extends AppCompatActivity implements MyInfoFragment.
     private void upLoadImg(final String filePath) {
         OkHttpClientManager.Param[] params = new OkHttpClientManager.Param[]{
                 new OkHttpClientManager.Param("user_id", currentUser.id),
-                new OkHttpClientManager.Param("system_name", "weiliao"),
+                new OkHttpClientManager.Param("system_name", "avatar"),
         };
 
 

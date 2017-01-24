@@ -35,5 +35,7 @@ public interface VUActivityOperation {
 
     void initSettingButton();
 
-    int getNetworkType();
+    boolean isNetWorkAvailable();
+
+    boolean isWifiConnected();
 }

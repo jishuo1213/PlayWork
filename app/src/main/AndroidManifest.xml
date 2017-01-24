@@ -115,10 +115,6 @@
             <!-- <data android:mimeType="text/plain"></data> -->
             <!-- </intent-filter> -->
         </activity>
-        <activity
-            android:name=".view.common.DummyActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Transparent" />
         <!-- ————————————   微邮  Activity    —————————————— -->
 
 
@@ -136,6 +132,22 @@
         <!-- <action android:name="android.net.conn.CONNECTIVITY_CHANGE" /> -->
         <!-- </intent-filter> -->
         <!-- </receiver> -->
+        <receiver
+            android:name=".broadcastreciver.NotifyMsgReciver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.inspur.playwork.broadcastreciver.recivemsgnotify" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".broadcastreciver.BackWardReciver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.inspur.playwork.broadcastreciver.appback" />
+            </intent-filter>
+        </receiver>
+
         <receiver
             android:name=".broadcastreciver.NotifyMsgReciver"
             android:exported="false">

@@ -34,6 +34,7 @@ import com.inspur.playwork.utils.CommonUtils;
 import com.inspur.playwork.utils.PreferencesHelper;
 import com.inspur.playwork.utils.UItoolKit;
 import com.inspur.playwork.utils.loadfile.LoadFileManager;
+import com.inspur.playwork.view.common.BaseActivity;
 import com.inspur.playwork.view.common.chosepicture.ChosePictureFragment;
 import com.inspur.playwork.view.message.chat.emoji.EmojiAdapter;
 
@@ -42,7 +43,7 @@ import org.json.JSONException;
 /**
  * Created by Fan on 15-9-21.
  */
-public class ChatActivityNew extends AppCompatActivity implements View.OnClickListener,
+public class ChatActivityNew extends BaseActivity implements View.OnClickListener,
         ChosePictureFragment.SelectedPicureListener, SendMailFragment.SendMailFinishListener, EmojiAdapter.EmojiSelectListener {
 
     private static final String TAG = "ChatActivityFan";

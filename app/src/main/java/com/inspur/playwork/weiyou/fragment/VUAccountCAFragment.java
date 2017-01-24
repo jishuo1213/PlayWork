@@ -218,4 +218,10 @@ public class VUAccountCAFragment extends Fragment implements AccountCaOperation,
     public void onButton1Click() {
 
     }
+
+    @Override
+    public void onDestroy() {
+        wyma.vuStores.setAccountCaReference(null);
+        super.onDestroy();
+    }
 }

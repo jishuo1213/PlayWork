@@ -17,12 +17,13 @@ import com.inspur.playwork.config.AppConfig;
 import com.inspur.playwork.utils.DeviceUtil;
 import com.inspur.playwork.utils.FileUtil;
 import com.inspur.playwork.utils.PictureUtils;
+import com.inspur.playwork.view.common.BaseActivity;
 import com.inspur.playwork.view.common.viewimage.view.ZoomImageView;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
-public class ImageViewActivity extends AppCompatActivity {
+public class ImageViewActivity extends BaseActivity {
 
     private static final String TAG = "ImageViewActivityFan";
 

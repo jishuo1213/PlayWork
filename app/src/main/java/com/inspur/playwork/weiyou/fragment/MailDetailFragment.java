@@ -3,16 +3,18 @@ package com.inspur.playwork.weiyou.fragment;
 import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.inspur.playwork.R;
@@ -48,6 +50,7 @@ public class MailDetailFragment extends Fragment implements ViewPager.OnPageChan
     private ViewPager mdViewPager;
     private ArrayList<View> mdViewList;
     private MailDetailPagerAdapter mdpAdapter;
+    private ScrollView scrollView;
     private InsideListView currAttachmentLV;
     private WebView currContentWV;
     private View hideView;
@@ -69,7 +72,6 @@ public class MailDetailFragment extends Fragment implements ViewPager.OnPageChan
         View v = inflater.inflate(R.layout.wy_fragment_mail_detail, container, false);
 //        Log.i(TAG, "onCreateView: MailDetailFragment onCreateView------------");
         initViewPager(v);
-
         downloadConfirmDialog = new VUConfirmDialog(wyma,"当前未连接WIFI,要下载的邮件大于5MB，是否继续下载？","不下载了","继续下载");
         downloadConfirmDialog.setOutsideTouchDisable();
         downloadConfirmDialog.setConfirmDialogListener(this);
@@ -111,6 +113,8 @@ public class MailDetailFragment extends Fragment implements ViewPager.OnPageChan
 //        FileUtil.getCurrMailAttachmentsPath(email)
 
         final View currView = mdViewList.get(wyma.vuStores.getCurrIndex() % 5);
+
+        scrollView = (ScrollView) currView.findViewById(R.id.md_scroll_view);
         String senderText = "";
         try {
             JSONObject from = new JSONObject(md.getFrom());
@@ -127,7 +131,7 @@ public class MailDetailFragment extends Fragment implements ViewPager.OnPageChan
         ((TextView) currView.findViewById(R.id.md_time_text)).setText(md.getCreateTime().toLocaleString());
 
 //        显示联系人
-        TextView ccTitle = (TextView) currView.findViewById(R.id.md_cc_title);
+//        TextView ccTitle = (TextView) currView.findViewById(R.id.md_cc_title);
         final WordWrapView toTVs = (WordWrapView) currView.findViewById(R.id.md_receiver_tvs);
         final WordWrapView ccTVs = (WordWrapView) currView.findViewById(R.id.md_cc_tvs);
         final TextView toFoldingTV = (TextView) currView.findViewById(R.id.md_to_folding);
@@ -241,7 +245,7 @@ public class MailDetailFragment extends Fragment implements ViewPager.OnPageChan
         });
 
         currContentWV = (WebView) currView.findViewById(R.id.md_content_wv);
-        WebSettings ws = currContentWV.getSettings();
+//        WebSettings ws = currContentWV.getSettings();
         //设置WebView的一些缩放功能点
         currContentWV.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         currContentWV.setHorizontalScrollBarEnabled(false);
@@ -270,15 +274,13 @@ public class MailDetailFragment extends Fragment implements ViewPager.OnPageChan
 //        是加密邮件的话 显示 加密图标
         currView.findViewById(R.id.md_encrypt_icon).setVisibility(md.getEncrypted()?View.VISIBLE:View.GONE);
         currView.findViewById(R.id.md_signed_icon).setVisibility(md.getSigned()?View.VISIBLE:View.GONE);
-        mdViewList.set(wyma.vuStores.getCurrIndex()%5, currView);
-        mdpAdapter.notifyDataSetChanged();
 
-        currView.post(new Runnable() {
-            @Override
-            public void run() {
-                wyma.vuStores.renderMailDetail(currContentWV);
-            }
-        });
+        wyma.vuStores.renderMailDetail(currContentWV);
+    }
+
+    @Override
+    public void loadMailContentInWebView(String content,String contentType){
+        currContentWV.loadDataWithBaseURL(null, content, contentType, "utf-8", null);
     }
 
     /**
@@ -287,8 +289,8 @@ public class MailDetailFragment extends Fragment implements ViewPager.OnPageChan
     @Override
     public void renderAttachmentList(final List<MailAttachment> currAttachmentList){
         if (currAttachmentList != null && currAttachmentList.size() > 0) {
-            currAttachmentLV.setVisibility(View.VISIBLE);
-    //        logi("currAttachmentList.size()--->" + wyma.currAttachmentList.size());
+
+            Log.i(TAG, "renderAttachmentList: currAttachmentLV.getAdapter() == null ? "+(currAttachmentLV.getAdapter() == null));
             MailAttachmentAdapter mdaa = new MailAttachmentAdapter(wyma, currAttachmentList, false,false);
             currAttachmentLV.setAdapter(mdaa);
             //点击打开附件
@@ -299,7 +301,7 @@ public class MailDetailFragment extends Fragment implements ViewPager.OnPageChan
                     String amPath = ma.getPath();
                     Intent intent = FileUtil.getOpenFileIntent(getActivity(),amPath);
                     if (intent == null) {
-                        UItoolKit.showToastShort(getActivity(), "未识别的文件类型");
+                        wyma.toast("未识别的文件类型");
                     } else {
                         try {
                             getActivity().startActivity(intent);
@@ -311,6 +313,7 @@ public class MailDetailFragment extends Fragment implements ViewPager.OnPageChan
             });
             currAttachmentLV.setFocusable(false);//解决ScrollView内嵌ListView的问题
             WeiYouUtil.setListViewHeightBasedOnChildren(currAttachmentLV);
+            currAttachmentLV.setVisibility(View.VISIBLE);
         }
     }
 
@@ -359,9 +362,11 @@ public class MailDetailFragment extends Fragment implements ViewPager.OnPageChan
             return true;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
         @Override
         public void onPageFinished(WebView view, String url) {
-            if(wyma!=null) {wyma.dismissProgressDialog();}
+            if(wyma!=null && !wyma.isDestroyed() && !wyma.isFinishing()) {wyma.dismissProgressDialog();}
+            scrollView.scrollTo(0,0);
         }
     }
 
@@ -382,8 +387,13 @@ public class MailDetailFragment extends Fragment implements ViewPager.OnPageChan
         downloadConfirmDialog.showPopWindow(hideView);
     }
 
+    @Override
+    public void onDestroy() {
+        wyma.vuStores.setMailDetailReference(null);
+        super.onDestroy();
+    }
 
-//    //下载微盘附件件
+    //    //下载微盘附件件
 //    private void downloadMailAttachment(String url, final String filePath) throws Exception {
 //        wyma.toast("正在下载附件...");
 //        OkHttpClientManager.getInstance().downLoadWPFile(url, filePath, new Callback() {

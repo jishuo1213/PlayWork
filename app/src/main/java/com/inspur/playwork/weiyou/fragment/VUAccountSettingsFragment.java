@@ -193,4 +193,10 @@ public class VUAccountSettingsFragment extends Fragment implements AccountSettin
 
     @Override
     public void onButton2Click() {}
+
+    @Override
+    public void onDestroy() {
+        wyma.vuStores.setAccountSettingsReference(null);
+        super.onDestroy();
+    }
 }

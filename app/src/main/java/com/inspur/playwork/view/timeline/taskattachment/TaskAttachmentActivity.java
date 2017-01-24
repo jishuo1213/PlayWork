@@ -7,11 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.inspur.playwork.R;
 import com.inspur.playwork.model.timeline.TaskBean;
+import com.inspur.playwork.view.common.BaseActivity;
 
 /**
  * Created by Fan on 15-9-18.
  */
-public class TaskAttachmentActivity extends AppCompatActivity {
+public class TaskAttachmentActivity extends BaseActivity {
 
     public static final String TASK_BEAN = "taskBean";
 

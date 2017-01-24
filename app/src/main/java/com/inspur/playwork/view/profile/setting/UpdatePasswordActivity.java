@@ -7,11 +7,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.inspur.playwork.R;
+import com.inspur.playwork.view.common.BaseActivity;
 
 /**
  * Created by bugcode on 15-8-13.
  */
-public class UpdatePasswordActivity extends Activity implements View.OnClickListener {
+public class UpdatePasswordActivity extends BaseActivity implements View.OnClickListener {
 
     private ImageButton backImageView;
     private TextView titleTextView;

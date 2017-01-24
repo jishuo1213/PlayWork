@@ -253,4 +253,10 @@ public class AddNewAccountFragment extends Fragment implements AddNewAccountOper
             wyma.toast("邮箱账号保存失败");
         }
     }
+
+    @Override
+    public void onDestroy() {
+        wyma.vuStores.setAddNewAccountReference(null);
+        super.onDestroy();
+    }
 }

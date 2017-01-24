@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -189,7 +190,7 @@ public class PlayWorkServiceNew extends Service {
 
         private WeakReference<PlayWorkServiceNew> reference;
 
-        public ServiceHandler(WeakReference<PlayWorkServiceNew> reference) {
+        ServiceHandler(WeakReference<PlayWorkServiceNew> reference) {
             this.reference = reference;
         }
 
@@ -788,4 +789,12 @@ public class PlayWorkServiceNew extends Service {
 
         ((PlayWorkApplication) getApplication()).logout();
     }
+
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+        }
+    };
 }

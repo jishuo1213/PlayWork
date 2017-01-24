@@ -8,8 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,7 +15,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -29,6 +26,7 @@ import android.widget.Toast;
 
 import com.inspur.playwork.R;
 import com.inspur.playwork.utils.FileUtil;
+import com.inspur.playwork.utils.NetWorkUtils;
 import com.inspur.playwork.utils.UItoolKit;
 import com.inspur.playwork.utils.db.bean.MailAccount;
 import com.inspur.playwork.view.common.BaseActivity;
@@ -518,61 +516,12 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
         }
     }
     @Override
-    public int getNetworkType() {
-
-        int strNetworkType = -1;
-
-//获取网络连接管理者
-        ConnectivityManager connectionManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        //获取网络的状态信息，有下面三种方式
-        NetworkInfo networkInfo = connectionManager.getActiveNetworkInfo();
-
-        if (networkInfo != null && networkInfo.isConnected()) {
-            if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-                strNetworkType = vuStores.CURR_NETWORK_TYPE_WIFI;
-            } else if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
-                String _strSubTypeName = networkInfo.getSubtypeName();
-
-                Log.e("getNetworkType", "Network getSubtypeName : " + _strSubTypeName);
-
-                // TD-SCDMA   networkType is 17
-                int networkType = networkInfo.getSubtype();
-                switch (networkType) {
-                    case TelephonyManager.NETWORK_TYPE_GPRS:
-                    case TelephonyManager.NETWORK_TYPE_EDGE:
-                    case TelephonyManager.NETWORK_TYPE_CDMA:
-                    case TelephonyManager.NETWORK_TYPE_1xRTT:
-                    case TelephonyManager.NETWORK_TYPE_IDEN: //api<8 : replace by 11
-                        strNetworkType = vuStores.CURR_NETWORK_TYPE_2G;
-                        break;
-                    case TelephonyManager.NETWORK_TYPE_UMTS:
-                    case TelephonyManager.NETWORK_TYPE_EVDO_0:
-                    case TelephonyManager.NETWORK_TYPE_EVDO_A:
-                    case TelephonyManager.NETWORK_TYPE_HSDPA:
-                    case TelephonyManager.NETWORK_TYPE_HSUPA:
-                    case TelephonyManager.NETWORK_TYPE_HSPA:
-                    case TelephonyManager.NETWORK_TYPE_EVDO_B: //api<9 : replace by 14
-                    case TelephonyManager.NETWORK_TYPE_EHRPD:  //api<11 : replace by 12
-                    case TelephonyManager.NETWORK_TYPE_HSPAP:  //api<13 : replace by 15
-                        strNetworkType = vuStores.CURR_NETWORK_TYPE_3G;
-                        break;
-                    case TelephonyManager.NETWORK_TYPE_LTE:    //api<11 : replace by 13
-                        strNetworkType = vuStores.CURR_NETWORK_TYPE_4G;
-                        break;
-                    default:
-                        // http://baike.baidu.com/item/TD-SCDMA 中国移动 联通 电信 三种3G制式
-                        if (_strSubTypeName.equalsIgnoreCase("TD-SCDMA") || _strSubTypeName.equalsIgnoreCase("WCDMA") || _strSubTypeName.equalsIgnoreCase("CDMA2000")) {
-                            strNetworkType = vuStores.CURR_NETWORK_TYPE_3G;
-                        } else {
-                            strNetworkType = vuStores.CURR_NETWORK_TYPE_4G;
-                        }
-
-                        break;
-                }
-            }
-        }
-
-        return strNetworkType;
+    public boolean isNetWorkAvailable() {
+        return NetWorkUtils.isNetWorkAvailable(this);
+    }
+    @Override
+    public boolean isWifiConnected() {
+        return NetWorkUtils.isWifiConnected(this);
     }
 
     @Override
@@ -614,6 +563,7 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
     @Override
     protected void onDestroy() {
 //        Log.i(TAG, "onDestroy");
+        vuStores.setVUActivityReference(null);
         vuStores.clean();
         vuStores = null;
         FileUtil.clearMailCache();// 清空邮件缓存

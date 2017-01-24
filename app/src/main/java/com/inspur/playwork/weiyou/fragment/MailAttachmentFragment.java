@@ -85,6 +85,7 @@ public class MailAttachmentFragment extends Fragment implements MailAttachmentOp
 
     @Override
     public void onDestroy() {
+        wyma.vuStores.setMailAttachmentReference(null);
         super.onDestroy();
     }
 

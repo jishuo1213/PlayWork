@@ -971,6 +971,11 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
         return wyma.paramMailDetail;
     }
 
+    @Override
+    public void onDestroy(){
+        wyma.vuStores.setWriteMailReference(null);
+        super.onDestroy();
+    }
 //    private static class AttachmentUploadHandler extends Handler {
 //        private WeakReference<WriteMailFragment> reference;
 //        private WriteMailFragment wmf;

@@ -259,12 +259,15 @@ public class LoadFileHandlerThread extends HandlerThread implements Handler.Call
 
     @Override
     public void onStart(String uuid) {
+        Log.i(TAG, "onStart: " + uuid);
         ArrayList<DownloadRequest> requestArrayList = requstMap.get(uuid);
         if (requestArrayList.size() > 0) {
             for (DownloadRequest request : requestArrayList) {
+                Log.i(TAG, "onStart: " + request.status);
                 if (request.status == DownloadRequest.Status.PAUSE) {
                     switch (request.loadType) {
                         case DOWNLOAD_FILE:
+                            request.status = DownloadRequest.Status.PENDING;
                             downloadFile(uuid, request);
                             break;
                     }
@@ -321,7 +324,10 @@ public class LoadFileHandlerThread extends HandlerThread implements Handler.Call
             if (downLoadFiles.contains(request.savePath)) {
                 return;
             }
-            requestArrayList.add(request);
+//            if (!requestArrayList.contains(request))
+            Log.i(TAG, "downloadFile: " + request.downloadUrl);
+            if (!requestArrayList.contains(request))
+                requestArrayList.add(request);
             downLoadFiles.add(request.savePath);
             Message msg = loadFileHandler.obtainMessage(DOWNLOAD_FILE);
             Bundle bundle = new Bundle();

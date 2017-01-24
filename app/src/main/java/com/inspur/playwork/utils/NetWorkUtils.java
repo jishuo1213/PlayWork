@@ -119,4 +119,10 @@ public class NetWorkUtils {
         return !netType.equals(NetWorkUtils.NETWORK_TYPE_DISCONNECT)
                 && !netType.equals(NetWorkUtils.NETWORK_TYPE_UNKNOWN);
     }
+
+    public static boolean isWifiConnected(Context context) {
+        String type = getNetWorkType(context);
+        Log.i(TAG, "isWifiConnected: " + type);
+        return type.equals(NETWORK_TYPE_WIFI);
+    }
 }
