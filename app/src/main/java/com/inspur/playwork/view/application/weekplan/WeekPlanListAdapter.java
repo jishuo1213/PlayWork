@@ -29,7 +29,7 @@ class WeekPlanListAdapter extends RecyclerView.Adapter<WeekPlanListAdapter.ViewH
     }
 
     interface WeekPlanListListener {
-        void onWeekPlanClick(WeekPlanHeader header);
+        void onWeekPlanClick(int pos);
     }
 
     public void setListEventListener(WeekPlanListListener listEventListener) {
@@ -115,9 +115,9 @@ class WeekPlanListAdapter extends RecyclerView.Adapter<WeekPlanListAdapter.ViewH
         @Override
         public void onClick(View v) {
             int pos = weekPlanList.getChildLayoutPosition(v);
-            WeekPlanHeader weekPlanHeader = getItem(pos);
+//            WeekPlanHeader weekPlanHeader = getItem(pos);
             if (listEventListener != null) {
-                listEventListener.onWeekPlanClick(weekPlanHeader);
+                listEventListener.onWeekPlanClick(pos);
             }
         }
     };

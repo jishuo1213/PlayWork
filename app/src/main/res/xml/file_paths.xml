@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-        <external-files-path name="playwork" path="playWork/" />
+    <!--<external-path name="playwork" path="playWork/"/>-->
 
-        <files-path name="playwork" path="playWork/"/>
+    <external-files-path name="playwork1" path="playWork/" />
+        <!--<root-path name="playwork" path="playWork/"/>-->
+    <files-path name="playwork2" path="playWork/"/>
+
+    <external-cache-path name="playworkcache1" path="playWork/"/>
+
+    <cache-path name="playworkcache2" path="playWork/"/>
+
 </paths>

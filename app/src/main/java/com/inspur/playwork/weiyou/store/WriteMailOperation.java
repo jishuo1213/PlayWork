@@ -15,7 +15,7 @@ public interface WriteMailOperation {
 
     void generateContactTV(UserInfoBean userInfoBean,int type);
 
-    void refreshSearchResultListView(ArrayList<UserInfoBean> contactSearchResult);
+    void refreshSearchResultListView(ArrayList<UserInfoBean> contactSearchResult,int type);
 
     void emptyInputText();
 

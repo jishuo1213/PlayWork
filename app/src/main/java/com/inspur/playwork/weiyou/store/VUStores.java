@@ -47,7 +47,6 @@ import com.inspur.playwork.weiyou.utils.MailSynchronizer;
 import com.inspur.playwork.weiyou.utils.MailUtil;
 import com.inspur.playwork.weiyou.utils.NetStatusReceiver;
 import com.inspur.playwork.weiyou.utils.OkHttpClientManager;
-import com.inspur.playwork.weiyou.utils.VUFileUtil;
 import com.inspur.playwork.weiyou.utils.WeiYouUtil;
 import com.sun.mail.pop3.POP3Folder;
 import com.sun.mail.pop3.POP3Store;
@@ -241,7 +240,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                 refreshSpinner(mailAccountCache, 0);
             }
         }
-        if(vuActivityOperation.get()!=null) vuActivityOperation.get().initSettingButton();
+        if(checkVUActivityOperation())vuActivityOperation.get().initSettingButton();
     }
 
     /**
@@ -276,7 +275,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                 if (res == true) {
                     newMailAccount.setId(accountId);
                     mailAccountCache.add(newMailAccount);
-                    addNewAccountOperation.get().saveMailAccountCallback(true);
+                    if(checkAddNewAccountOperation())addNewAccountOperation.get().saveMailAccountCallback(true);
                     refreshSpinner(mailAccountCache, mailAccountCache.size() - 1);
                     switchMailAccount(mailAccountCache.size() - 1);
                 } else {
@@ -285,7 +284,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                 break;
             case UPDATE_EXISTS_MAIL_ACCOUNT://修改邮箱账号
                 if (res == true) {
-                    accountSettingsOperation.get().updateMailAccountCallback(true);
+                    if(checkAccountSettingsOperation())accountSettingsOperation.get().updateMailAccountCallback(true);
                     mailAccountCache.set(targetMailAccountIndex, newMailAccount);
                 } else {
                     toast("非常抱歉，保存更新后的邮箱账号失败了");
@@ -331,11 +330,10 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         if (!downloadingUidCacheMap.containsKey(currEmail)) {
             downloadingUidCacheMap.put(currEmail, new ArrayList<String>());
         }
-        Log.i(TAG, "switchMailAccount: vuActivityOperation.get() != null ? "+(vuActivityOperation.get() != null));
         if(!isWritingMail) {//如果是打开微邮
             DBUtil.queryMailDirectory(currEmail);//查询邮箱目录
             FileUtil.validateMailFolder(currEmail);//检查该邮箱的缓存文件目录是否存在，若不存在就创建一遍
-            if (vuActivityOperation.get() != null)
+            if(checkVUActivityOperation())
                 vuActivityOperation.get().switchSelectedAccount(currEmail);
 //        去取发件箱邮件
             DBUtil.queryOutBoxMailList(currEmail);//查询发件箱邮件 并开启同步器
@@ -365,11 +363,12 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
             directoryData.addAll(mdList);
         }
 //        刷新侧边栏目录视图
-        vuActivityOperation.get().renderMailDirectoryView();
+        if(checkVUActivityOperation())
+            vuActivityOperation.get().renderMailDirectoryView();
     }
 
     public void switchMailDirectory(int position) {
-//        Log.i(TAG, "switchMailDirectory: ....");
+        Log.i(TAG, "switchMailDirectory: ....");
 //        再次判断是否是切换了新账号
         boolean accountIsChanged = false;
         boolean isNeedSwitch = true;
@@ -378,6 +377,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
             accountIsChanged = true;
             isNeedSwitch = false;
         }
+        if(position<0 || position>=directoryData.size()) return;
 
         MailDirectory dir = directoryData.get(position);
         if (accountIsChanged || currDirId != dir.getId()) {
@@ -385,15 +385,15 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
             currDirName = dir.getName();
             Log.i(TAG, "switchMailList dirId:" + currDirId);
             Log.i(TAG, "before showMailListFragment...");
-            vuActivityOperation.get().showMailListFragment(currDirName);
-            if (isNeedSwitch)
-                vuActivityOperation.get().switchMailList(position);
+            boolean isAA = checkVUActivityOperation();
+            if(isAA) vuActivityOperation.get().showMailListFragment(currDirName);
+            if(isNeedSwitch && isAA) vuActivityOperation.get().switchMailList(position);
         }
     }
 
     public void loadListData() {
 //        设置带上拉下拉的listView
-        mailListOperation.get().setListViewPullWay();
+        if(checkMailListOperation()) mailListOperation.get().setListViewPullWay();
         if (currDirId == AppConfig.WY_CFG.DIR_ID_UNREAD_MAIL) {
             DBUtil.queryUnreadMailList(currEmail);
         } else if (currDirId == AppConfig.WY_CFG.DIR_ID_MARKED_MAIL) {
@@ -503,6 +503,12 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                 List<MimeMessage> validMessageList = new ArrayList<>();//新邮件list
                 try{
                     isDownloadingMail = true;
+                    int pop3DownloadWay = getMailDownloadWay();
+                    int mailNumPerDownload = pop3DownloadWay == MAIL_DOWNLOAD_WAY_HEAD
+                            ?AppConfig.WY_CFG.MAIL_NUM_PER_PAGE_HEAD
+                            :AppConfig.WY_CFG.MAIL_NUM_PER_PAGE_ALL;
+
+
                     vuMailHandler.sendMessage(vuMailHandler.obtainMessage(CHECK_MAIL_RESULT, 0, 0, "正在连接邮件服务器..."));
                     javax.mail.Message [] messages = getInboxMessages();
                     Log.i(TAG, "getMailUIDList: messages.length = " + messages.length);
@@ -541,8 +547,8 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                                 Log.i(TAG, "download mail: 取最新邮件");
                                 if (index > 0) {
                                     int begin = 0;
-                                    if (index > AppConfig.WY_CFG.MAIL_NUM_PER_PAGE) {
-                                        begin = index - AppConfig.WY_CFG.MAIL_NUM_PER_PAGE;
+                                    if (index > mailNumPerDownload) {
+                                        begin = index - mailNumPerDownload;
                                     }
                                     serverUidList = serverUidList.subList(begin, index);
                                     Log.i(TAG, "download mail::begin = "+begin);
@@ -561,8 +567,8 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                             } else {//取更早的邮件
                                 Log.i(TAG, "download mail: 取更早的邮件");
                                 if (index < serverUidListSize - 1) {
-                                    int end = (index < serverUidListSize - AppConfig.WY_CFG.MAIL_NUM_PER_PAGE)
-                                            ? index + AppConfig.WY_CFG.MAIL_NUM_PER_PAGE + 1
+                                    int end = (index < serverUidListSize - mailNumPerDownload)
+                                            ? index + mailNumPerDownload + 1
                                             : serverUidListSize;
 //                                    Log.i(TAG, "取更早的邮件: index = " + index);
 //                                    Log.i(TAG, "取更早的邮件: end = " + end);
@@ -578,11 +584,11 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                         } else {//本地最新的邮件uid 不在服务器邮件UID列表中
                             Log.i(TAG, "run: 本地最新的邮件uid 不在服务器邮件UID列表中");
                             if (isQueryNewMail) {//取最新邮件
-                                serverUidList = serverUidList.subList(0,(serverUidListSize > AppConfig.WY_CFG.MAIL_NUM_PER_PAGE)?AppConfig.WY_CFG.MAIL_NUM_PER_PAGE:serverUidListSize);
-                                serverUidIndexList = serverUidIndexList.subList(0,(serverUidListSize > AppConfig.WY_CFG.MAIL_NUM_PER_PAGE)?AppConfig.WY_CFG.MAIL_NUM_PER_PAGE:serverUidListSize);
+                                serverUidList = serverUidList.subList(0,(serverUidListSize > mailNumPerDownload)?mailNumPerDownload:serverUidListSize);
+                                serverUidIndexList = serverUidIndexList.subList(0,(serverUidListSize > mailNumPerDownload)?mailNumPerDownload:serverUidListSize);
                             }else{
-                                serverUidList = serverUidList.subList((serverUidListSize > AppConfig.WY_CFG.MAIL_NUM_PER_PAGE)?serverUidListSize - AppConfig.WY_CFG.MAIL_NUM_PER_PAGE -1:0,serverUidListSize);
-                                serverUidIndexList = serverUidIndexList.subList((serverUidListSize > AppConfig.WY_CFG.MAIL_NUM_PER_PAGE)?serverUidListSize - AppConfig.WY_CFG.MAIL_NUM_PER_PAGE -1:0,serverUidListSize);
+                                serverUidList = serverUidList.subList((serverUidListSize > mailNumPerDownload)?serverUidListSize - mailNumPerDownload -1:0,serverUidListSize);
+                                serverUidIndexList = serverUidIndexList.subList((serverUidListSize > mailNumPerDownload)?serverUidListSize - mailNumPerDownload -1:0,serverUidListSize);
                             }
                         }
                         int suls = serverUidList.size();
@@ -598,6 +604,8 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                             Map<String, Object> paramsMap = new ArrayMap<>();
                             paramsMap.put("email", currEmail);
                             paramsMap.put("messageList", validMessageList);
+                            paramsMap.put("pop3DownloadWay", pop3DownloadWay);
+
                             downloadingMailCount = validMessageList.size();
                             vuMailHandler.sendMessage(vuMailHandler.obtainMessage(FETCH_MESSAGES_RESULT, 0, 0, paramsMap));
                         }
@@ -606,8 +614,8 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
 //                        Log.i(TAG, "run: 本地没有邮件");
                         int msgLen = messages.length;
                         int range = 0;
-                        if (msgLen > AppConfig.WY_CFG.MAIL_NUM_PER_PAGE) {
-                            range = msgLen - AppConfig.WY_CFG.MAIL_NUM_PER_PAGE;
+                        if (msgLen > mailNumPerDownload) {
+                            range = msgLen - mailNumPerDownload;
                         }
 //                        Log.i(TAG, "range----------------: " + range);
                         for (int i = msgLen - 1; i >= range; i--) {
@@ -622,6 +630,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                         Map<String, Object> paramsMap = new ArrayMap<>();
                         paramsMap.put("email", currEmail);
                         paramsMap.put("messageList", validMessageList);
+                        paramsMap.put("pop3DownloadWay", pop3DownloadWay);
                         downloadingMailCount = validMessageList.size();
                         vuMailHandler.sendMessage(vuMailHandler.obtainMessage(FETCH_MESSAGES_RESULT, 0, 0, paramsMap));
                     }
@@ -640,9 +649,8 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         });
     }
 
-    private void handleMimeMessage(List<MimeMessage> mimeMessageList, final String email) {
+    private void handleMimeMessage(List<MimeMessage> mimeMessageList, final String email,final int pop3DownloadWay) {
 //        Log.i(TAG, "handleMimeMessage: mimeMessageList.size = " + mimeMessageList.size());
-        final int pop3DownloadWay = getMailDownloadWay();
         int i;
         final int l = mimeMessageList.size();
         for (i = 0; i < l; i++) {
@@ -655,14 +663,14 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                     MailDetail md = new MailDetail();
                     try {
                         String uid = folder.getUID(message);
-                        Log.i(TAG, System.currentTimeMillis()+"---begin handleMimeMessage: uid = "+uid);
+                        //Log.i(TAG, System.currentTimeMillis()+"---begin handleMimeMessage: uid = "+uid);
 //                        vuMailHandler.sendMessage(vuMailHandler.obtainMessage(CHECK_MAIL_RESULT, 0, 0, "正在下载邮件：" + MailUtil.getSubject(message)));
 
                         // 返回邮件信息
                         md.setUid(uid);
                         localUidList.add(uid);
 
-                        Log.i(TAG, System.currentTimeMillis()+"---begin handleMimeMessage1: MessageID = "+message.getMessageID());
+                        //Log.i(TAG, System.currentTimeMillis()+"---begin handleMimeMessage1: MessageID = "+message.getMessageID());
                         md.setEmail(email);
                         md.setMessageId(message.getMessageID());
                         md.setFrom(WeiYouUtil.getUserJSONStr(MailUtil.getFromMap(message)));
@@ -925,7 +933,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                         Log.i(TAG, "往来邮件——>" + _md.getSubject());
                     }
                 }
-                vuActivityOperation.get().openExchangeListFragment();
+                if(checkVUActivityOperation()) vuActivityOperation.get().openExchangeListFragment();
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -959,15 +967,18 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                 for (MailDetail _md : mailListData) {
                     showingMailIdList.add(_md.getId());
                 }
-            vuActivityOperation.get().showMailDetail();
+            if(checkVUActivityOperation()) vuActivityOperation.get().showMailDetail();
         } else {
-            vuActivityOperation.get().reEditDraftMail();
+            if(checkVUActivityOperation()) vuActivityOperation.get().reEditDraftMail();
         }
         timeSeperator = now;
     }
 
     /******************* 写邮件 ********************/
 
+    public static int RCPT_CURR_EDITING = 0;
+    public static int RCPT_TO_EDITING = 1;
+    public static int RCPT_CC_EDITING = 2;
     private static final String IMG_PATH = "image_path";
     private static final int SHOW_COMPRESS_BITMAP = 0x03;
     private static final String COMPRESS_BITMAP = "compress_bitmap";
@@ -981,7 +992,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
     private ArrayList<UserInfoBean> ccList = new ArrayList<>();
     //    ArrayList<UserInfoBean> scList;
     private ArrayList<MailAttachment> attachmentList = new ArrayList<>();
-    private int currContactType = 0;
+    private int currContactType = RCPT_TO_EDITING;
     private ArrayList<UserInfoBean> contactSearchResult = new ArrayList<>();
     private String references = "";
     private List<String> noPbkRcptAL = new ArrayList<>();
@@ -1001,7 +1012,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         toList.clear();
         ccList.clear();
         contactSearchResult.clear();
-        currContactType = 0;
+        currContactType = RCPT_TO_EDITING;
         references = "";
         showSavePopWindowOnBackPress = false;
         canSendNoSubjectMail = false;
@@ -1131,7 +1142,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                     e.printStackTrace();
                 }
             }else{//普通邮件
-                if(writeMailOperation.get()!=null) {
+                if(checkWriteMailOperation()) {
                     MailDetail quoteMail = writeMailOperation.get().getParamMailDetail();
                     if (quoteMail != null) {
                         if (!TextUtils.isEmpty(quoteMail.getTo())) {
@@ -1195,7 +1206,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         }
         boolean encryptMail = _saftyItemEnabled &&CAEncryptUtils.getDefaultEncrypt(currEmail);
         boolean signMail = _saftyItemEnabled && CAEncryptUtils.getDefaultSign(currEmail);
-        writeMailOperation.get().fillDraftData(draftOrignalSubject, toList, ccList, draftOrignalContent, encryptMail, signMail, _saftyItemEnabled);
+        if(checkWriteMailOperation()) writeMailOperation.get().fillDraftData(draftOrignalSubject, toList, ccList, draftOrignalContent, encryptMail, signMail, _saftyItemEnabled);
 
     }
 
@@ -1212,9 +1223,9 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
     public void addToContactList(UserInfoBean userInfoBean, int type) {
         boolean isExists = false;
         ArrayList<UserInfoBean> uibList = null;
-        if(type == 0) type = currContactType;
-        if(type == 1){uibList = toList;}
-        else if(type == 2){uibList = ccList;}
+        if(type == RCPT_CURR_EDITING) type = currContactType;
+        if(type == RCPT_TO_EDITING){uibList = toList;}
+        else if(type == RCPT_CC_EDITING){uibList = ccList;}
         for (UserInfoBean uib : uibList) {
             if (uib.email.equals(userInfoBean.email)) {
                 isExists = true;
@@ -1222,7 +1233,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         }
         if (!isExists) {
             uibList.add(userInfoBean);
-            writeMailOperation.get().generateContactTV(userInfoBean, type);
+            if(checkWriteMailOperation()) writeMailOperation.get().generateContactTV(userInfoBean, type);
             showSavePopWindowOnBackPress = true;
         } else {
 //            toast("该联系人已存在");
@@ -1242,10 +1253,11 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                 inputText = inputText.trim();
                 // 判断email是否合法
                 handleInputText(inputText, 0);
-                writeMailOperation.get().emptyInputText();
+                if(checkWriteMailOperation()) writeMailOperation.get().emptyInputText();
             } else {
                 //            Log.i(TAG, "searchNameTextWatcher onTextChanged: " + inputText);
-                DBUtil.sarchContactsByStr(inputText);
+//                DBUtil.sarchContactsByStr(inputText);
+                DBUtil.searchPerson(currInputText);//从服务器搜索联系人
             }
         }
     }
@@ -1281,7 +1293,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                 contactSearchResult.add(new UserInfoBean(mc));
 //            }
             }
-            writeMailOperation.get().refreshSearchResultListView(contactSearchResult);
+            if(checkWriteMailOperation()) writeMailOperation.get().refreshSearchResultListView(contactSearchResult,currContactType);
         } else {
             DBUtil.searchPerson(currInputText);//从服务器搜索联系人
         }
@@ -1300,7 +1312,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
     }
 
     public String generateOrignalContent() {
-        String contentHtml = writeMailOperation.get().getDraftHtmlContent();
+        String contentHtml = checkWriteMailOperation()?writeMailOperation.get().getDraftHtmlContent():null;
         return contentHtml == null ? "" : "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" /></head><body>" + contentHtml + "</body></html>";
     }
 
@@ -1318,25 +1330,31 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
     }
 
     public void onCancelSendMail() {
-        String html = writeMailOperation.get().getDraftHtmlContent();
-        String newSubject = writeMailOperation.get().getSubjectText();
-        if (!draftOrignalContent.equals(html) || !draftOrignalSubject.equals(newSubject)
-                || showSavePopWindowOnBackPress) {
-            writeMailOperation.get().showSaveDraftPopWindow();
-        } else {
-            Log.i(TAG, "onCancelSendMail: closeWriteMailFragment");
-            finishWritingMail();
-        }
+        if(checkWriteMailOperation()) {
+            WriteMailOperation wmo = writeMailOperation.get();
+            String html = wmo.getDraftHtmlContent();
+            String newSubject = wmo.getSubjectText();
+            if (!draftOrignalContent.equals(html) || !draftOrignalSubject.equals(newSubject)
+                    || showSavePopWindowOnBackPress) {
+                wmo.showSaveDraftPopWindow();
+            } else {
+                Log.i(TAG, "onCancelSendMail: closeWriteMailFragment");
+                finishWritingMail();
+            }
+        }else finishWritingMail();
     }
 
     private void showWriteMailToast(String msg){
-        if(writeMailOperation.get()!=null)writeMailOperation.get().toast(msg);
+        if(checkWriteMailOperation())writeMailOperation.get().toast(msg);
     }
 
     private boolean checkMailDraft() {
-        if (writeMailOperation.get().getSubjectText().length() == 0 && !canSendNoSubjectMail) {
-            writeMailOperation.get().showRemindSubjectDialog();
-            return false;
+        if(checkWriteMailOperation()) {
+            WriteMailOperation wmo = writeMailOperation.get();
+            if (wmo.getSubjectText().length() == 0 && !canSendNoSubjectMail) {
+                wmo.showRemindSubjectDialog();
+                return false;
+            }
         }
         if (toList.size() == 0) {
             showWriteMailToast("请选择收件人");
@@ -1354,7 +1372,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
      * 保存草稿按钮
      */
     public void saveMailDraft() {
-        String contentHtml = writeMailOperation.get().getDraftHtmlContent();
+        String contentHtml = checkWriteMailOperation() ? writeMailOperation.get().getDraftHtmlContent():"";
         generateDraftObject();
         mailDetailCache.setSendStatus(MailDetail.MAIL_TYPE_NO_STATUS);
         try {
@@ -1419,7 +1437,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         } else {
             mailDetailCache = new MailDetail();
         }
-        writeMailOperation.get().prepareToSendMail(mailDetailCache);
+        if(checkWriteMailOperation()) writeMailOperation.get().prepareToSendMail(mailDetailCache);
         mailDetailCache.setEmail(currEmail);
         Date now = new Date();
         mailDetailCache.setCreateTime(now);
@@ -1546,7 +1564,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
     private void finishWritingMail(){
 //        quoteMailContent = "";
 //        attachmentList.clear();
-        writeMailOperation.get().closeWriteMailFragment();
+        if(checkWriteMailOperation()) writeMailOperation.get().closeWriteMailFragment();
     }
 
     public void sendWeiYouMail() {
@@ -1738,7 +1756,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                     int targetIndex = outBoxMailListData.indexOf(_md);
                     Log.i(TAG, "onSendFailed: targetIndex = " + targetIndex);
                     _md.setSendStatus(MailDetail.MAIL_TYPE_IS_SENDING);
-                    if(mailListOperation.get()!= null) mailListOperation.get().refreshMailItem(targetIndex);
+                    if (checkMailListOperation()) mailListOperation.get().refreshMailItem(targetIndex);
                 }
             }
         }
@@ -1749,14 +1767,19 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         String _email = mTask.getEmail();
         DBUtil.updateMailSendStatus(_email, mTask.getCreateTime(), MailDetail.MAIL_TYPE_SEND_FAILED);
         if (currEmail.equals(_email)) { //处理视图的数据
-            for (MailDetail _md : outBoxMailListData) {
-                Log.i(TAG, "onSendFailed: _md.getSentDate() = " + _md.getSentDate());
-                if (_md.getSentDate().equals(mTask.getCreateTime())) {
-                    int targetIndex = outBoxMailListData.indexOf(_md);
-                    Log.i(TAG, "onSendFailed: targetIndex = " + targetIndex);
-                    _md.setSendStatus(MailDetail.MAIL_TYPE_SEND_FAILED);
-                    if(mailListOperation.get()!= null) mailListOperation.get().refreshMailItem(targetIndex);
+            try {
+                for (MailDetail _md : outBoxMailListData) {
+                    Log.i(TAG, "onSendFailed: _md.getSentDate() = " + _md.getSentDate());
+                    if (_md.getSentDate().equals(mTask.getCreateTime())) {
+                        int targetIndex = outBoxMailListData.indexOf(_md);
+                        Log.i(TAG, "onSendFailed: targetIndex = " + targetIndex);
+                        _md.setSendStatus(MailDetail.MAIL_TYPE_SEND_FAILED);
+                        if (checkMailListOperation()) mailListOperation.get().refreshMailItem(targetIndex);
+
+                    }
                 }
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }
     }
@@ -1818,20 +1841,26 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
      * @param p
      */
     public void addMailAttachmentByFilePath(String p) {
+        long attachmentsSize = 0;
+        for(MailAttachment ma : attachmentList){
+            attachmentsSize += ma.getSize();
+        }
         File f = new File(p);
-        try {
+        attachmentsSize += f.length();
+        if(attachmentsSize > AppConfig.WY_CFG.SEND_ATTACHMENT_SIZE_LIMIT){
+            if(checkWriteMailOperation()) writeMailOperation.get().toast("您选择的附件超出了允许的大小限制");
+        }else {
             MailAttachment ma = new MailAttachment();
-            ma.setSize(VUFileUtil.getFileSize(f));
+            ma.setSize(f.length());
             ma.setName(f.getName());
             ma.setEmail(currEmail);
             ma.setPath(p);
             if (!attachmentList.contains(ma)) {
                 attachmentList.add(ma);
-                writeMailOperation.get().refreshAttachmentListView();
+                if (checkWriteMailOperation())
+                    writeMailOperation.get().refreshAttachmentListView();
                 showSavePopWindowOnBackPress = true;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -1840,16 +1869,27 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         if (choseFileList == null || choseFileList.size() == 0) {
             return;
         }
+        long attachmentsSize = 0;
+        for(MailAttachment ma : attachmentList){
+            attachmentsSize += ma.getSize();
+        }
         for (LocalFileBean lfb : choseFileList) {
-            MailAttachment ma = new MailAttachment();
-            ma.setSize(lfb.size);
-            ma.setName(lfb.name);
-            ma.setEmail(currEmail);
-            ma.setPath(lfb.currentPath);
-            if (!attachmentList.contains(ma)) {
-                attachmentList.add(ma);
-                showSavePopWindowOnBackPress = true;
-                writeMailOperation.get().refreshAttachmentListView();
+            attachmentsSize += lfb.size;
+            if(attachmentsSize > AppConfig.WY_CFG.SEND_ATTACHMENT_SIZE_LIMIT){
+                if(checkWriteMailOperation()) writeMailOperation.get().toast("您选择的附件超出了允许的大小限制");
+                break;
+            }else {
+                MailAttachment ma = new MailAttachment();
+                ma.setSize(lfb.size);
+                ma.setName(lfb.name);
+                ma.setEmail(currEmail);
+                ma.setPath(lfb.currentPath);
+                if (!attachmentList.contains(ma)) {
+                    attachmentList.add(ma);
+                    showSavePopWindowOnBackPress = true;
+                    if (checkWriteMailOperation())
+                        writeMailOperation.get().refreshAttachmentListView();
+                }
             }
         }
     }
@@ -1859,7 +1899,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
             if (!attachmentList.contains(ma)) {
                 attachmentList.add(ma);
                 showSavePopWindowOnBackPress = true;
-                writeMailOperation.get().refreshAttachmentListView();
+                if(checkWriteMailOperation())writeMailOperation.get().refreshAttachmentListView();
             }
         }
     }
@@ -1867,7 +1907,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
     public void removeAttachment(int position) {
         attachmentList.remove(position);
         showSavePopWindowOnBackPress = true;
-        writeMailOperation.get().refreshAttachmentListView();
+        if(checkWriteMailOperation())writeMailOperation.get().refreshAttachmentListView();
     }
 
         /* ************  ContactSelectorFragment 联系人查询接口  ************ */
@@ -1883,7 +1923,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         this.mRecentChatList = new ArrayList<>();
         this.mDepartmentList = new ArrayList<>();
         this.mSearchPersonResultArrayList = new ArrayList<>();
-        this.selectedContacts = currContactType == 1 ? toList : ccList;
+        this.selectedContacts = currContactType == RCPT_TO_EDITING ? toList : ccList;
         GroupStores.getInstance().getAllRecentContacts();
         GroupStores.getInstance().searchByDept();
     }
@@ -1953,10 +1993,13 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
     }
 
     public void selectOver() {
-        writeMailOperation.get().emptyContactTV();
-        for (UserInfoBean u : selectedContacts) {
-//          重新生成UserInfoBean 视图
-            writeMailOperation.get().generateContactTV(u, currContactType);
+        if(checkWriteMailOperation()){
+            WriteMailOperation wmo = writeMailOperation.get();
+            wmo.emptyContactTV();
+            for (UserInfoBean u : selectedContacts) {
+    //          重新生成UserInfoBean 视图
+                wmo.generateContactTV(u, currContactType);
+            }
         }
     }
 
@@ -1975,24 +2018,29 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
             // 添加搜索到的联系人
             case MessageActions.SEARCH_PERSON:
                 //noinspection unchecked
-//                Log.i(TAG, (currSPA == null) + " SEARCH_PERSON result: " + updateUIAction.getActionData().size());
+                Log.i(TAG, "onEventMainThread: isInContactSelector = "+isInContactSelector);
+                ArrayList<UserInfoBean> searchRes = (ArrayList<UserInfoBean>) updateUIAction.getActionData().get(0);
                 if (isInContactSelector) {
-                    mSearchPersonResultArrayList = (ArrayList<UserInfoBean>) updateUIAction.getActionData().get(0);
-                    contactSelectOperation.get().refreshSearchResultListView(mSearchPersonResultArrayList);
-                } else {
-                    ArrayList<UserInfoBean> searchRes = (ArrayList<UserInfoBean>) updateUIAction.getActionData().get(0);
-                    for (UserInfoBean resUib : searchRes) {
-                        boolean hasAlready = false;
-                        for (UserInfoBean uib : contactSearchResult) {
-                            if (resUib.email.equals(uib.email)) {
-                                hasAlready = true;
-                            }
-                        }
-                        if (!hasAlready) {
-                            contactSearchResult.add(resUib);
-                        }
+                    if(checkContactSelectorOperation()) {
+                        ContactSelectorOperation cso = contactSelectOperation.get();
+                        mSearchPersonResultArrayList = searchRes;
+                        cso.refreshSearchResultListView(mSearchPersonResultArrayList);
                     }
-                    writeMailOperation.get().refreshSearchResultListView(contactSearchResult);
+                } else {
+                    contactSearchResult.clear();
+                    contactSearchResult.addAll(searchRes);
+//                    for (UserInfoBean resUib : searchRes) {
+//                        boolean hasAlready = false;
+//                        for (UserInfoBean uib : contactSearchResult) {
+//                            if (resUib.email.equals(uib.email)) {
+//                                hasAlready = true;
+//                            }
+//                        }
+//                        if (!hasAlready) {
+//                            contactSearchResult.add(resUib);
+//                        }
+//                    }
+                    if(checkWriteMailOperation()) writeMailOperation.get().refreshSearchResultListView(contactSearchResult,currContactType);
                 }
                 break;
             // 获取联系人和联系组
@@ -2001,7 +2049,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                 mGroupChatList = (ArrayList<GroupInfoBean>) updateUIAction.getActionData().get(0); // 聊天组列表
                 //noinspection unchecked
                 mRecentChatList = (ArrayList<UserInfoBean>) updateUIAction.getActionData().get(1); // 联系人列表
-                contactSelectOperation.get().refreshAllListView(mRecentChatList, mGroupChatList);
+                if(checkContactSelectorOperation())contactSelectOperation.get().refreshAllListView(mRecentChatList, mGroupChatList);
 
                 break;
             // 获取部门人员
@@ -2009,7 +2057,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                 //noinspection unchecked
                 Log.i(TAG, "SEARCH_USER_BY_DEPT-------");
                 mDepartmentList = (ArrayList<UserInfoBean>) updateUIAction.getActionData().get(0); // 部门人员列表
-                contactSelectOperation.get().refreshDepartmentListView(mDepartmentList);
+                if(checkContactSelectorOperation())contactSelectOperation.get().refreshDepartmentListView(mDepartmentList);
 
                 break;
             default:
@@ -2034,7 +2082,6 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         Log.i(TAG, "initMailDetailData: currIndex = "+currIndex);
         for (int i = 0; i < showingMailIdList.size(); i++) {
             mailDetailList.add(new MailDetail());
-//            mailDetailOperation.get().addViewToViewList();
         }
     }
 
@@ -2046,7 +2093,8 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
             requestMailDetail();
         } else {
             currMail = md;//更新当前邮件
-            mailDetailOperation.get().renderCurrentView(md);
+            if(checkMailDetailOperation())
+                mailDetailOperation.get().renderCurrentView(md);
         }
     }
 
@@ -2060,7 +2108,8 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
     private void getMailDetailByMessageIDCallback(SparseArray mlSA) {
         currMail = (MailDetail) mlSA.get(0);
         mailDetailList.set(currIndex,currMail);
-        mailDetailOperation.get().renderCurrentView(currMail);
+        if(checkMailDetailOperation())
+            mailDetailOperation.get().renderCurrentView(currMail);
     }
 
 
@@ -2086,13 +2135,13 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                         if (isWifiConnected()) {
                             downloadMailContent();
                         }else{
-                            mailDetailOperation.get().showDownloadComfirmDialog();
+                            if(checkMailDetailOperation())mailDetailOperation.get().showDownloadComfirmDialog();
                         }
                     } else {
                         downloadMailContent();
                     }
                 }else{
-                    currContentWV.loadDataWithBaseURL(null, "网络连接不可用，邮件内容下载失败", "text/html", "utf-8", null);
+                    if(currContentWV!=null)currContentWV.loadDataWithBaseURL(null, "网络连接不可用，邮件内容下载失败", "text/html", "utf-8", null);
                 }
             } else {
                 parseMailSource(mailFilePath);
@@ -2102,13 +2151,13 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                 currAttachmentList.addAll(currMail.getAttachments());
                 quoteMailContent = new String(Base64Utils.decode(currMail.getContent()), "utf-8");
                 Log.i(TAG, "renderMailDetail: currMail.getContent() = " + currMail.getContent());
-                currContentWV.loadDataWithBaseURL(null, quoteMailContent, "text/html", "utf-8", null);
+                if(currContentWV!=null)currContentWV.loadDataWithBaseURL(null, quoteMailContent, "text/html", "utf-8", null);
 
             } catch (Exception e) {
-                currContentWV.loadDataWithBaseURL(null, "邮件解析失败", "text/html", "utf-8", null);
+                if(currContentWV!=null)currContentWV.loadDataWithBaseURL(null, "邮件解析失败", "text/html", "utf-8", null);
                 e.printStackTrace();
             }
-            mailDetailOperation.get().renderAttachmentList(currAttachmentList);
+            renderAttachmentList();
         }
     }
     Thread mdThread;
@@ -2191,33 +2240,37 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
             switch (encType) {
                 case 0:
                     Log.i(TAG, "renderMailDetail: 普通邮件");
-                    MailUtil.getMailText(msg, currMail, currContentWV);
-                    MailUtil.saveAttachments(msg, currMail.getEmail(), currAttachmentList);
-                    quoteMailContent = currMail.getContent();
-                    break;
-                case 1://加密邮件
-                    parseEncryptMail(currContentWV, mailFilePath, certPath);
-                    break;
-                case 2://签名邮件
-                    Log.i(TAG, "renderMailDetail: 最外层是签名邮件");
-
-                    String msg_vfy = mailCachePath + currMail.getUid() + "_vfy";
-                    int vfyRes = dm.verifySignedMail(mailFilePath, msg_vfy, certPath);
-                    Log.i(TAG, "renderMailDetail: verify signed mail res:" + vfyRes);
-                    if (vfyRes == 0) {
-                        MimeBodyPart vfyMsg = new MimeBodyPart(new FileInputStream(msg_vfy));
-                        if (MailUtil.getMailEncType(vfyMsg, currMail) == 1) {
-                            parseEncryptMail(currContentWV, msg_vfy, certPath);
-                        }else{
-                            MailUtil.getMailText(vfyMsg, currMail, currContentWV);
-                            MailUtil.saveAttachments(vfyMsg, currMail.getEmail(), currAttachmentList);
-                        }
-                    } else {//解签名失败
-                        Log.e(TAG, "renderMailDetail: verify signed mail error2:");
+                    if(currContentWV!=null) {
                         MailUtil.getMailText(msg, currMail, currContentWV);
                         MailUtil.saveAttachments(msg, currMail.getEmail(), currAttachmentList);
+                        quoteMailContent = currMail.getContent();
                     }
-                    quoteMailContent = currMail.getContent();
+                    break;
+                case 1://加密邮件
+                    if(currContentWV!=null) parseEncryptMail(currContentWV, mailFilePath, certPath);
+                    break;
+                case 2://签名邮件
+                    if(currContentWV!=null) {
+                        Log.i(TAG, "renderMailDetail: 最外层是签名邮件");
+
+                        String msg_vfy = mailCachePath + currMail.getUid() + "_vfy";
+                        int vfyRes = dm.verifySignedMail(mailFilePath, msg_vfy, certPath);
+                        Log.i(TAG, "renderMailDetail: verify signed mail res:" + vfyRes);
+                        if (vfyRes == 0) {
+                                MimeBodyPart vfyMsg = new MimeBodyPart(new FileInputStream(msg_vfy));
+                                if (MailUtil.getMailEncType(vfyMsg, currMail) == 1) {
+                                    parseEncryptMail(currContentWV, msg_vfy, certPath);
+                                } else {
+                                    MailUtil.getMailText(vfyMsg, currMail, currContentWV);
+                                    MailUtil.saveAttachments(vfyMsg, currMail.getEmail(), currAttachmentList);
+                                }
+                        } else {//解签名失败
+                            Log.e(TAG, "renderMailDetail: verify signed mail error2:");
+                            MailUtil.getMailText(msg, currMail, currContentWV);
+                            MailUtil.saveAttachments(msg, currMail.getEmail(), currAttachmentList);
+                        }
+                        quoteMailContent = currMail.getContent();
+                    }
                     break;
             }
         } catch (Exception e) {
@@ -2226,9 +2279,13 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         }
         currMail.setContent("");//用完即清空，否则邮件正文太大时 数据库受不了~
         DBUtil.updateMailDetail(currMail, null);
-        mailDetailOperation.get().renderAttachmentList(currAttachmentList);
+        renderAttachmentList();
     }
 
+    private void renderAttachmentList(){
+        if(checkMailDetailOperation())
+            mailDetailOperation.get().renderAttachmentList(currAttachmentList);
+    }
     private void parseEncryptMail(WebView currContentWV,String inputFilePath,String certPath) throws Exception {
         Log.i(TAG, "parseEncryptMail: 加密邮件");
         String content = "<p style='color:#666'>本邮件是加密邮件，您的邮箱账号未安装任何数字证书，无法查看邮件详细内容。以下方案可以助您查看加密邮件：</p>" +
@@ -2367,7 +2424,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         newMailAccount = mailAccountCache.get(index);
         currSettingEmail = newMailAccount.getEmail();
         caList = CAEncryptUtils.getCAListData(newMailAccount.getEmail());
-        vuActivityOperation.get().openMailAccountSettingFragment();
+        if(checkVUActivityOperation()) vuActivityOperation.get().openMailAccountSettingFragment();
     }
 
     public MailAccount getNewMailAccount() {
@@ -2441,7 +2498,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
             }).start();
         }else if(isNameChanged){
             saveOneMailAccount(newMailAccount, UPDATE_EXISTS_MAIL_ACCOUNT);
-        }else accountSettingsOperation.get().updateMailAccountCallback(true);
+        }else if(checkAccountSettingsOperation())accountSettingsOperation.get().updateMailAccountCallback(true);
     }
 
     public boolean isDefaultAccount() {
@@ -2459,7 +2516,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
 
     public void initAccountCaData() {
         deleteIndex = -1;
-        accountCaOperation.get().refreshCaListView();
+        if(checkAccountCaOperation())accountCaOperation.get().refreshCaListView();
     }
 
     public void setDefaultEncryptWay(boolean isChecked) {
@@ -2497,7 +2554,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
         CAEncryptUtils.saveCaListData(currSettingEmail, caList);
         CAEncryptUtils.setDefaultEncrypt(currSettingEmail, true);
         CAEncryptUtils.setDefaultSign(currSettingEmail, true);
-        accountCaOperation.get().refreshCaListView();
+        if(checkAccountCaOperation()) accountCaOperation.get().refreshCaListView();
     }
 
     /**
@@ -2558,7 +2615,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                 CAEncryptUtils.setDefaultSign(currSettingEmail, false);
             }
         }
-        accountCaOperation.get().refreshCaListView();
+        if(checkAccountCaOperation())accountCaOperation.get().refreshCaListView();
     }
 
     /********************       设置     ********************/
@@ -2591,12 +2648,12 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
                 break;
             case DataBaseActions.DELETE_ONE_MAIL_ACCOUNT_SUCCESS:
                 Log.i(TAG, "DELETE_ONE_MAIL_ACCOUNT_SUCCESS ==>");
-                accountSettingsOperation.get().deleteMailAccountCallback(true);
+                if(checkAccountSettingsOperation())accountSettingsOperation.get().deleteMailAccountCallback(true);
                 refreshSpinner(mailAccountCache, targetMailAccountIndex - 1);
                 break;
             case DataBaseActions.DELETE_ONE_MAIL_ACCOUNT_FAILED:
                 Log.e(TAG, "DELETE_ONE_MAIL_ACCOUNT_FAILED ==>");
-                accountSettingsOperation.get().deleteMailAccountCallback(false);
+                if(checkAccountSettingsOperation())accountSettingsOperation.get().deleteMailAccountCallback(false);
                 break;
             case DataBaseActions.QUERY_MAIL_DIRECTORY_LIST_SUCCESS:
                 Log.i(TAG, "QUERY_MAIL_DIRECTORY_LIST_SUCCESS ==>");
@@ -2770,22 +2827,26 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
             switch (msg.what) {
                 case CHECK_MAIL_RESULT://检查邮件完毕
 //                    if(msg.arg1 == 0){
-                    VUActivityOperation vuao = vuStores.vuActivityOperation.get();
-                    if (vuao!=null && !vuao.isPaused()) {
-                        if (msg.obj != null) {
-                            MailListOperation mlo = vuStores.mailListOperation.get();
-                            if(mlo!=null) mlo.showDownloadInfo(msg.obj.toString(), msg.arg1 == 1);
+                    if(vuStores.checkVUActivityOperation()) {
+                        VUActivityOperation vuao = vuStores.vuActivityOperation.get();
+                        if (!vuao.isPaused()) {
+                            if (msg.obj != null && vuStores.checkMailListOperation()) {
+                                MailListOperation mlo = vuStores.mailListOperation.get();
+                                if (mlo != null)
+                                    mlo.showDownloadInfo(msg.obj.toString(), msg.arg1 == 1);
+                            }
                         }
+                        if (msg.arg1 == 1) vuStores.isDownloadingMail = false;
                     }
-                    if(msg.arg1 == 1) vuStores.isDownloadingMail = false;
                     break;
                 case DOWNLOAD_MAIL_RESULT://下载邮件情况提示
-                    MailListOperation mlo = vuStores.mailListOperation.get();
-                    if(mlo!=null) mlo.showDownloadInfo(msg.arg2, vuStores.downloadingMailCount);
+                    if(vuStores.checkMailListOperation()) {
+                        vuStores.mailListOperation.get().showDownloadInfo(msg.arg2, vuStores.downloadingMailCount);
+                    }
                     break;
                 case FETCH_MESSAGES_RESULT://下载指定的邮件
                     Map<String, Object> params = (Map<String, Object>) msg.obj;
-                    vuStores.handleMimeMessage((List<MimeMessage>) params.get("messageList"), (String) params.get("email"));
+                    vuStores.handleMimeMessage((List<MimeMessage>) params.get("messageList"), (String) params.get("email"),(Integer) params.get("pop3DownloadWay"));
                     break;
                 case DOWNLOAD_MAIL_DETAIL://处理下载完的单封邮件
                     switch (msg.arg1){
@@ -2815,7 +2876,7 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
 
                     } else if (msg.arg1 == SEND_MAIL_PBK_ERROR) {
 //                        弹窗！！！
-                        vuStores.writeMailOperation.get().showNoPbkWarningDialog(msg.obj.toString(), msg.arg2);
+                        if(vuStores.checkWriteMailOperation()) vuStores.writeMailOperation.get().showNoPbkWarningDialog(msg.obj.toString(), msg.arg2);
                     }
                     break;
                 case HANDLE_DRAFT_MAIL_TASK://处理发邮件任务
@@ -2957,51 +3018,146 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
 
     public void setVUActivityReference(VUActivityOperation operation) {
         this.vuActivityOperation = new WeakReference<>(operation);
-        Log.i(TAG, "setVUActivityReference: ..."+(this.vuActivityOperation.get() == null));
+    }
+
+    private boolean checkVUActivityOperation(){
+        if(this.vuActivityOperation!=null){
+            if(this.vuActivityOperation.get()!=null){
+                return true;
+            }else return false;
+        }else return false;
     }
 
     public void setMailListReference(MailListOperation operation) {
         this.mailListOperation = new WeakReference<>(operation);
     }
 
+    private boolean checkMailListOperation(){
+        if(this.mailListOperation!=null){
+            if(this.mailListOperation.get()!=null){
+                return true;
+            }else return false;
+        }else return false;
+    }
+
     public void setExchangeMailListOperation(ExchangeMailListOperation operation) {
         this.exchangeMailListOperation = new WeakReference<>(operation);
+    }
+
+    private boolean checkExchangeMailListOperation(){
+        if(this.exchangeMailListOperation!=null){
+            if(this.exchangeMailListOperation.get()!=null){
+                return true;
+            }else return false;
+        }else return false;
     }
 
     public void setMailDetailReference(MailDetailOperation operation) {
         this.mailDetailOperation = new WeakReference<>(operation);
     }
 
+    private boolean checkMailDetailOperation(){
+        if(this.mailDetailOperation!=null){
+            if(this.mailDetailOperation.get()!=null){
+                return true;
+            }else return false;
+        }else return false;
+    }
+
     public void setContactSelectOperation(ContactSelectorOperation operation) {
         this.contactSelectOperation = new WeakReference<>(operation);
+    }
+
+    private boolean checkContactSelectorOperation(){
+        if(this.contactSelectOperation!=null){
+            if(this.contactSelectOperation.get()!=null){
+                return true;
+            }else return false;
+        }else return false;
     }
 
     public void setMailAttachmentReference(MailAttachmentOperation operation) {
         this.mailAttachmentOperation = new WeakReference<>(operation);
     }
 
+    private boolean checkMailAttachmentOperation(){
+        if(this.mailAttachmentOperation!=null){
+            if(this.mailAttachmentOperation.get()!=null){
+                return true;
+            }else return false;
+        }else return false;
+    }
+
     public void setVUSettingsReference(VUSettingsOperation operation) {
         this.vuSettingsOperation = new WeakReference<>(operation);
+    }
+
+    private boolean checkVUSettingsOperation(){
+        if(this.vuSettingsOperation!=null){
+            if(this.vuSettingsOperation.get()!=null){
+                return true;
+            }else return false;
+        }else return false;
     }
 
     public void setAddNewAccountReference(AddNewAccountOperation operation) {
         this.addNewAccountOperation = new WeakReference<>(operation);
     }
 
+    private boolean checkAddNewAccountOperation(){
+        if(this.addNewAccountOperation!=null){
+            if(this.addNewAccountOperation.get()!=null){
+                return true;
+            }else return false;
+        }else return false;
+    }
+
     public void setAccountSettingsReference(AccountSettingsOperation operation) {
         this.accountSettingsOperation = new WeakReference<>(operation);
+    }
+
+    private boolean checkAccountSettingsOperation(){
+        if(this.accountSettingsOperation!=null){
+            if(this.accountSettingsOperation.get()!=null){
+                return true;
+            }else return false;
+        }else return false;
     }
 
     public void setAccountCaReference(AccountCaOperation operation) {
         this.accountCaOperation = new WeakReference<>(operation);
     }
 
+    private boolean checkAccountCaOperation(){
+        if(this.accountCaOperation!=null){
+            if(this.accountCaOperation.get()!=null){
+                return true;
+            }else return false;
+        }else return false;
+    }
+
     public void setFeedbackReference(FeedbackOperation operation) {
         this.feedbackOperation = new WeakReference<>(operation);
     }
 
+    private boolean checkFeedbackOperation(){
+        if(this.feedbackOperation!=null){
+            if(this.feedbackOperation.get()!=null){
+                return true;
+            }else return false;
+        }else return false;
+    }
+
     public void setWriteMailReference(WriteMailOperation operation) {
         this.writeMailOperation = new WeakReference<>(operation);
+    }
+
+    private boolean checkWriteMailOperation(){
+        if(this.writeMailOperation!=null){
+            if(this.writeMailOperation.get()!=null){
+                return true;
+            }else return false;
+        }else return false;
     }
 
     public void setSendMailButtonEnabled(boolean sendMailButtonEnabled) {
@@ -3009,34 +3165,35 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
     }
 
     private void toast(String msg){
-        if(vuActivityOperation.get()!=null) vuActivityOperation.get().toast(msg);
+        if(checkVUActivityOperation()) vuActivityOperation.get().toast(msg);
     }
 
     private void showProgressDialog(String msg){
-        if(vuActivityOperation.get()!=null && !vuActivityOperation.get().isPaused())
+        if(checkVUActivityOperation() && !vuActivityOperation.get().isPaused())
             vuActivityOperation.get().showProgressDialog(msg);
     }
 
     private void dismissProgressDialog(){
-        if(vuActivityOperation.get()!=null && !vuActivityOperation.get().isPaused())
+        if(checkVUActivityOperation() && !vuActivityOperation.get().isPaused())
             vuActivityOperation.get().dismissProgressDialog();
     }
 
     private void refreshSpinner(ArrayList<MailAccount> mailAccountCache, int index){
-        if(vuActivityOperation.get()!=null) vuActivityOperation.get().refreshSpinner(mailAccountCache,index);
+        if(checkVUActivityOperation()) vuActivityOperation.get().refreshSpinner(mailAccountCache,index);
     }
 
     private void renderMailListView(){
-        if(mailListOperation.get()!=null) mailListOperation.get().renderMailListView();
+        if(checkMailListOperation()) mailListOperation.get().renderMailListView();
     }
 
     private boolean isNetWorkAvailable(){
-        if(vuActivityOperation.get() == null) return false;
+        if(!checkVUActivityOperation()) return false;
         return vuActivityOperation.get().isNetWorkAvailable();
     }
 
     private boolean isWifiConnected(){
-        if(vuActivityOperation.get() == null) return false;
+
+        if(!checkVUActivityOperation()) return false;
         return vuActivityOperation.get().isWifiConnected();
     }
 
@@ -3054,13 +3211,13 @@ public class VUStores extends Stores implements MailSynchronizer.SendMailResultL
 
     public void cleanWriteMailStores(){
         writeMailOperation = null;
-        if(vuActivityOperation == null || vuActivityOperation.get() == null){
+        if(!checkVUActivityOperation()) {
             unRegister();
         }
     }
 
     private void loadMailContentInWebView(String content,String contentType){
-        if(mailDetailOperation.get() != null)
+        if(checkMailDetailOperation())
             mailDetailOperation.get().loadMailContentInWebView(content,contentType);
     }
 

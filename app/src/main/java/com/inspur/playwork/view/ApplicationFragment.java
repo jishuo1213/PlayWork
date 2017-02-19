@@ -27,8 +27,6 @@ public class ApplicationFragment extends Fragment implements View.OnClickListene
 
     private static final String TAG = "ApplicationFragmentFan";
 
-    private RelativeLayout weiyouRelativeLayout;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_application, container, false);
@@ -37,7 +35,7 @@ public class ApplicationFragment extends Fragment implements View.OnClickListene
     }
 
     private void initView(View view) {
-        weiyouRelativeLayout = (RelativeLayout) view.findViewById(R.id.relative_weiyou);
+        RelativeLayout weiyouRelativeLayout = (RelativeLayout) view.findViewById(R.id.relative_weiyou);
         weiyouRelativeLayout.setOnClickListener(this);
         view.findViewById(R.id.relative_weizhi).setOnClickListener(this);
         view.findViewById(R.id.relative_weipan).setOnClickListener(this);
@@ -80,6 +78,8 @@ public class ApplicationFragment extends Fragment implements View.OnClickListene
         }
     }
 
+
+
     public Intent getInitedIntent(int id) {
         Intent intent = null;
         switch (id) {
@@ -96,10 +96,10 @@ public class ApplicationFragment extends Fragment implements View.OnClickListene
                 intent.putExtra("app_url", AppConfig.APP_DISK_LOGIN);
                 break;
             case R.id.relative_inspur_weekplan:
-                intent = new Intent(getActivity(), AppContainerPortiaActivity.class);
-                intent.putExtra("app_name", "集团周计划");
-                intent.putExtra("app_code", 3);
-//                intent = new Intent(getActivity(), WeekPlanActivity.class);
+//                intent = new Intent(getActivity(), AppContainerPortiaActivity.class);
+//                intent.putExtra("app_name", "集团周计划");
+//                intent.putExtra("app_code", 3);
+                intent = new Intent(getActivity(), WeekPlanActivity.class);
                 break;
             case R.id.relative_inspur_mbo:
                 intent = new Intent(getActivity(), AppContainerPortiaActivity.class);

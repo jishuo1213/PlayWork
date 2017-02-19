@@ -93,10 +93,12 @@ public class GroupNewsActivity extends BaseActivity implements View.OnClickListe
     }
 
     @Override
-    public String getCompanyName(String name) {
-        String englishName = companyName.get(name);
+    public String getCompanyName(String company, String department) {
+        String englishName = companyName.get(company);
         if (TextUtils.isEmpty(englishName)) {
-            return name;
+            englishName = companyName.get(department);
+            if (TextUtils.isEmpty(englishName))
+                return company;
         }
         return englishName;
     }

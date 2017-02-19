@@ -392,14 +392,14 @@ public class MailListFragment extends Fragment implements MailListOperation,View
     public void showDownloadInfo(String msg,boolean isDownloadOver){
         downloadInfoTV.setVisibility(View.VISIBLE);
         downloadInfoTV.setText(msg);
-        downloadInfoTV.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                downloadInfoTV.setHeight(0);
-                downloadInfoTV.setVisibility(View.GONE);
-            }
-        },3000);
         if(isDownloadOver == true){
+            downloadInfoTV.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    downloadInfoTV.setHeight(0);
+                    downloadInfoTV.setVisibility(View.GONE);
+                }
+            },2000);
             emptyView.findViewById(R.id.ml_no_mail_tv).setVisibility(View.VISIBLE);
             emptyView.findViewById(R.id.click_to_load_tv).setVisibility(View.VISIBLE);
             emptyView.findViewById(R.id.ml_is_loading_rl).setVisibility(View.GONE);
@@ -408,7 +408,7 @@ public class MailListFragment extends Fragment implements MailListOperation,View
 
     @Override
     public void refreshMailItem(int index) {
-        mMenuAdapter.notifyItemChanged(index);
+        if(mMenuAdapter!=null) mMenuAdapter.notifyItemChanged(index);
     }
 
     @Override

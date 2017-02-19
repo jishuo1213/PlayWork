@@ -124,8 +124,8 @@ android {
         applicationId "com.inspur.playwork"
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 132
-        versionName "2.0.5"
+        versionCode 133
+        versionName "2.0.6"
 
 
         ndk {

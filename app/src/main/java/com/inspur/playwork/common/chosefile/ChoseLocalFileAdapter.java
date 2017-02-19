@@ -192,11 +192,11 @@ class ChoseLocalFileAdapter extends RecyclerView.Adapter<ChoseLocalFileAdapter.V
             if (isSelected) {
                 if(singleSelectedMode) {
                     selectFiles.clear();
-                    if (selectedPosition > -1 && selectedPosition != pos) {
-                        ViewHolder preSelectedViewHolder = (ViewHolder) recyclerView.findViewHolderForAdapterPosition(selectedPosition);
+                    if (pos > -1 && selectedPosition != pos) {
+                        ViewHolder preSelectedViewHolder = (ViewHolder) recyclerView.findViewHolderForAdapterPosition(pos);
                         preSelectedViewHolder.selectStatus.setSelected(false);
+                        selectedPosition = pos;
                     }
-                    selectedPosition = pos;
                 }
                 selectFiles.add(clickBean.currentPath);
             }else

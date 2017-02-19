@@ -80,7 +80,8 @@ class CrashHandler implements Thread.UncaughtExceptionHandler {
 
         //如果系统提供了默认的异常处理器，则交给系统去结束我们的程序，否则就由我们自己结束自己
         if (mDefaultCrashHandler != null) {
-            mDefaultCrashHandler.uncaughtException(thread, ex);
+            Process.killProcess(Process.myPid());
+//            mDefaultCrashHandler.uncaughtException(thread, ex);
         } else {
             Process.killProcess(Process.myPid());
         }

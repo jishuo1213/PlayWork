@@ -17,7 +17,7 @@ public class AppConfig {
     private static final String WP_BASE_URI_HOST = "http://htime.inspur.com";
 //    public static final String WP_BASE_URI_HOST = "http://10.110.9.46";
 
-    //        public static final String HTTP_SERVER_IP = "http://10.47.1.20:6382/";
+//    public static final String HTTP_SERVER_IP = "http://10.47.0.181:6382/";
 //    public static final String HTTP_SERVER_IP = "http://218.57.135.45:55166/";
 //    public static final String HTTP_SERVER_IP = "http://218.57.135.45:9080/";
     public static final String HTTP_SERVER_IP = "http://htime.inspur.com:6380/";
@@ -110,7 +110,7 @@ public class AppConfig {
     public static final String ATTACHMENT_DIR = "/playWork/attachments/";
 
     public static class WY_CFG {
-        public static String CKCDK = "A49AQ11PZ9I4U0CV2YMY2780O5CRA5";//Q37TWX11PZ9I4U0CV2YMY2780O5CRA1
+//        public static String CKCDK = "A49AQ11PZ9I4U0CV2YMY2780O5CRA5";//Q37TWX11PZ9I4U0CV2YMY2780O5CRA1
 
         //        各种马里奥数据接口
         public static String URL_GET_MAIL_LIST = WY_PUBLIC_URL_BASE + "/getMailUIDListForMobile";
@@ -122,7 +122,8 @@ public class AppConfig {
         //        邮件大小大于它就自动存文件的
         public static final long SAVE_FILE_SIZE = 256 * 1024;
         //          邮件列表每页条数
-        public static final int MAIL_NUM_PER_PAGE = 10;
+        public static final int MAIL_NUM_PER_PAGE_HEAD = 30;
+        public static final int MAIL_NUM_PER_PAGE_ALL = 10;
         //        默认目录的ID
 //        public static final long DIR_ID_DELETED_AGAIN = -1000;
         public static final long DIR_ID_INBOX = -999;
@@ -150,6 +151,7 @@ public class AppConfig {
         public static final boolean SMTP_SERVER_SSL = false;
 
         public static final long SEND_MAIL_INTERVAL = 10000;
+        public static final long SEND_ATTACHMENT_SIZE_LIMIT = 10*1024*1024;
     }
 
     public static void main(String[] argc) {

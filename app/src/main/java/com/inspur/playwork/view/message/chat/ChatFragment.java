@@ -15,12 +15,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.view.ViewPager;
@@ -64,6 +62,7 @@ import com.inspur.playwork.model.message.ChatWindowInfoBean;
 import com.inspur.playwork.model.message.CustomProperty;
 import com.inspur.playwork.model.message.MessageBean;
 import com.inspur.playwork.model.message.SmallMailBean;
+import com.inspur.playwork.model.message.VChatBean;
 import com.inspur.playwork.model.timeline.TaskBean;
 import com.inspur.playwork.stores.message.MessageStores;
 import com.inspur.playwork.stores.timeline.TimeLineStoresNew;
@@ -254,9 +253,9 @@ public class ChatFragment extends Fragment implements ChatViewOperation, ChosePe
         Dispatcher.getInstance().register(this);
         if (taskBean != null)
             Log.i(TAG, "registerEventHandlers: " + taskBean.unReadMessageNum);
-        MessageStores.getInstance().clearServerUnReadMsg(taskBean == null ? null : taskBean.taskId,
-                windowInfoBean.groupId);
         if (taskBean != null && taskBean.unReadMessageNum > 0) {
+            MessageStores.getInstance().clearServerUnReadMsg(taskBean.taskId,
+                    windowInfoBean.groupId);
             Dispatcher.getInstance().dispatchDataBaseAction(DataBaseActions.DELETE_UNREAD_MSG_BY_GROUPID, windowInfoBean.groupId);
             TimeLineStoresNew.getInstance().setUnReadMsgRead(taskBean.taskId, windowInfoBean.groupId);
         } else {
@@ -274,16 +273,8 @@ public class ChatFragment extends Fragment implements ChatViewOperation, ChosePe
             }
             MessageStores.getInstance().getMessageList(windowInfoBean, 0L);
         }
-//        VChatBean vChatBean = ((ChatActivityNew) getActivity()).getvChatBean();
-//        if (vChatBean != null && vChatBean.unReadMsgNum > 0) {
-//            Log.i(TAG, "registerEventHandlers: unread num" + vChatBean.unReadMsgNum);
-//            vChatBean.unReadMsgNum = 0;
-//            Dispatcher.getInstance().dispatchStoreActionEvent(MessageActions.SET_UNREAD_MSG_READ, null, windowInfoBean.groupId);
-//            MessageStores.getInstance().clearServerUnReadMsg(null, windowInfoBean.groupId);
-//        }
         // 获取随手记内容
         if (taskBean != null) {
-//            Dispatcher.getInstance().dispatchStoreActionEvent(MessageActions.GET_NOTES_BY_GROUP_ID, windowInfoBean.groupId);
             MessageStores.getInstance().getNotesByGroupId(windowInfoBean.groupId);
         }
     }
@@ -292,63 +283,6 @@ public class ChatFragment extends Fragment implements ChatViewOperation, ChosePe
     public void onEventMainThread(UpdateUIAction action) {
         switch (action.getActionType()) {
             // 创建新微聊
-//            case MessageActions.CREATE_NEW_CHAT:
-//
-//                if (action.getActionData().get(0) == null) {
-//                    break;
-//                }
-//                // 检查头像图片路径是否存在
-//                checkDirExit();
-//
-//                boolean isSingle = windowInfoBean.isSingle;//之前的单聊标志
-//
-//                windowInfoBean = (ChatWindowInfoBean) action.getActionData().get(0);
-//                MessageStores.getInstance().setCurrentWindow(windowInfoBean);
-////                boolean isOldSingle = (boolean) action.getActionData().get(1);
-//                ArrayList<String> chatGroupIds = MessageStores.getInstance().getChatGroupIds();
-//                boolean isExisted = chatGroupIds.contains(windowInfoBean.groupId);
-//
-//                ((ChatActivityNew) getActivity()).setWindowInfoBean(windowInfoBean);
-//                ((ChatActivityNew) getActivity()).setWindowGroupId(windowInfoBean.groupId);
-//                windowInfoBean.memberNames = ((ChatActivityNew) getActivity()).setVChatBean(windowInfoBean);
-//
-//                VChatBean vChatBean = ((ChatActivityNew) getActivity()).getvChatBean();
-//
-//                if (!isExisted) {
-//                    chatGroupIds.add(windowInfoBean.groupId);
-//                    Dispatcher.getInstance().dispatchDataBaseAction(DataBaseActions.INSERT_ONE_CHAT_WINDOW_INFO, windowInfoBean);
-//                    Dispatcher.getInstance().dispatchDataBaseAction(DataBaseActions.INSERT_ONE_CHAT_WINDOW_SUMMARY, vChatBean, false, false);
-//                }
-//
-//                /*
-//                UI操作
-//                 */
-//                if (windowInfoBean.isSingle) { // 单聊
-////                    isSingle = true;
-////                    Dispatcher.getInstance().dispatchStoreActionEvent(MessageActions.IS_SINGLE_CHAT_EXISTED, windowInfoBean.groupId);
-//                    Log.i(TAG, "onEventMainThread: dealSingleChat");
-//                    MessageStores.getInstance().dealSingleChat(windowInfoBean.groupId);
-//                    ((ChatActivityNew) getActivity()).initTitleView(View.VISIBLE, View.VISIBLE, windowInfoBean.memberNames, View.GONE, View.GONE, windowInfoBean.memberNames);
-//                } else {
-//                    if (isSingle) { // 单聊转群聊
-//                        ((ChatActivityNew) getActivity()).setLastMessage(); // 清空消息列表之前，封装单聊的最后一条消息
-//                        ((ChatActivityNew) getActivity()).clearTitleEdit(); // 话题框变为可编辑状态
-//                        ((MessageRecyclerAdapter) messageRecyView.getAdapter()).setAllMessageList(new ArrayList<MessageBean>(), isTaskChat);
-//                        messageRecyView.getAdapter().notifyDataSetChanged();
-//                    } else { // 群聊
-//                        ((ChatActivityNew) getActivity()).changeTitleEdit();
-//                    }
-//                }
-//
-//                /*
-//                发送创建消息
-//                只有新建的单/群聊发消息，如果单聊已经存在则不发消息
-//                 */
-//                if (!windowInfoBean.isSingle) {
-//                    this.sendCreateMsg();
-//                }
-
-//                break;
             case MessageActions.ADD_MEMBER:
                 boolean addRes = (boolean) action.getActionData().get(0);
                 if (addRes) {
@@ -379,7 +313,7 @@ public class ChatFragment extends Fragment implements ChatViewOperation, ChosePe
     private void showMessageList(long time, ArrayList<MessageBean> messageList) {
         if (time == 0) {
             if (messageRecyView.getAdapter() == null) {
-                MessageRecyclerAdapter adapter = new MessageRecyclerAdapter(messageRecyView, null, loadFileManager);
+                MessageRecyclerAdapter adapter = new MessageRecyclerAdapter(messageRecyView, loadFileManager);
                 adapter.setListener(this);
                 adapter.setAvatars(((PlayWorkApplication) getActivity().getApplication()).getAvatars());
                 adapter.setAllMessageList(messageList, isTaskChat);
@@ -968,7 +902,7 @@ public class ChatFragment extends Fragment implements ChatViewOperation, ChosePe
     }
 
     @Override
-    public void onCreateNewChat(final ChatWindowInfoBean chatWindowInfoBean) {
+    public void onCreateNewChat(final ChatWindowInfoBean chatWindowInfoBean, VChatBean vChatBean) {
         final boolean isSingle = windowInfoBean.isSingle;//之前的单聊标志
 
         if (chatWindowInfoBean != null) {
@@ -977,6 +911,7 @@ public class ChatFragment extends Fragment implements ChatViewOperation, ChosePe
 //            MessageStores.getInstance().setCurrentWindow(windowInfoBean);
 
             ((ChatActivityNew) getActivity()).setWindowInfoBean(windowInfoBean);
+            ((ChatActivityNew) getActivity()).setVChatBean(vChatBean);
             ((ChatActivityNew) getActivity()).setWindowGroupId(windowInfoBean.groupId);
         }
 
@@ -1303,7 +1238,7 @@ public class ChatFragment extends Fragment implements ChatViewOperation, ChosePe
     private void hideInputMethod() {
         View view = getActivity().getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm.isActive())
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
@@ -1614,13 +1549,13 @@ public class ChatFragment extends Fragment implements ChatViewOperation, ChosePe
         }
     }
 
-    public MessageBean getLastMessage() {
-        if (messageRecyView.getAdapter() != null) {
-            return ((MessageRecyclerAdapter) messageRecyView.getAdapter()).getLastMessage();
-        } else {
-            return null;
-        }
-    }
+//    public MessageBean getLastMessage() {
+//        if (messageRecyView.getAdapter() != null) {
+//            return ((MessageRecyclerAdapter) messageRecyView.getAdapter()).getLastMessage();
+//        } else {
+//            return null;
+//        }
+//    }
 
     public boolean isChosePersonShow() {
         return isChosePersonShow;
@@ -1711,7 +1646,7 @@ public class ChatFragment extends Fragment implements ChatViewOperation, ChosePe
 
     private void initMesaageAdapter() {
         if (messageRecyView.getAdapter() == null) {
-            MessageRecyclerAdapter messageRecyclerAdapter = new MessageRecyclerAdapter(messageRecyView, null, loadFileManager);
+            MessageRecyclerAdapter messageRecyclerAdapter = new MessageRecyclerAdapter(messageRecyView, loadFileManager);
             messageRecyclerAdapter.setAvatars(((PlayWorkApplication) getActivity().getApplication()).getAvatars());
             messageRecyclerAdapter.setListener(this);
             messageRecyView.setAdapter(messageRecyclerAdapter);
@@ -1810,15 +1745,9 @@ public class ChatFragment extends Fragment implements ChatViewOperation, ChosePe
                 (taskBean == null ? "聊天" : "任务"), MessageBean.SYSTEM_TIP_MESSAGE, windowInfoBean.chatMemberList);
     }
 
-    private void sendReCreateMsg() {
-//        MessageBean addMsg = new MessageBean();
-//        addMsg.sendMessageUser = PreferencesHelper.getInstance().getCurrentUser();
-//        addMsg.content = " 你恢复了与 " + windowInfoBean.chatMemberList.get(0).name + " 的聊天";
-//        addMsg.type = MessageBean.SYSTEM_TIP_MESSAGE;
-//        sendMsg(addMsg, true);
-
-        sendMsg(" 你恢复了与 " + windowInfoBean.chatMemberList.get(0).name + " 的聊天", MessageBean.SYSTEM_TIP_MESSAGE, new ArrayList<UserInfoBean>());
-    }
+//    private void sendReCreateMsg() {
+//        sendMsg(" 你恢复了与 " + windowInfoBean.chatMemberList.get(0).name + " 的聊天", MessageBean.SYSTEM_TIP_MESSAGE, new ArrayList<UserInfoBean>());
+//    }
 
     private void sendSmallMail() {
         UserInfoBean from = PreferencesHelper.getInstance().getCurrentUser();

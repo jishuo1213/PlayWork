@@ -44,7 +44,6 @@ public class WriteMailActivity extends BaseActivity {
     public VUStores vuStores;
     public MailDetail paramMailDetail;
     public List<MailAttachment> paramAttachments;
-    private boolean isWritingMail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,14 +137,14 @@ public class WriteMailActivity extends BaseActivity {
     }
 
     public void showKeyboard(View v) {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(v, 0);
     }
 
     public void hideInputMethod() {
         View view = getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm.isActive())
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
@@ -225,7 +224,7 @@ public class WriteMailActivity extends BaseActivity {
             ft.show(writeMailFragment);
             choosePictureFragment = null;
         } else if (writeMailFragment != null && writeMailFragment.isResumed()) {
-            if (isWritingMail) vuStores.onCancelSendMail();
+            if (vuStores.isWritingMail) vuStores.onCancelSendMail();
             else {
                 Log.i(TAG, "onBackPressed: writeMailFragment != null && writeMailFragment.isResumed()");
                 finishWriteMail();

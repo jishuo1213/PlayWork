@@ -108,7 +108,7 @@ public class ChatActivityNew extends BaseActivity implements View.OnClickListene
         mGroupName = windowInfoBean.taskTitle;
 
         vChatBean = getIntent().getParcelableExtra(VCHAT_BEAN);
-        MessageStores.getInstance().setCurrentVchatBean(vChatBean);
+        this.vChatBean = MessageStores.getInstance().setCurrentVchatBean(vChatBean);
 
         bindService(new Intent(this, PlayWorkServiceNew.class), connection, 0);
     }
@@ -151,7 +151,7 @@ public class ChatActivityNew extends BaseActivity implements View.OnClickListene
         titleEditText.setText(titleEdit);
         if ((titleEditVisibility == View.VISIBLE) && (windowInfoBean.groupId == null || !"".equals(windowInfoBean.taskTitle))) {
             titleEditText.requestFocus();
-            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager inputMethodManager = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.showSoftInput(titleEditText, InputMethodManager.SHOW_IMPLICIT);
         }
     }
@@ -355,7 +355,7 @@ public class ChatActivityNew extends BaseActivity implements View.OnClickListene
     /**
      * 封装VChatBean信息
      */
-//    private String setVChatBean(ChatWindowInfoBean chatWindowInfoBean) {
+    public void setVChatBean(VChatBean vChatBean) {
 //        VChatBean vChatBean = new VChatBean();
 //        vChatBean.groupId = chatWindowInfoBean.groupId;
 //        vChatBean.memberList = chatWindowInfoBean.allMemberList;
@@ -372,9 +372,9 @@ public class ChatActivityNew extends BaseActivity implements View.OnClickListene
 //        }
 //        vChatBean.members = chatWindowInfoBean.memberString;
 //        vChatBean.lastChatTime = System.currentTimeMillis();
-//        this.vChatBean = vChatBean;
+        this.vChatBean = vChatBean;
 //        return memberNames;
-//    }
+    }
 
     /**
      * 封装最后一条消息
@@ -504,6 +504,7 @@ public class ChatActivityNew extends BaseActivity implements View.OnClickListene
             vChatBean.topic = windowInfoBean.memberNames;
         }
         vChatBean.isNeedCreateAvatar = true;
+        Log.i(TAG, "setVChatMembers: " + vChatBean.topic);
         try {
             vChatBean.setMember(windowInfoBean.memberString);
             vChatBean.setAvatars(((PlayWorkApplication) getApplication()).getAvatars());

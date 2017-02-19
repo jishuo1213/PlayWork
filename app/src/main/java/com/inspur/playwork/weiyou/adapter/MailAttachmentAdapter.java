@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.inspur.playwork.R;
+import com.inspur.playwork.utils.FileUtil;
 import com.inspur.playwork.utils.db.bean.MailAttachment;
-import com.inspur.playwork.weiyou.utils.VUFileUtil;
 
 import java.util.List;
 
@@ -109,7 +109,7 @@ public class MailAttachmentAdapter extends BaseAdapter {
         }
         cache.attachmentTypeImageView.setImageResource(fileIcon);
         cache.attachmentNameTextView.setText(ma.getName());
-        cache.attachmentSizeTextView.setText(VUFileUtil.convertFileSize(ma.getSize()));
+        cache.attachmentSizeTextView.setText(FileUtil.getFileSizeStr(ma.getSize()));
         cache.attachmentRemoveButton.setVisibility(View.GONE);
         if(!delete_able){
             cache.attachmentStatusTextView.setVisibility(View.VISIBLE);

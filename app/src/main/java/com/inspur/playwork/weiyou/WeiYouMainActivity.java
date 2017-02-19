@@ -363,14 +363,14 @@ public class WeiYouMainActivity extends BaseActivity implements VUActivityOperat
     }
 
     public void showKeyboard(View v) {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(v, 0);
     }
 
     public void hideInputMethod() {
         View view = getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm.isActive())
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }

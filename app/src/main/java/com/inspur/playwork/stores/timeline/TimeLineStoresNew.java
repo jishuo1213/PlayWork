@@ -1,10 +1,9 @@
 package com.inspur.playwork.stores.timeline;
 
-import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.inspur.playwork.BuildConfig;
 import com.inspur.playwork.actions.StoreAction;
 import com.inspur.playwork.actions.common.CommonActions;
 import com.inspur.playwork.actions.db.DataBaseActions;
@@ -225,9 +224,9 @@ public class TimeLineStoresNew extends Stores {
     }
 */
 
-    public void with(AppCompatActivity appCompatActivity) {
-
-    }
+//    public void with(AppCompatActivity appCompatActivity) {
+//
+//    }
 
 
     @Override
@@ -825,7 +824,7 @@ public class TimeLineStoresNew extends Stores {
         try {
             body.put("userId", PreferencesHelper.getInstance().readStringPreference(PreferencesHelper.USER_NAME));
             body.put("isPhone", true);
-            body.put("version", 132);
+            body.put("version", BuildConfig.VERSION_CODE);
 //            dispatcher.dispatchNetWorkAction(CommonActions.GET_TIMELINE_DATA_FROM_SERVER, GET_UN_READ_MESSAGE, createRequestJson(body));
             OkHttpClientManager.getInstance().getAsyn(AppConfig.HTTP_SERVER_IP + "getMcUnReadMsg", getUnReadCallback, createRequestJson(body), "");
         } catch (JSONException e) {
@@ -958,12 +957,23 @@ public class TimeLineStoresNew extends Stores {
         @Override
         public void onResponse(Call call, Response response) throws IOException {
             try {
-                JSONObject res = new JSONObject(response.body().string());
-                Log.i(TAG, "onResponse: getChatWindowInfo" + res.toString());
-                if (res.has("code")) {
-                    return;
+                if (response.isSuccessful()) {
+                    JSONObject res = new JSONObject(response.body().string());
+                    Log.i(TAG, "onResponse: getChatWindowInfo" + res.toString());
+                    if (res.optBoolean("type")) {
+                        parseWindowInfoResult(res);
+                    } else {
+                        isGetChatWidowInfo = false;
+                        if (viewOperationWeakReference.get() != null) {
+                            viewOperationWeakReference.get().getChatWindowInfoSuccess(false, null, null);
+                        }
+                    }
+                } else {
+                    isGetChatWidowInfo = false;
+                    if (viewOperationWeakReference.get() != null) {
+                        viewOperationWeakReference.get().getChatWindowInfoSuccess(false, null, null);
+                    }
                 }
-                parseWindowInfoResult(res);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -1016,6 +1026,7 @@ public class TimeLineStoresNew extends Stores {
     private Callback getUnReadCallback = new Callback() {
         @Override
         public void onFailure(Call request, IOException e) {
+            e.printStackTrace();
             parseUnReadMessage(null);
             MessageStores.getInstance().praseUnReadMsgList(null);
 //            getLocalUnReadMsg();
@@ -1030,6 +1041,7 @@ public class TimeLineStoresNew extends Stores {
 
                 if (!res.optBoolean("type")) {
                     parseUnReadMessage(null);
+                    MessageStores.getInstance().praseUnReadMsgList(null);
                     return;
                 }
                 if (res.has("code")) {

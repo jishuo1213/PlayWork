@@ -5,9 +5,11 @@ import android.os.Parcelable;
 
 import com.inspur.playwork.model.common.UserInfoBean;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.Collator;
+import java.util.ArrayList;
 
 /**
  * Created by fan on 17-1-12.
@@ -36,6 +38,10 @@ public class WeekPlanHeader implements Parcelable, Comparable<WeekPlanHeader> {
     public int type;
 
     public UserInfoBean from;
+    public long weekTime;
+
+    public UserInfoBean mainSubmitPerson;
+    public ArrayList<UserInfoBean> shareUserList;
 
     private static WeekPlanHeader myPlanTitle;
     private static WeekPlanHeader otherPlanTitle;
@@ -47,6 +53,14 @@ public class WeekPlanHeader implements Parcelable, Comparable<WeekPlanHeader> {
         staus = planJson.optInt("Status");
         from = new UserInfoBean(planJson.optJSONObject("From"));
         from.department = planJson.optJSONObject("From").optString("department");
+        mainSubmitPerson = new UserInfoBean(planJson.optJSONArray("MainSubmitUsers").optJSONObject(0));
+        shareUserList = new ArrayList<>();
+        JSONArray shareUsers = planJson.optJSONArray("OtherShareUsers");
+        int count = shareUsers.length();
+        for (int i = 0; i < count; i++) {
+            UserInfoBean user = new UserInfoBean(shareUsers.optJSONObject(i));
+            shareUserList.add(user);
+        }
 //        departMent = planJson.optJSONObject("From").optString("department");
 //        fromName = planJson.optJSONObject("From").optString("name");
         type = OTHER_PLAN;
@@ -54,6 +68,10 @@ public class WeekPlanHeader implements Parcelable, Comparable<WeekPlanHeader> {
 
     public WeekPlanHeader(int type) {
         this.type = type;
+    }
+
+    public boolean isDateView() {
+        return type == MY_PLAN_TITLE || type == OTHER_PLAN_TITLE;
     }
 
     public static WeekPlanHeader getInstance(int type) {
@@ -70,6 +88,7 @@ public class WeekPlanHeader implements Parcelable, Comparable<WeekPlanHeader> {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private WeekPlanHeader(Parcel in) {
         subject = in.readString();
         updateTime = in.readLong();
@@ -77,6 +96,9 @@ public class WeekPlanHeader implements Parcelable, Comparable<WeekPlanHeader> {
         staus = in.readInt();
         from = in.readParcelable(getClass().getClassLoader());
         type = in.readInt();
+        mainSubmitPerson = in.readParcelable(getClass().getClassLoader());
+        shareUserList = in.readArrayList(getClass().getClassLoader());
+        weekTime = in.readLong();
     }
 
     public static final Creator<WeekPlanHeader> CREATOR = new Creator<WeekPlanHeader>() {
@@ -91,6 +113,24 @@ public class WeekPlanHeader implements Parcelable, Comparable<WeekPlanHeader> {
         }
     };
 
+
+    public String getShareUserName() {
+        if (shareUserList == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        int i = 1;
+        int count = shareUserList.size();
+        for (UserInfoBean user : shareUserList) {
+            sb.append(user.name);
+            if (i < count) {
+                sb.append(",");
+            }
+            i++;
+        }
+        return sb.toString();
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -104,6 +144,9 @@ public class WeekPlanHeader implements Parcelable, Comparable<WeekPlanHeader> {
         dest.writeInt(staus);
         dest.writeParcelable(from, flags);
         dest.writeInt(type);
+        dest.writeParcelable(mainSubmitPerson, flags);
+        dest.writeList(shareUserList);
+        dest.writeLong(weekTime);
     }
 
     private Collator cmp = Collator.getInstance(java.util.Locale.CHINA);

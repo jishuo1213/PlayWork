@@ -1,7 +1,6 @@
 package com.inspur.playwork.view.message.chat;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,7 +28,6 @@ import com.inspur.playwork.utils.EmojiHandler;
 import com.inspur.playwork.utils.PictureUtils;
 import com.inspur.playwork.utils.loadfile.LoadFileHandlerThread;
 import com.inspur.playwork.utils.loadfile.LoadFileManager;
-import com.inspur.playwork.utils.loadpicture.BitmapCacheManager;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -102,14 +100,13 @@ class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecyclerAdapter
         void onFileMsgClick(MessageBean messageBean, int pos);
     }
 
-    MessageRecyclerAdapter(RecyclerView messageRecyclerView, BitmapCacheManager arrayMap, LoadFileManager loadFileManager) {
+    MessageRecyclerAdapter(RecyclerView messageRecyclerView, LoadFileManager loadFileManager) {
         this.messageRecyclerView = messageRecyclerView;
         showMessageList = new ArrayList<>();
         NumberFormat nt = NumberFormat.getPercentInstance();
         nt.setMaximumFractionDigits(0);
         nt.setMaximumIntegerDigits(3);
         adapterHander = new AdapterHandler(this);
-//        sendMessageMap = new ArrayMap<>();
         this.loadFileManager = loadFileManager;
         setHasStableIds(true);
         chatNote = new MessageBean();

@@ -279,7 +279,7 @@ public class AddTodayTaskDialogFragment extends DialogFragment implements TextWa
     }
 
     private void showKeyboard(View v) {
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
     }
 
@@ -715,7 +715,7 @@ public class AddTodayTaskDialogFragment extends DialogFragment implements TextWa
     }
 
     private void hideInputMethod() {
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(inputTaskCount.getWindowToken(), 0);
     }
 }

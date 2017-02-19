@@ -348,7 +348,7 @@ public class RecipientFragment extends Fragment implements RecipientView, View.O
     private void hideInputMethod() {
         View view = activity.getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) activity.getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm.isActive())
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }

@@ -330,12 +330,12 @@ public class AddCrossDayRootView extends LinearLayout {
 
 
     private void showKeyboard(View v) {
-        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getContext().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(v, 0);
     }
 
     private void hideInputMethod() {
-        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getContext().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(inputTaskContent.getWindowToken(), 0);
     }
 

@@ -271,7 +271,7 @@ public class SendMailFragment extends Fragment implements SendMailView, View.OnC
     private void hideInputMethod() {
         View view = getActivity().getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm.isActive())
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }

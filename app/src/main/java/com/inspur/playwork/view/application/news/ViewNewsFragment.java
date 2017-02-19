@@ -105,8 +105,7 @@ public class ViewNewsFragment extends Fragment implements ViewPager.OnPageChange
     private void loadData() {
         DepartmentNewsBean currentBean = newsList.get(currentPos);
         newsTitle.setText(currentBean.title);
-        newsDate.setText(currentBean.date);
-        Log.i(TAG, "loadData: " + currentPos);
+        setDateAndUnit(currentBean);
         if (CommonUtils.isUrlVliad(currentBean.url)) {
             LoadDetailRequest request = new LoadDetailRequest(currentBean.id, currentPos);
             request.url = currentBean.url;
@@ -118,6 +117,13 @@ public class ViewNewsFragment extends Fragment implements ViewPager.OnPageChange
             refreshLayout.setRefreshing(true);
             loadDetail(currentBean);
         }
+    }
+
+    private void setDateAndUnit(DepartmentNewsBean currentBean) {
+        if (!TextUtils.isEmpty(currentBean.departName))
+            newsDate.setText(currentBean.departName + "   " + currentBean.date);
+        else
+            newsDate.setText(currentBean.date);
     }
 
     @Override
@@ -254,7 +260,7 @@ public class ViewNewsFragment extends Fragment implements ViewPager.OnPageChange
         currentPos = position;
         DepartmentNewsBean bean = newsList.get(position);
         newsTitle.setText(bean.title);
-        newsDate.setText(bean.date);
+        setDateAndUnit(bean);
         if (CommonUtils.isUrlVliad(bean.url)) {
             LoadDetailRequest request = new LoadDetailRequest(bean.id, currentPos);
             request.url = bean.url;

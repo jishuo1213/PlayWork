@@ -71,7 +71,7 @@ public class PushService extends Service implements Emitter.Listener {
 //    public static final String HTTP_SERVER_IP = "http://218.57.135.45:9080/";
     public static final String HTTP_SERVER_IP = "http://htime.inspur.com:6380/";
 //    public static final String HTTP_SERVER_IP = "http://htime.inspur.com:55166/";
-//    public static final String HTTP_SERVER_IP = "http://10.47.1.20:6382/";'
+//    public static final String HTTP_SERVER_IP = "http://10.47.0.181:6382/";
 
     private static final int SOCKET_CONNECT_TO_SERVER = 0;
     private static final int SOCKET_DISCONNECT_TO_SERVER = -1;
@@ -369,7 +369,7 @@ public class PushService extends Service implements Emitter.Listener {
 //            socket = IO.socket("http://218.57.135.45:9090", options);
 //            socket = IO.socket("http://htime.inspur.com:5848", options);
             socket = IO.socket("http://htime.inspur.com:5848", options);
-//            socket = IO.socket("http://10.47.1.20:5849", options);
+//            socket = IO.socket("http://10.47.0.181:5849", options);
             socket.on(Socket.EVENT_CONNECT, onConnectListener);
             socket.on(Socket.EVENT_DISCONNECT, onDisConnectListener);
             socket.on(Socket.EVENT_RECONNECT, onReConnectListener);

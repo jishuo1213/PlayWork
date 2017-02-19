@@ -12,7 +12,7 @@
         android:layout_weight="1"
         android:background="@drawable/wy_ml_mark_item"
         android:contentDescription="@null"
-        android:padding="5dp"
+        android:padding="8dp"
         android:src="@drawable/app_left" />
 
     <ImageButton
@@ -22,6 +22,7 @@
         android:layout_weight="1"
         android:background="@drawable/wy_ml_mark_item"
         android:contentDescription="@null"
-        android:padding="5dp"
+        android:padding="8dp"
         android:src="@drawable/app_right" />
+
 </LinearLayout>

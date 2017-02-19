@@ -751,10 +751,15 @@ public class WriteMailFragment extends Fragment implements WriteMailOperation, O
     };
 
     @Override
-    public void refreshSearchResultListView(ArrayList<UserInfoBean> contactSearchResult) {
-        if (currSPA != null) {
-            currSPA.setDataList(contactSearchResult);
-            currSPA.notifyDataSetChanged();
+    public void refreshSearchResultListView(ArrayList<UserInfoBean> contactSearchResult,int type) {
+        Log.i(TAG, "refreshSearchResultListView: ......contactSearchResult.size() = "+contactSearchResult.size());
+        Log.i(TAG, "refreshSearchResultListView: ......type = "+type);
+        if (type == wyma.vuStores.RCPT_TO_EDITING) {
+            toSPA.setDataList(contactSearchResult);
+            toSPA.notifyDataSetChanged();
+        }else if (type == wyma.vuStores.RCPT_CC_EDITING) {
+            ccSPA.setDataList(contactSearchResult);
+            ccSPA.notifyDataSetChanged();
         }
     }
 

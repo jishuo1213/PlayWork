@@ -47,7 +47,7 @@ public class EmotionKeyboard {
     public static EmotionKeyboard with(Activity activity) {
         EmotionKeyboard emotionInputDetector = new EmotionKeyboard();
         emotionInputDetector.mActivity = activity;
-        emotionInputDetector.mInputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        emotionInputDetector.mInputManager = (InputMethodManager) activity.getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         emotionInputDetector.sp = activity.getSharedPreferences(SHARE_PREFERENCE_NAME, Context.MODE_PRIVATE);
         return emotionInputDetector;
     }

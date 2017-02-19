@@ -127,7 +127,7 @@ public class VUAccountCAFragment extends Fragment implements AccountCaOperation,
 
         inputPwdET = (EditText) popupWindow_view.findViewById(R.id.wy_input_pwd_et);
         inputPwdET.requestFocus();//获取焦点
-        InputMethodManager imm = (InputMethodManager) wyma.getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) wyma.getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);//显示虚拟键盘
 
         popupWindow_view.findViewById(R.id.wy_input_pwd_ok_btn).setOnClickListener(this);

@@ -17,6 +17,7 @@ public class DateUtils {
 
     private static final String TAG = "DateUtilsFan";
     private static Calendar tempCalendar = Calendar.getInstance();
+    private static String[] chinaWeekText = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
 
     public static int getTimeNoonOrAfterNoon(long time) {
         Calendar calendar = Calendar.getInstance();
@@ -34,6 +35,35 @@ public class DateUtils {
         Calendar calendar = Calendar.getInstance();
         trimCalendarDate(calendar);
         return calendar.getTimeInMillis() <= selectday.getTimeInMillis();
+    }
+
+    public static String getOneWeekTextString(long time) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        if (dayOfWeek == 1) {
+            calendar.add(Calendar.DATE, -6);
+        } else {
+            calendar.add(Calendar.DATE, 2 - dayOfWeek);
+        }
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int date = calendar.get(Calendar.DATE);
+        StringBuilder sb = new StringBuilder();
+        sb.append(calendar.get(Calendar.YEAR)).
+                append(".").
+                append(month >= 10 ? month : "0" + month).
+                append(".").
+                append(date >= 10 ? date : "0" + date);
+        sb.append("~");
+        calendar.add(Calendar.DATE, 6);
+        month = calendar.get(Calendar.MONTH) + 1;
+        date = calendar.get(Calendar.DATE);
+        sb.append(calendar.get(Calendar.YEAR)).
+                append(".").
+                append(month >= 10 ? month : "0" + month).
+                append(".").
+                append(date >= 10 ? date : "0" + date);
+        return sb.toString();
     }
 
     public static boolean isSameYearMonth(Calendar selectday) {
@@ -137,7 +167,6 @@ public class DateUtils {
         int day = tempCalendar.get(Calendar.DATE);
         int hour = tempCalendar.get(Calendar.HOUR_OF_DAY);
         int minute = tempCalendar.get(Calendar.MINUTE);
-        int second = tempCalendar.get(Calendar.SECOND);
         return sb.append(tempCalendar.get(Calendar.YEAR)).append("-").
                 append(month < 10 ? "0" + month : month).append("-").
                 append(day < 10 ? "0" + day : day).append(" ").
@@ -145,13 +174,25 @@ public class DateUtils {
                 append(minute < 10 ? "0" + minute : minute).toString();
     }
 
-    public static String getCalendarText(Calendar calendar) {
+    private static String getCalendarText(Calendar calendar) {
         StringBuilder sb = new StringBuilder();
         int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DATE);
         return sb.append(calendar.get(Calendar.YEAR)).append("年").
                 append(month < 10 ? "0" + month : month).append("月").
                 append(day < 10 ? "0" + day : day).append("日").toString();
+    }
+
+    public static String getCalendarDateWeek(long time) {
+        tempCalendar.setTimeInMillis(time);
+        StringBuilder sb = new StringBuilder();
+        int year = tempCalendar.get(Calendar.YEAR);
+        int month = tempCalendar.get(Calendar.MONTH) + 1;
+        int day = tempCalendar.get(Calendar.DATE);
+        int week = tempCalendar.get(Calendar.DAY_OF_WEEK);
+        return sb.append(year).append("-").append(month < 10 ? "0" + month : month).append("-").
+                append(day < 10 ? "0" + day : day).append(" ")
+                .append(chinaWeekText[week - 1]).toString();
     }
 
     public static String getCalendarYearMonth(Calendar calendar) {
@@ -300,7 +341,7 @@ public class DateUtils {
                 dateNums -= (7 - yearFirstDayofWeek + 2);
             }
         }
-        if (dateNums == 0) {//去年的最后一周
+        if (dateNums <= 0) {//去年的最后一周
             currentDay.add(Calendar.DATE, -1);
             return getDayWeekNum(currentDay.getTimeInMillis());
         }
@@ -341,14 +382,22 @@ public class DateUtils {
 
 
     public static void main(String[] args) {
-//        Calendar c1 = Calendar.getInstance();
+        Calendar c1 = Calendar.getInstance();
+
 //        Calendar c2 = Calendar.getInstance();
-//        c1.set(Calendar.HOUR_OF_DAY, 23);
-//        c1.set(Calendar.MINUTE, 59);
+//        c1.set(Calendar.YEAR, 2016);
+//        c1.set(Calendar.MONTH, 0);
+//        c1.set(Calendar.DATE, 1);
+//        c1.set(Calendar.MONTH, 0);
+//        c1.set(Calendar.MONTH, 0);
 //        c2.set(Calendar.DATE, 4);
 //        c2.set(Calendar.HOUR_OF_DAY, 1);
 //        c2.set(Calendar.MINUTE, 0);
 //        System.out.println(isSameDayOfMillis(c1.getTimeInMillis(), c2.getTimeInMillis()));
 //        System.out.println(isUrlVliad("http://office7.inspur.com:8082/eportal/fileDir/inspur/resource/cms/2017/01/img_mobile_site/2017011223160635012_small.jpg"));
+        int[] res = getDayWeekNum(c1.getTimeInMillis());
+
+        System.out.println(res[0]);
+        System.out.println(res[1]);
     }
 }

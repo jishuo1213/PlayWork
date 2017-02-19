@@ -1511,7 +1511,8 @@ public class MessageStores extends Stores {
                     continue;
                 Log.i(TAG, "updateVchatUnreadCount: " + vChatBean.lastChatTime + "--------" + unReadMessageBean.msgSendTime);
                 if (vChatBean.lastChatTime < unReadMessageBean.msgSendTime &&
-                        !vChatBean.msgId.equals(unReadMessageBean.msgId)) {
+                        !unReadMessageBean.msgId.equals(vChatBean.msgId) /*&&
+                        !vChatBean.msgId.equals(unReadMessageBean.msgId*/) {
                     vChatBean.lastChatTime = unReadMessageBean.msgSendTime;
                     vChatBean.lastMsg = unReadMessageBean.content;
                     vChatBean.msgId = unReadMessageBean.msgId;
@@ -1731,6 +1732,9 @@ public class MessageStores extends Stores {
     public void removeUnReadMsg(String groupId) {
 
         if (currentVchatBean != null && currentVchatBean.groupId.equals(groupId)) {
+            if (currentVchatBean.unReadMsgNum > 0) {
+                clearServerUnReadMsg(null, currentVchatBean.groupId);
+            }
             currentVchatBean.unReadMsgNum = 0;
         }
         if (vChatUnReadMsg == null)
@@ -2171,14 +2175,15 @@ public class MessageStores extends Stores {
         currentVchatBean = null;
     }
 
-    public void setCurrentVchatBean(VChatBean vchatBean) {
+    public VChatBean setCurrentVchatBean(VChatBean vchatBean) {
         if (vchatBean != null) {
             if (chatGroupIds.contains(vchatBean.groupId)) {
                 this.currentVchatBean = getVchatBeanByGroupId(vchatBean.groupId);
             }
-            return;
+            return currentVchatBean;
         }
         this.currentVchatBean = null;
+        return null;
     }
 
     /**
@@ -2190,7 +2195,7 @@ public class MessageStores extends Stores {
     void createNewChat(ChatWindowInfoBean chatWindowInfoBean, boolean isAddressBook) {
         if (chatWindowInfoBean == null) {
             if (chatOperationReference.get() != null && !isAddressBook) {
-                chatOperationReference.get().onCreateNewChat(null);
+                chatOperationReference.get().onCreateNewChat(null, null);
             }
             return;
         }
@@ -2229,7 +2234,7 @@ public class MessageStores extends Stores {
         this.currentWindow = chatWindowInfoBean;
 
         if (chatOperationReference.get() != null) {
-            chatOperationReference.get().onCreateNewChat(chatWindowInfoBean);
+            chatOperationReference.get().onCreateNewChat(chatWindowInfoBean, vChatBean);
         }
     }
 

@@ -16,7 +16,6 @@ import com.inspur.playwork.utils.db.bean.MailAttachment;
 import com.inspur.playwork.weiyou.WeiYouMainActivity;
 import com.inspur.playwork.weiyou.adapter.MailAttachmentAdapter;
 import com.inspur.playwork.weiyou.store.MailAttachmentOperation;
-import com.inspur.playwork.weiyou.utils.VUFileUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ import java.util.Date;
 /**
  * Created by Fan on 15-9-18.
  */
-public class MailAttachmentFragment extends Fragment implements MailAttachmentOperation{
+public class MailAttachmentFragment extends Fragment implements MailAttachmentOperation {
 
     private static final String TAG = "MailAttachmentFragment";
 
@@ -34,12 +33,13 @@ public class MailAttachmentFragment extends Fragment implements MailAttachmentOp
     private MailAttachmentAdapter maAdapter;
     private ArrayList<MailAttachment> mailAttachmentListData;
     private WeiYouMainActivity wyma;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        wyma = (WeiYouMainActivity)getActivity();
+        wyma = (WeiYouMainActivity) getActivity();
         wyma.vuStores.setMailAttachmentReference(this);
-        mailAttachmentListData= new ArrayList<>();
+        mailAttachmentListData = new ArrayList<>();
 //        DBUtil.queryMailAttachmentList(wyma.currMailAccount.getEmail());File file = new File(getMailCachePath());
         String email = wyma.currMailAccount.getEmail();
         File file = new File(FileUtil.getCurrMailAttachmentsPath(email));
@@ -47,13 +47,13 @@ public class MailAttachmentFragment extends Fragment implements MailAttachmentOp
         if (files != null && files.length >= 0) {
             for (File _file : files) {
 //                Long id, String name, String path, String url, Long size, String email, java.util.Date createTime, long mailId
-                MailAttachment ma = new MailAttachment(null,_file.getName(),_file.getAbsolutePath(),null,_file.length(),email,new Date(_file.lastModified()),0l);
+                MailAttachment ma = new MailAttachment(null, _file.getName(), _file.getAbsolutePath(), null, _file.length(), email, new Date(_file.lastModified()), 0l);
                 mailAttachmentListData.add(ma);
             }
         }
         Collections.sort(mailAttachmentListData);
 //        关闭侧边栏手势滑动
-        if(wyma.drawer!=null)
+        if (wyma.drawer != null)
             wyma.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
@@ -70,14 +70,14 @@ public class MailAttachmentFragment extends Fragment implements MailAttachmentOp
             }
         });
         mailAttachmentListView = (ListView) rootView.findViewById(R.id.mal_lv);
-        maAdapter = new MailAttachmentAdapter(wyma,mailAttachmentListData,false,false);
+        maAdapter = new MailAttachmentAdapter(wyma, mailAttachmentListData, false, false);
         mailAttachmentListView.setAdapter(maAdapter);
         mailAttachmentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 MailAttachment ma = mailAttachmentListData.get(i);
                 String amPath = ma.getPath();
-                getActivity().startActivity(VUFileUtil.openFile(amPath));
+                getActivity().startActivity(FileUtil.getOpenFileIntent(getActivity(), amPath));
             }
         });
         return rootView;

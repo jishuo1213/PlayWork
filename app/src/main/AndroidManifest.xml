@@ -178,7 +178,11 @@
         <service android:name=".core.PlayWorkServiceNew$InnerService" />
 
         <activity android:name=".view.common.chosepicture.ChoseImageActivity" />
-        <activity android:name=".view.application.weekplan.WeekPlanActivity" />
+
+        <activity
+            android:name=".view.application.weekplan.WeekPlanActivity"
+            android:windowSoftInputMode="adjustPan" />
+
         <activity android:name=".view.application.news.GroupNewsActivity" />
 
         <receiver android:name=".weiyou.utils.NetStatusReceiver">
@@ -198,7 +202,7 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name=".weiyou.WriteMailActivity"></activity>
+        <activity android:name=".weiyou.WriteMailActivity" />
         <activity android:name=".view.common.GuideActivity">
 
         </activity>

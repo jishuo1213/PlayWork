@@ -586,6 +586,7 @@ public class DBOperation {
             Cursor cursor = db.query(SQLSentence.TABLE_CHAT_MESSAGE, new String[]{SQLSentence.MESSAGE_MAILID,
                             SQLSentence.MESSAGE_CONTENT, SQLSentence.MESSAGE_SENDTIME}, SQLSentence.MESSAGE_GROUP_ID + " = ? ", new String[]{vChatBean.groupId},
                     null, null, SQLSentence.MESSAGE_SENDTIME + " DESC ", 1 + "");
+
             if (cursor.getCount() > 0 && cursor.moveToFirst()) {
                 vChatBean.lastMsg = cursor.getString(cursor.getColumnIndex(SQLSentence.MESSAGE_CONTENT));
                 vChatBean.lastChatTime = cursor.getLong(cursor.getColumnIndex(SQLSentence.MESSAGE_SENDTIME));

@@ -4,6 +4,7 @@ import com.inspur.playwork.model.message.ChatWindowInfoBean;
 import com.inspur.playwork.model.message.CustomProperty;
 import com.inspur.playwork.model.message.MessageBean;
 import com.inspur.playwork.model.message.SmallMailBean;
+import com.inspur.playwork.model.message.VChatBean;
 
 import java.util.ArrayList;
 
@@ -35,7 +36,7 @@ public interface ChatViewOperation {
 
     void onGetSmallMailDetail(String mark, SmallMailBean smallMailBean);
 
-    void onCreateNewChat(ChatWindowInfoBean windowInfoBean);
+    void onCreateNewChat(ChatWindowInfoBean windowInfoBean, VChatBean vChatBean);
 
     void renameChatSubject(String subject);
 

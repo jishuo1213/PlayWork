@@ -9,6 +9,7 @@ import com.inspur.playwork.config.AppConfig;
 import com.inspur.playwork.dispatcher.Dispatcher;
 import com.inspur.playwork.model.common.SearchPersonInfo;
 import com.inspur.playwork.model.news.DepartmentNewsBean;
+import com.inspur.playwork.model.weekplan.WeekPlanDetailBean;
 import com.inspur.playwork.model.weekplan.WeekPlanHeader;
 import com.inspur.playwork.stores.Stores;
 import com.inspur.playwork.utils.DateUtils;
@@ -20,6 +21,7 @@ import com.inspur.playwork.view.application.addressbook.AddressBookViewOperation
 import com.inspur.playwork.view.application.news.NewListFragment;
 import com.inspur.playwork.view.application.news.NewsDetailOperation;
 import com.inspur.playwork.view.application.news.NewsViewOperation;
+import com.inspur.playwork.view.application.weekplan.WeekPlanDetailViewOperation;
 import com.inspur.playwork.view.application.weekplan.WeekPlanViewOperation;
 
 import org.json.JSONArray;
@@ -44,9 +46,9 @@ public class ApplicationStores extends Stores {
     private static final String TAG = "ApplicationStores";
 
     private static final String GET_OTHER_PLANS = "getOtherPlans";
-    private static final String GET_WEEK_PLAN_DETAIL = "getWeekPlanByWeeks";
     private static final String QUERY_NEWS = "getNews";
     private static final String QUERY_NEWS_DETAIL = "getNewsDetail";
+    private static final String GET_WEEK_PLAN_DETAIL = "getWeekPlanByWeeks";
 
     private ArrayList<WeekPlanHeader> planArrayList;
 
@@ -60,6 +62,7 @@ public class ApplicationStores extends Stores {
 
     private WeakReference<AddressBookViewOperation> addressBookReference = new WeakReference<>(null);
     private WeakReference<WeekPlanViewOperation> weekPlanWeakReference = new WeakReference<>(null);
+    private WeakReference<WeekPlanDetailViewOperation> weekPlanDetailWeakReference = new WeakReference<>(null);
     private WeakReference<NewsViewOperation> newsWeakReference = new WeakReference<>(null);
     private WeakReference<NewsDetailOperation> newsDetailWeakReference = new WeakReference<>(null);
     private ArrayList<SearchPersonInfo> resultList;
@@ -176,6 +179,10 @@ public class ApplicationStores extends Stores {
         this.newsDetailWeakReference = new WeakReference<>(operation);
     }
 
+    public void setWeekPlanDetailWeakReference(WeekPlanDetailViewOperation operation) {
+        this.weekPlanDetailWeakReference = new WeakReference<>(operation);
+    }
+
     public void getNews(String uuid, int type, int page, String departMent) {
         JSONObject requsetJson = new JSONObject();
         try {
@@ -221,15 +228,20 @@ public class ApplicationStores extends Stores {
         }
     }
 
-    public void getShareWeekPlanList(int weekNum) {
+    public void getShareWeekPlanList(long time) {
+        int[] yearWeek = DateUtils.getDayWeekNum(time);
+        int weekNum = yearWeek[1];
+        Log.i(TAG, "getShareWeekPlanList: weekNum" + weekNum);
         JSONObject requestJson = new JSONObject();
         try {
             requestJson.put("userId", PreferencesHelper.getInstance().getCurrentUser().id);
             requestJson.put("WeekNumber", weekNum);
+            requestJson.put("Year", yearWeek[0]);
             createHttpRequestJson(requestJson);
             JSONObject headerJson = new JSONObject();
             headerJson.put("name", GET_OTHER_PLANS);
             headerJson.put("weekNum", weekNum);
+            headerJson.put("time", time);
             OkHttpClientManager.getInstance().newGetAsyn(AppConfig.HTTP_SERVER_IP + GET_OTHER_PLANS,
                     httpCallback, requestJson, headerJson.toString());
         } catch (JSONException e) {
@@ -244,7 +256,7 @@ public class ApplicationStores extends Stores {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 1);
         calendar.set(Calendar.MILLISECOND, 0);
-        int weekNum = DateUtils.getDayWeekNum(time)[1] + 1;
+        int weekNum = DateUtils.getDayWeekNum(time)[1];
         JSONObject requestJson = new JSONObject();
         JSONArray weekArray = new JSONArray();
 //        calendar.get(Calendar.)
@@ -267,6 +279,7 @@ public class ApplicationStores extends Stores {
             createHttpRequestJson(requestJson);
             JSONObject headerJson = new JSONObject();
             headerJson.put("name", GET_WEEK_PLAN_DETAIL);
+            headerJson.put("weekNumbers", weekArray);
             OkHttpClientManager.getInstance().newGetAsyn(AppConfig.HTTP_SERVER_IP + GET_WEEK_PLAN_DETAIL,
                     httpCallback, requestJson, headerJson.toString());
         } catch (JSONException e) {
@@ -283,7 +296,7 @@ public class ApplicationStores extends Stores {
 
         @Override
         public void onResponse(Call call, Response response) throws IOException {
-            if (response.isSuccessful()) {
+            if (response.isSuccessful() && !call.isCanceled()) {
                 try {
                     String requestId = (String) call.request().tag();
                     JSONObject res = new JSONObject(response.body().string());
@@ -339,17 +352,27 @@ public class ApplicationStores extends Stores {
         }
     }
 
-    private void parseWeekPlanDetail(JSONObject res, JSONObject requstId) {
-        try {
-            FileUtil.writeContentToFile(res.toString(), FileUtil.getSDCardRoot() + "test.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void parseWeekPlanDetail(JSONObject res, JSONObject requestId) {
+        Log.i(TAG, "parseWeekPlanDetail: " + requestId);
+        if (res.optBoolean("type")) {
 
+            JSONArray timeArray = requestId.optJSONArray("weekNumbers");
+            int count = timeArray.length();
+            long[] oneWeekTime = new long[7];
+            for (int i = 0; i < count; i++) {
+                oneWeekTime[i] = timeArray.optLong(i);
+            }
+            WeekPlanDetailBean weekPlanDetailBean = new WeekPlanDetailBean(res,oneWeekTime);
+            weekPlanDetailBean.weekDayTime = oneWeekTime;
+            if (weekPlanDetailWeakReference.get() != null) {
+                weekPlanDetailWeakReference.get().onGetWeekPlanDetail(weekPlanDetailBean);
+            }
+        }
     }
 
-    private void parseGetShareWeekPlanList(JSONObject res, JSONObject requstId) {
-        int clientWeekNum = requstId.optInt("weekNum");
+    private void parseGetShareWeekPlanList(JSONObject res, JSONObject requestId) {
+        int clientWeekNum = requestId.optInt("weekNum");
+        long weekTime = requestId.optLong("time");
         if (res.optBoolean("type")) {
             JSONArray planList = res.optJSONArray("data");
             int length = planList.length();
@@ -361,11 +384,15 @@ public class ApplicationStores extends Stores {
             for (int i = 0; i < length; i++) {
                 JSONObject plan = planList.optJSONObject(i);
                 WeekPlanHeader weekPlanHeader = new WeekPlanHeader(plan);
+                weekPlanHeader.weekTime = weekTime;
                 planArrayList.add(weekPlanHeader);
             }
             WeekPlanHeader myWeekPlan = new WeekPlanHeader(WeekPlanHeader.MY_PLAN);
+
             myWeekPlan.subject = "第" + clientWeekNum + "周计划--" + PreferencesHelper.getInstance().getCurrentUser().name;
             myWeekPlan.from = PreferencesHelper.getInstance().getCurrentUser();
+            myWeekPlan.weekTime = weekTime;
+
             planArrayList.add(WeekPlanHeader.getInstance(WeekPlanHeader.MY_PLAN_TITLE));
             planArrayList.add(WeekPlanHeader.getInstance(WeekPlanHeader.OTHER_PLAN_TITLE));
             planArrayList.add(myWeekPlan);
@@ -374,10 +401,13 @@ public class ApplicationStores extends Stores {
                 weekPlanWeakReference.get().showShareWeekPlanList(planArrayList);
             }
         } else {
-            errorHandle(requstId.toString());
+            errorHandle(requestId.toString());
         }
     }
 
+    public ArrayList<WeekPlanHeader> getPlanArrayList() {
+        return planArrayList;
+    }
 
     private Callback getNewsDetailCallback = new Callback() {
         @Override

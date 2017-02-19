@@ -44,6 +44,8 @@ public class WeekPlanListFragment extends Fragment implements WeekPlanViewOperat
 
     public interface WeekPlanListEventListener {
         void onChangeWeek(int year, int weekNum);
+
+        void onWeekPlanClick(int pos);
     }
 
     @Override
@@ -94,8 +96,7 @@ public class WeekPlanListFragment extends Fragment implements WeekPlanViewOperat
     }
 
     private void loadWeekPlanList() {
-        int[] yearWeek = DateUtils.getDayWeekNum(calendar.getTimeInMillis());
-        ApplicationStores.getInstance().getShareWeekPlanList(yearWeek[1]);
+        ApplicationStores.getInstance().getShareWeekPlanList(calendar.getTimeInMillis());
     }
 
     @Override
@@ -191,8 +192,8 @@ public class WeekPlanListFragment extends Fragment implements WeekPlanViewOperat
     }
 
     @Override
-    public void onWeekPlanClick(WeekPlanHeader header) {
-        ApplicationStores.getInstance().getPlanDetail(header.from.id, header.updateTime);
+    public void onWeekPlanClick(int pos) {
+        eventListener.onWeekPlanClick(pos);
     }
 
     private void setTitleView() {

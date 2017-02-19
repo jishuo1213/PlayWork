@@ -573,6 +573,6 @@ public class SQLSentence {
 
     public static void main(String[] argc) {
         String s = "AAAAA&BBBBB";
-        System.out.println(s.substring(6));
+        System.out.println(getUpsertChatSummarySql());
     }
 }

@@ -5,8 +5,6 @@ import android.net.Uri;
 import android.util.Log;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.text.DecimalFormat;
 
 /**
@@ -21,12 +19,12 @@ public class VUFileUtil {
         return ((am_size > 1024 * 1024) ? df.format((double)am_size / 1024 / 1024) + "MB" : df.format((double)am_size / 1024) + "KB");
     }
 
-    public static long getFileSize(String filePath) throws IOException {
-        return new FileInputStream(filePath).available();
-    }
-    public static long getFileSize(File file) throws IOException {
-        return new FileInputStream(file).available();
-    }
+//    public static long getFileSize(String filePath) throws IOException {
+//        return new FileInputStream(filePath).available();
+//    }
+//    public static long getFileSize(File file) throws IOException {
+//        return new FileInputStream(file).available();
+//    }
 
     public static Intent openFile(String filePath){
 

@@ -247,7 +247,7 @@ public class AddTodayRootView extends RelativeLayout {
     }
 
     private void hideInputMethod() {
-        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getContext().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(inputTaskCount.getWindowToken(), 0);
     }
 
@@ -385,7 +385,7 @@ public class AddTodayRootView extends RelativeLayout {
 
 
     private void showKeyboard(View v) {
-        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getContext().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
     }
 

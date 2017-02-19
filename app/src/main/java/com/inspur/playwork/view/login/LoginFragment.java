@@ -353,8 +353,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showKeyboard(View v) {
-        InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(v, 0);
+        if (getActivity() != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(v, 0);
+        }
     }
 
     private void showProgressDialog() {

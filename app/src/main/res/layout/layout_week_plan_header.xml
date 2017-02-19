@@ -7,98 +7,122 @@
     card_view:cardCornerRadius="2dp"
     card_view:cardElevation="3dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_week_plan_name"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lin_main_submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="第2周计划"
-            android:textSize="16sp" />
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tv_week_plan_date"
+
+            <TextView
+                android:id="@+id/tv_plan_from_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="报送人:"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_plan_from"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="江国福"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_plan_to_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="主报:"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_plan_to"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="樊继硕"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/btn_add_main_submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:contentDescription="@null"
+                android:src="@drawable/quick_add_people_background" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_week_plan_name"
-            android:gravity="center"
-            android:paddingBottom="5dp"
-            android:text="2017.01.09-2017.01.15" />
+            android:layout_marginBottom="3dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tv_plan_from_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_week_plan_date"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="5dp"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="报送人:" />
+            <TextView
+                android:id="@+id/tv_plan_share_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="共享:"
+                android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/tv_plan_from"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_week_plan_date"
-            android:layout_toEndOf="@id/tv_plan_from_label"
-            android:layout_toRightOf="@id/tv_plan_from_label"
-            android:gravity="center"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:text="江国福" />
+            <TextView
+                android:id="@+id/tv_plan_share"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="董晨晨,邵帅,孙源,董晨晨,邵帅,孙源,董晨晨,邵帅,孙源,董晨晨,邵帅,孙源,董晨晨,邵帅,孙源"
+                android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/tv_plan_to_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_week_plan_date"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_toEndOf="@id/tv_plan_from"
-            android:layout_toRightOf="@id/tv_plan_from"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="主报:" />
+            <ImageView
+                android:id="@+id/btn_add_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:contentDescription="@null"
+                android:src="@drawable/quick_add_people_background" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_plan_to"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_week_plan_date"
-            android:layout_toEndOf="@id/tv_plan_to_label"
-            android:layout_toRightOf="@id/tv_plan_to_label"
-            android:gravity="center"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:text="樊继硕" />
-
-        <TextView
-            android:id="@+id/tv_plan_share_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_plan_from_label"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="5dp"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="共享:" />
-
-        <TextView
-            android:id="@+id/tv_plan_share"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_plan_from_label"
-            android:layout_toEndOf="@id/tv_plan_share_label"
-            android:layout_toRightOf="@id/tv_plan_share_label"
-            android:gravity="center"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:text="董晨晨,邵帅,孙源" />
-    </RelativeLayout>
+    </LinearLayout>
 </android.support.v7.widget.CardView>

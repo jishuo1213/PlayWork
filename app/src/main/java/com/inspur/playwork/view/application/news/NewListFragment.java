@@ -41,7 +41,7 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
 
         void onNewsClick(int pos, ArrayList<DepartmentNewsBean> newsList);
 
-        String getCompanyName(String name);
+        String getCompanyName(String company, String department);
     }
 
     private NewsListEventListener eventListener;
@@ -190,7 +190,7 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
         LoadNewsRequest request = new LoadNewsRequest(uuid, page, currentType, loadType);
         requestArrayMap.put(uuid, request);
         ApplicationStores.getInstance().getNews(uuid, request.newsType.ordinal(), request.page, eventListener.getCompanyName(PreferencesHelper.
-                getInstance().getCurrentUser().company));
+                getInstance().getCurrentUser().company, PreferencesHelper.getInstance().getCurrentUser().department));
     }
 
     @Override
@@ -285,6 +285,8 @@ public class NewListFragment extends Fragment implements TabRecyAdapter.TabEvent
             public void run() {
                 LoadNewsRequest request = requestArrayMap.get(uuid);
                 Log.i(TAG, "run: " + request + "" + currentNeedRequestId);
+                if (request == null)
+                    return;
                 if (uuid.equals(currentNeedRequestId)) {//返回的数据是需要的数据
                     if (request.newsType == currentType) {//是当前的tab页
                         setCurrentTabResult(request, newsBeanArrayList);
